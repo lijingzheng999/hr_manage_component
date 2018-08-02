@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd  
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context-2.5.xsd
+    http://www.springframework.org/schema/tx
+ 	http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+    ">
+
+	<!-- 自动扫描 -->
+	<context:annotation-config />
+	<context:component-scan base-package="hr.manage.component" />
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+      <property name="locations" value="classpath:jdbc.properties" />  
+    </bean> 
+	
+    <bean id="dataSource-test" class="org.apache.commons.dbcp2.BasicDataSource"
+        destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="${JDBC_TEST_URL}" />
+        <property name="username" value="${JDBC_TEST_USERNAME}" />
+        <property name="password" value="${JDBC_TEST_PASSWORD}" />
+        <property name="initialSize" value="10" />
+		<property name="maxTotal" value="30" />
+		<property name="maxWaitMillis" value="60000" />
+		<property name="minIdle" value="10"></property>
+		<property name="maxIdle" value="30"></property>
+		<property name="removeAbandonedOnBorrow" value="true"></property>
+		<property name="removeAbandonedTimeout" value="60"></property>
+		<property name="logAbandoned" value="true"></property>
+		<property name="minEvictableIdleTimeMillis" value="3600000"></property>
+		<property name="numTestsPerEvictionRun" value="50"></property>
+		<property name="timeBetweenEvictionRunsMillis" value="300000"></property>
+		<property name="testWhileIdle" value="true"></property>
+		<property name="validationQuery" value="SELECT 1"></property>
+    </bean>
+    <bean id="dataSource-online"  class="org.apache.commons.dbcp2.BasicDataSource"
+        destroy-method="close">
+       <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="${JDBC_URL}" />
+        <property name="username" value="${JDBC_USERNAME}" />
+        <property name="password" value="${JDBC_PASSWORD}" />
+        <property name="initialSize" value="10" />
+		<property name="maxTotal" value="30" />
+		<property name="maxWaitMillis" value="60000" />
+		<property name="minIdle" value="10"></property>
+		<property name="maxIdle" value="30"></property>
+		<property name="removeAbandonedOnBorrow" value="true"></property>
+		<property name="removeAbandonedTimeout" value="60"></property>
+		<property name="logAbandoned" value="true"></property>
+		<property name="minEvictableIdleTimeMillis" value="3600000"></property>
+		<property name="numTestsPerEvictionRun" value="50"></property>
+		<property name="timeBetweenEvictionRunsMillis" value="300000"></property>
+		<property name="testWhileIdle" value="true"></property>
+		<property name="validationQuery" value="SELECT 1"></property>
+    </bean> 
+	
+	 <!-- 使用自定义的路径选择器 -->
+    <bean id="dataSource" class="hr.manage.component.util.DynamicDataSource">
+        <property name="defaultTargetDataSource" ref="dataSource-online"/>
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <entry key="dataSource-test" value-ref="dataSource-test"></entry>
+                <entry key="dataSource-online" value-ref="dataSource-online"></entry>
+            </map>
+        </property>
+    </bean>
+	
+  
+	<!-- 启用Jade配置 -->
+    <bean class="net.paoding.rose.jade.context.spring.JadeBeanFactoryPostProcessor" />
+    <!-- 启用jade-plugin-sql插件 -->
+	<bean class="net.paoding.rose.jade.plugin.sql.PlumSQLInterpreter">
+        <property name="dialect">
+            <bean class="net.paoding.rose.jade.plugin.sql.dialect.MySQLDialect" />
+        </property>
+    </bean>
+    <!-- 开启事务控制的注解支持 -->  
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+     <!-- 配置spring的PlatformTransactionManager，名字为默认值 -->  
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+    </bean>  
+    
+</beans>
