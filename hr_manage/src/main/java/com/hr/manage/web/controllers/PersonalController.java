@@ -12,7 +12,9 @@ import hr.manage.component.personal.service.PersonalService;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -23,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import net.paoding.rose.web.Invocation;
 import net.paoding.rose.web.annotation.Param;
@@ -59,7 +63,9 @@ import com.hr.manage.web.constant.FunctionIds;
 import com.hr.manage.web.constant.JSONResult;
 import com.hr.manage.web.util.DataMapUtil;
 import com.hr.manage.web.util.DateTimeUtil;
+import com.hr.manage.web.util.ExportBeanExcel;
 import com.hr.manage.web.util.MD5Util;
+import com.hr.manage.web.util.StringToListUtil;
 import com.hr.manage.web.util.StringUtil;
 
 @Path("personal")
@@ -754,6 +760,7 @@ public class PersonalController {
 					curAdmin.setRealname(personalAll.getPersonalInfo().getName());
 					curAdmin.setStatus(1);
 					curAdmin.setMobilePhone(personalAll.getPersonalInfo().getPhone());
+					curAdmin.setCreateTime(new Date());
 					int result = (int) adminService.addUser(curAdmin);
 					if(result>0){
 						return "@" + JSONResult.success();
@@ -780,8 +787,14 @@ public class PersonalController {
     * @Title: getList
     * @Description: 根据条件获取员工信息列表
     * @Url: personal/getList
-    * @Param 
-    * @param @return    
+    * @Param("name") String name,
+    * @Param("expatriateUnit") String expatriateUnit,
+    * @Param("postType") String postType,
+    * @Param("department") String department,
+    * @Param("center") String center,
+    * @Param("workingPlace") String workingPlace 	
+    * @Param("pageIndex") int pageIndex, 
+    * @Param("pageSize") int pageSize 	
     * @return String    
     * @throws
      */
@@ -789,7 +802,7 @@ public class PersonalController {
 	@NotCareLogin
 	@Get("getList")
 	@Post("getList")
-	public String getTransactionList(@Param("name") String name,
+	public String getPersonalAllList(@Param("name") String name,
 			@Param("expatriateUnit") String expatriateUnit,
 			@Param("postType") String postType,
 			@Param("department") String department,
@@ -797,7 +810,6 @@ public class PersonalController {
 			@Param("workingPlace") String workingPlace,
 			@Param("pageIndex") int pageIndex, 
 			@Param("pageSize") int pageSize) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		PersonalCondition condition = new PersonalCondition();
 //		if(StringUtils.isNotBlank(name)){
 //			// 当查询条件有姓名时，只需要根据姓名查出该单，其他条件忽略
@@ -813,20 +825,103 @@ public class PersonalController {
 //		}
 		pageIndex = pageIndex < 0 ? 0 : pageIndex;
 		pageSize = pageSize < 1 ? 1 : pageSize;
-		condition.setOrderby("id");
+//		condition.setOrderby("id");
 		condition.setOffset(pageIndex * pageSize);
 		condition.setLimit(pageSize);
 		Long count = 0L;
 		List<PersonalAllExport> personalLists = new ArrayList<>();
 		try {
-//			personalLists = pointCommonService.listTransactionInfo(condition);
-//			count = pointCommonService.countTransactionInfo(condition);
+			personalLists = personalService.listPersonalAllExport(condition);
+			count = personalService.countPersonalAllExport(condition);
 		} catch (Exception e) {
-			logger.error("=====交易列表查询，调用service出错=====", e);
+			logger.error("=====根据条件获取员工信息列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
 		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
 		Map<String, Object> dataMap = DataMapUtil.getDataMap("personalViewList", personalLists, count, pageCount);
 		return "@" + JSONResult.success(dataMap);
+	}
+	
+	/**
+     * 
+    * @Title: exportPersonalAll
+    * @Description: 根据条件导出员工信息列表
+    * @Url: personal/exportPersonalAll
+    * @Param("heads") String heads,
+    * @Param("columns") String columns,
+    * @Param("name") String name,
+    * @Param("expatriateUnit") String expatriateUnit,
+    * @Param("postType") String postType,
+    * @Param("department") String department,
+    * @Param("center") String center,
+    * @Param("workingPlace") String workingPlace 		   
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Get("export")
+	public String exportPersonalAll(@Param("heads") String heads,
+			@Param("columns") String columns,
+			@Param("name") String name,
+			@Param("expatriateUnit") String expatriateUnit,
+			@Param("postType") String postType,
+			@Param("department") String department,
+			@Param("center") String center,
+			@Param("workingPlace") String workingPlace) {
+		PersonalCondition condition = new PersonalCondition();
+//		if(StringUtils.isNotBlank(name)){
+//			// 当查询条件有姓名时，只需要根据姓名查出该单，其他条件忽略
+//			condition.setName(name);
+//		} else {
+			condition.setName(name);
+			condition.setExpatriateUnit(expatriateUnit);
+			condition.setPostType(postType);
+			condition.setDepartment(department);
+			condition.setCenter(center);
+			condition.setWorkingPlace(workingPlace);
+			
+//		}
+//		condition.setOrderby("id");
+		Long count = 0L;
+		List<PersonalAllExport> personalLists = new ArrayList<>();
+		try {
+			personalLists = personalService.listPersonalAllExport(condition);
+		} catch (Exception e) {
+			logger.error("=====根据条件获取员工信息列表查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		//根据查询条件和字段导出到excel
+		Admin admin = (Admin)inv.getRequest().getSession().getAttribute("user");
+		String dateStr = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+		String fileName = "PersonalAllExport-" + dateStr + ".xlsx";
+		HttpServletResponse response = inv.getResponse();
+		response.setCharacterEncoding("UTF-8");
+		response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");//xlsx
+//		response.setContentType("application/vnd.ms-excel");//xls
+		List<String> listHeads = StringToListUtil.getStringList(heads, ",");
+		List<String> listColumns = StringToListUtil.getStringList(columns, ",");
+		OutputStream out = null;
+		try {
+			out = response.getOutputStream();
+			ExportBeanExcel<PersonalAllExport> exportBeanExcelUtil = new ExportBeanExcel();
+			exportBeanExcelUtil.exportExcel("员工信息列表",listHeads,listColumns,personalLists,out);
+		} catch (IOException e) {
+			logger.error(admin.getRealname() + " 操作导出员工列表文件出错", e);
+			e.printStackTrace();
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		} finally {
+			try {
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+		
+		
+//		return "@" + JSONResult.success();
 	}
 }

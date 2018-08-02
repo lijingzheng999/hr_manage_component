@@ -28,4 +28,24 @@ public class StringToListUtil {
 		return list;
 	}
 	
+	public static List<String> getStringList(String arrStr, String splitRegex) {
+		List<String> list = new  ArrayList<>();
+		if(StringUtils.isBlank(arrStr) || StringUtils.isBlank(splitRegex)){
+			return list;
+		}
+		String[] arrs = arrStr.split(splitRegex);
+		for (int i = 0; i < arrs.length; i++) {
+			if(!StringUtils.isBlank(arrs[i])){
+				try {
+					list.add(arrs[i]);
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				}
+			}else {
+				continue;
+			}
+		}
+		return list;
+	}
 }

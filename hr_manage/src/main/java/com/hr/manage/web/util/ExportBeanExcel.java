@@ -9,6 +9,7 @@ import hr.manage.component.admin.model.Admin;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,7 +38,7 @@ public class ExportBeanExcel<T> {
      *  out         与输出设备关联的流对象，可以将EXCEL文档导出到本地文件或者网络中
      */
     public  void exportExcel(String title, List<String> headersName,List<String> headersId,
-                            List<T> dtoList) {
+                            List<T> dtoList,OutputStream out) {
         //表头--标题栏
         Map<Integer, String> headersNameMap = new HashMap<>();
         int key=0;
@@ -59,7 +60,8 @@ public class ExportBeanExcel<T> {
         // 声明一个工作薄
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet(title);
-        sheet.setDefaultColumnWidth((short)15);
+        sheet.setDefaultRowHeight((short) (2 * 256)); //设置默认行高，表示2个字符的高度，必须先设置列宽然后设置行高，不然列宽没有效果
+        sheet.setDefaultColumnWidth(17);    //设置默认列宽
         // 生成一个样式
         XSSFCellStyle style = wb.createCellStyle();
         XSSFRow row = sheet.createRow(0);
@@ -124,9 +126,9 @@ public class ExportBeanExcel<T> {
             }
         }
         try {
-            FileOutputStream exportXls = new FileOutputStream("D://工单信息表.xlsx");
-            wb.write(exportXls);
-            exportXls.close();
+//            FileOutputStream exportXls = new FileOutputStream(fileName);
+            wb.write(out);
+//            exportXls.close();
             System.out.println("导出成功!");
         } catch (FileNotFoundException e) {
             System.out.println("导出失败!");
@@ -169,8 +171,8 @@ public class ExportBeanExcel<T> {
 //		list.add(new Admin(4, "jifen","积分", "444444444444",new TblA(1, "2")));
 //		list.add(new Admin(5, "point","积分2", "555555555",new TblA(1, "2")));
 //		list.add(new Admin(6, "sdfdsf","乱码", "6666666",new TblA(1, "2")));
-		ExportBeanExcel<Admin> exportBeanExcelUtil = new ExportBeanExcel();
-		exportBeanExcelUtil.exportExcel("测试POI导出EXCEL文档",listName,listId,list);
+//		ExportBeanExcel<Admin> exportBeanExcelUtil = new ExportBeanExcel();
+//		exportBeanExcelUtil.exportExcel("测试POI导出EXCEL文档",listName,listId,list);
 
 //        List<String> listName = new ArrayList<>();
 //        listName.add("id");

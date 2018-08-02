@@ -1,6 +1,8 @@
 package hr.manage.component.personal.service;
 
 import hr.manage.component.personal.model.PersonalAll;
+import hr.manage.component.personal.model.PersonalAllExport;
+import hr.manage.component.personal.model.PersonalCondition;
 
 import java.util.List;
 
@@ -54,4 +56,25 @@ public interface PersonalService {
      */
 	public int deletePersonalAllInfoById(Integer personalInfoId);
 	
+	/**
+     * 
+    * @Title: listPersonalAllExport
+    * @Description: 条件查询员工基本信息列表
+    * @param @param PersonalCondition
+    * @param @return    
+    * @return List<listPersonalAllExport>    
+    * @throws
+     */
+	public List<PersonalAllExport> listPersonalAllExport(PersonalCondition condition);
+	
+	/**
+     * 
+    * @Title: countPersonalAllExport
+    * @Description: 条件查询员工基本信息列表个数
+    * @param @param PersonalCondition
+    * @param @return    
+    * @return Long
+    * @throws
+     */
+	public Long countPersonalAllExport(PersonalCondition condition);
 }

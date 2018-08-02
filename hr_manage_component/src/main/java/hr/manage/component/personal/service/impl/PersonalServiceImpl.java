@@ -6,6 +6,8 @@ import hr.manage.component.personal.dao.PersonalInfoDAO;
 import hr.manage.component.personal.dao.PersonalSalaryInfoDAO;
 import hr.manage.component.personal.dao.PersonalWorkInfoDAO;
 import hr.manage.component.personal.model.PersonalAll;
+import hr.manage.component.personal.model.PersonalAllExport;
+import hr.manage.component.personal.model.PersonalCondition;
 import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
@@ -100,4 +102,13 @@ public class PersonalServiceImpl implements PersonalService {
 		return result;
 	}
 
+	@Override
+	public List<PersonalAllExport> listPersonalAllExport(PersonalCondition condition){
+		return personalInfoDAO.listPersonalAllExport(condition);
+	}
+	
+	@Override
+    public Long countPersonalAllExport(PersonalCondition condition) {
+        return personalInfoDAO.countPersonalAllExport(condition);
+    }
 }
