@@ -3,6 +3,8 @@ package com.hr.manage.web.controllers;
 import hr.manage.component.admin.model.Admin;
 import hr.manage.component.admin.service.AdminService;
 import hr.manage.component.personal.model.PersonalAll;
+import hr.manage.component.personal.model.PersonalAllExport;
+import hr.manage.component.personal.model.PersonalCondition;
 import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
@@ -46,6 +48,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.internal.bind.BigIntegerTypeAdapter;
 import com.google.gson.reflect.TypeToken;
@@ -54,20 +57,112 @@ import com.hr.manage.web.annotation.NotCareLogin;
 import com.hr.manage.web.constant.CodeMsg;
 import com.hr.manage.web.constant.FunctionIds;
 import com.hr.manage.web.constant.JSONResult;
+import com.hr.manage.web.util.DataMapUtil;
 import com.hr.manage.web.util.DateTimeUtil;
 import com.hr.manage.web.util.MD5Util;
 import com.hr.manage.web.util.StringUtil;
 
-@Path("")
+@Path("personal")
 public class PersonalController {
 
 	@Autowired
 	Invocation inv;
 	@Autowired
 	PersonalService personalService;
-	
+	@Autowired
+	AdminService adminService;
 	private final Log logger = LogFactory.getLog(PersonalController.class);
 	private static final String FILE_UPLOAD_URL="C:/data/uploadfile/";
+	
+	/**
+     * 
+    * @Title: getPersonalAllInfoBySelfId
+    * @Description: 查询本人基本信息
+    * @Url: personal/getPersonalAllInfoBySelfId
+    * @Param 
+    * @param @return    
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_11)
+	@NotCareLogin
+	@Post("getPersonalAllInfoBySelfId")
+	@Get("getPersonalAllInfoBySelfId")
+	public String getPersonalAllInfoBySelfId(){
+		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
+		//判断是否有基本信息
+		if(user.getPersonalInfoId()>0){
+			PersonalAll personalAll = personalService.getPersonalAllInfoById(user.getPersonalInfoId());
+			if(personalAll.getPersonalInfo()!=null){
+				return "@"+JSONResult.success(personalAll);
+			}
+			else{
+				logger.error("根据登陆ID未查到基本信息");
+				return "@"+JSONResult.error(CodeMsg.ERROR,"根据登陆ID未查到基本信息");
+			}
+		}
+		else{
+			logger.error("登陆ID没有基本信息");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"登陆ID没有基本信息");
+		}
+		
+	}
+	
+	
+	/**
+     * 
+    * @Title: updatePersonalAllInfoBySelf
+    * @Description: 修改本人基本信息
+    * @Url: personal/updatePersonalAllInfoBySelf
+    * @Param @Param("personalAll")String
+    * @param @return    
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_11)
+	@NotCareLogin
+	@Post("updatePersonalAllInfoBySelf")
+	@Get("updatePersonalAllInfoBySelf")
+	public String updatePersonalAllInfoBySelf(@Param("personalAll")String personalAllJsonStr ){
+		if(StringUtils.isBlank(personalAllJsonStr)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		PersonalAll personalAll = null;
+		try {
+			personalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
+		} catch (Exception e) {
+			logger.error("=====修改本人基本信息，解析参数出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+		}
+		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
+		//判断是否有基本信息
+		if(user.getPersonalInfoId()>0){
+			//判断修改信息是否为本人的
+			if(user.getPersonalInfoId().equals(personalAll.getPersonalInfo().getId())){
+				//进行修改
+				PersonalAll oldPersonalAll = personalService.getPersonalAllInfoById(user.getPersonalInfoId());
+				if(oldPersonalAll.getPersonalInfo()!=null){
+					//赋予新值
+					return "@"+JSONResult.success();
+				}
+				else{
+					logger.error("根据登陆ID未查到基本信息");
+					return "@"+JSONResult.error(CodeMsg.ERROR,"根据登陆ID未查到基本信息");
+				}
+			}
+			else{
+				logger.error("登陆ID与要修改的员工不一致");
+				return "@"+JSONResult.error(CodeMsg.ERROR,"登陆ID与要修改的员工不一致");
+			}
+			
+		}
+		else{
+			logger.error("登陆ID没有基本信息");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"登陆ID没有基本信息");
+		}
+		
+	}
 	
 	/**
      * 
@@ -81,8 +176,8 @@ public class PersonalController {
      */
 	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
 	@NotCareLogin
-	@Post("personal/importExcel")
-	@Get("personal/importExcel")
+	@Post("importExcel")
+	@Get("importExcel")
 	public String importExcel(@Param("filedata")MultipartFile filedata){
 		boolean result = true;
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
@@ -486,6 +581,7 @@ public class PersonalController {
 	                //验证员工信息是否存在
 	                int checkNum = personalService.checkPersonalByNameAndCard(person.getName(), person.getIdentityCard());
 	                if(checkNum>0){
+	                	logger.error("====="+String.format("员工信息已存在,姓名:%s,身份证:%s", person.getName(), person.getIdentityCard())+"=====");
 	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工信息已存在,姓名:%s,身份证:%s", person.getName(), person.getIdentityCard())); 
 	                }
 	                personalAll.setPersonalInfo(person);
@@ -499,21 +595,238 @@ public class PersonalController {
 			} catch (Exception e) {
 				// TODO: handle exception
 				logger.error("保存数据库异常,已回滚", e);
-				return "@"+JSONResult.error(CodeMsg.ERROR,"保存数据库异常,已回滚"+ e);  
+				return "@"+JSONResult.error(CodeMsg.ERROR,"保存数据库异常,已回滚"+ e.getMessage());  
 			}
 	        
 		}catch(Exception e){
 			logger.error("upload personalInfo throws Exception", e);
-			return "@"+JSONResult.error(CodeMsg.ERROR,"上传员工基本信息文件失败，请稍后重试"+e);  
+			return "@"+JSONResult.error(CodeMsg.ERROR,"上传员工基本信息文件失败，请稍后重试"+e.getMessage());  
 		}
 		if(result){
 			logger.info("adminUser : "+user.getUsername()+"upload timeOutFile ; fileNumber : OT"+fileNumber);
 			return "@"+JSONResult.success("导入成功！文件编号为OT"+fileNumber);
 		}else{
+			logger.error("=====导入失败！请重新导入=====");
 			return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！请重新导入");  
 		}
 		
 	}
 	
+	/**
+     * 
+    * @Title: getPersonalAllInfoById
+    * @Description: 查询员工基本信息
+    * @Url: personal/getPersonalAllInfoById
+    * @Param @Param("personalInfoId")Integer personalInfoId
+    * @param @return    
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Post("getPersonalAllInfoById")
+	@Get("getPersonalAllInfoById")
+	public String getPersonalAllInfoById(@Param("personalInfoId")Integer personalInfoId){
+		PersonalAll personalAll = personalService.getPersonalAllInfoById(personalInfoId);
+		if(personalAll.getPersonalInfo()!=null){
+			return "@"+JSONResult.success(personalAll);
+		}
+		else{
+			logger.error("=====未查到员工数据=====");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"未查到员工数据");
+		}
+	}
 	
+	
+	/**
+     * 
+    * @Title: updatePersonalAllInfo
+    * @Description: 修改员工基本信息
+    * @Url: personal/updatePersonalAllInfo
+    * @Param  @Param("personalAll")String
+    * @param @return    
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Post("updatePersonalAllInfo")
+	@Get("updatePersonalAllInfo")
+	public String updatePersonalAllInfo(
+			@Param("personalAll") String personalAllJsonStr) {
+		if(StringUtils.isBlank(personalAllJsonStr)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		PersonalAll personalAll = null;
+		try {
+			personalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
+		} catch (Exception e) {
+			logger.error("=====修改员工基本信息，解析参数出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+		}
+		// 进行修改
+		PersonalAll oldPersonalAll = personalService
+				.getPersonalAllInfoById(personalAll.getPersonalInfo().getId());
+		if (oldPersonalAll.getPersonalInfo() != null) {
+			// 赋予新值
+			return "@" + JSONResult.success();
+		} else {
+			logger.error("=====根据员工ID未查到基本信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据员工ID未查到基本信息");
+		}
+
+	}
+	
+	
+	/**
+     * 
+    * @Title: deletePersonalAllInfo
+    * @Description: 删除员工基本信息
+    * @Url: personal/deletePersonalAllInfo
+    * @Param @Param("personalInfoId")Integer personalInfoId
+    * @param @return    
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Post("deletePersonalAllInfo")
+	@Get("deletePersonalAllInfo")
+	public String deletePersonalAllInfo(
+			@Param("personalInfoId")Integer personalInfoId) {
+
+		PersonalAll personalAll = personalService
+				.getPersonalAllInfoById(personalInfoId);
+		if (personalAll.getPersonalInfo() != null) {
+			// 进行逻辑删除
+			try {
+				int result = personalService.deletePersonalAllInfoById(personalInfoId);
+				return "@" + JSONResult.success();
+				
+			} catch (Exception e) {
+				logger.error("=====删除员工基本信息异常====="+e);
+				return "@" + JSONResult.error(CodeMsg.ERROR, "删除员工基本信息异常,"+e.getMessage());
+			}	
+		} else {
+			logger.error("=====根据员工ID未查到基本信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据员工ID未查到基本信息");
+		}
+	}
+	
+	/**
+     * 
+    * @Title: addAdminByPInfoId
+    * @Description: 分配员工账号；默认密码
+    * @Url: personal/addAdminByid
+    * @Param 
+    * @param @return    
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Post("addAdminByPInfoId")
+	@Get("addAdminByPInfoId")
+	public String addAdminByPInfoId(
+			@Param("personalInfoId")Integer personalInfoId) {
+		// 进行修改
+		PersonalAll personalAll = personalService
+				.getPersonalAllInfoById(personalInfoId);
+		if (personalAll.getPersonalInfo() != null) {
+			// 进行分配账号
+			try {
+				Admin admin = adminService.getAdminByInfoId(personalInfoId);
+				if(admin!=null){
+					logger.error("=====此员工已分配账号=====");
+					return "@" + JSONResult.error(CodeMsg.ERROR, "此员工已分配账号");
+				}
+				else{
+					Admin curAdmin = new Admin();
+					curAdmin.setUsername(personalAll.getPersonalInfo().getPhone());
+					//默认密码手机号+出生月日
+					curAdmin.setPassword(MD5Util.GetMD5Code(personalAll.getPersonalInfo().getPhone()+personalAll.getPersonalInfo().getIdentityCard().substring(10, 14)));
+					curAdmin.setPersonalInfoId(personalInfoId);
+					//默认权限
+					curAdmin.setRoleids(",1,");
+					curAdmin.setRolenames("普通员工");
+					curAdmin.setEmail(personalAll.getPersonalInfo().getEmail());
+					curAdmin.setRealname(personalAll.getPersonalInfo().getName());
+					curAdmin.setStatus(1);
+					curAdmin.setMobilePhone(personalAll.getPersonalInfo().getPhone());
+					int result = (int) adminService.addUser(curAdmin);
+					if(result>0){
+						return "@" + JSONResult.success();
+					}
+					else{
+						logger.error("=====入库异常,分配失败=====");
+						return "@" + JSONResult.error(CodeMsg.ERROR, "入库异常,分配失败");
+					}
+				}
+				
+				
+			} catch (Exception e) {
+				logger.error("=====分配员工账号异常====="+e);
+				return "@" + JSONResult.error(CodeMsg.ERROR, "分配员工账号异常,"+e.getMessage());
+			}	
+		} else {
+			logger.error("=====根据员工ID未查到基本信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据员工ID未查到基本信息");
+		}
+	}
+	
+	/**
+     * 
+    * @Title: getList
+    * @Description: 根据条件获取员工信息列表
+    * @Url: personal/getList
+    * @Param 
+    * @param @return    
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Get("getList")
+	@Post("getList")
+	public String getTransactionList(@Param("name") String name,
+			@Param("expatriateUnit") String expatriateUnit,
+			@Param("postType") String postType,
+			@Param("department") String department,
+			@Param("center") String center,
+			@Param("workingPlace") String workingPlace,
+			@Param("pageIndex") int pageIndex, 
+			@Param("pageSize") int pageSize) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		PersonalCondition condition = new PersonalCondition();
+//		if(StringUtils.isNotBlank(name)){
+//			// 当查询条件有姓名时，只需要根据姓名查出该单，其他条件忽略
+//			condition.setName(name);
+//		} else {
+			condition.setName(name);
+			condition.setExpatriateUnit(expatriateUnit);
+			condition.setPostType(postType);
+			condition.setDepartment(department);
+			condition.setCenter(center);
+			condition.setWorkingPlace(workingPlace);
+			
+//		}
+		pageIndex = pageIndex < 0 ? 0 : pageIndex;
+		pageSize = pageSize < 1 ? 1 : pageSize;
+		condition.setOrderby("id");
+		condition.setOffset(pageIndex * pageSize);
+		condition.setLimit(pageSize);
+		Long count = 0L;
+		List<PersonalAllExport> personalLists = new ArrayList<>();
+		try {
+//			personalLists = pointCommonService.listTransactionInfo(condition);
+//			count = pointCommonService.countTransactionInfo(condition);
+		} catch (Exception e) {
+			logger.error("=====交易列表查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+		Map<String, Object> dataMap = DataMapUtil.getDataMap("personalViewList", personalLists, count, pageCount);
+		return "@" + JSONResult.success(dataMap);
+	}
 }
