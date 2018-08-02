@@ -32,5 +32,26 @@ public interface PersonalService {
      */
 	public int savePersonalAllListRecord(List<PersonalAll> personAllList);
 	
-
+	/**
+     * 
+    * @Title: getPersonalAllInfoById
+    * @Description: 查询员工基本信息
+    * @Param Integer personalInfoId
+    * @param @return    
+    * @return PersonalAll    
+    * @throws
+     */
+	public PersonalAll getPersonalAllInfoById(Integer personalInfoId);
+	
+	/**
+     * 
+    * @Title: deletePersonalAllInfoById
+    * @Description: 删除员工基本信息
+    * @Param Integer personalInfoId
+    * @param @return    
+    * @return int    
+    * @throws
+     */
+	public int deletePersonalAllInfoById(Integer personalInfoId);
+	
 }

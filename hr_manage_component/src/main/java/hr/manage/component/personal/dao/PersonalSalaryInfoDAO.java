@@ -1,6 +1,7 @@
 package hr.manage.component.personal.dao;
 
 import hr.manage.component.personal.model.PersonalSalaryInfo;
+import hr.manage.component.personal.model.PersonalWorkInfo;
 
 import java.util.List;
 
@@ -15,10 +16,15 @@ public interface PersonalSalaryInfoDAO  extends GenericDAO<PersonalSalaryInfo,In
 	
 	public static final String COLUMNS = "  id,personal_info_id,entry_time,arrival_time,worker_time,working_years,insurance_begin_date,insurance_place,bank_card_number,bank_open_place,probation_period,probation_period_welfare,worker_welfare,base_pay,merit_pay,subsidy,worker_pay,probationary_pay,settlement_price,is_del,update_time,create_time ";
 
-	    
-//	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
-//	            "#if(:1.employee_number != null) { and employee_number = :1.employeeNumber } " +
-//	            " order by id ")
-//	    List<ContractInfo> listTradeInfo(ContractInfo contractInfo);
+	@SQL("SELECT  "
+			+ COLUMNS
+			+ " FROM "
+			+ TABLE
+			+ " WHERE personal_info_id= :1 and is_del=1 ")
+	PersonalSalaryInfo getPersonalSalaryInfoById(Integer personalInfoId);
 
+	@SQL(" update  "+ TABLE
+			+ " set is_del=0 "
+			+ " WHERE id= :1 and is_del=1 ")
+	int deletePersonalSalaryInfoById(Integer personalInfoId);
 }

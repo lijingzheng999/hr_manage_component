@@ -77,6 +77,27 @@ public class PersonalServiceImpl implements PersonalService {
 		return result;
 	}
 	
+	@Override
+	public PersonalAll getPersonalAllInfoById(Integer personalInfoId){
+		PersonalAll personalAll = new PersonalAll();
+		PersonalInfo personalInfo= personalInfoDAO.getPersonalInfoById(personalInfoId);
+        PersonalWorkInfo personalWorkInfo= personalWorkInfoDAO.getPersonalWorkInfoById(personalInfoId);
+        PersonalSalaryInfo personalSalaryInfo =personalSalaryInfoDAO.getPersonalSalaryInfoById(personalInfoId);
+        personalAll.setPersonalInfo(personalInfo);
+        personalAll.setPersonalWorkInfo(personalWorkInfo);
+        personalAll.setPersonalSalaryInfo(personalSalaryInfo);
+        return personalAll;
+	}
 	
+	@Override
+	@Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor={Exception.class})
+	public int deletePersonalAllInfoById(Integer personalInfoId){
+		int result=0;
+		personalInfoDAO.deletePersonalInfoById(personalInfoId);
+		personalWorkInfoDAO.deletePersonalWorkInfoById(personalInfoId);
+		personalSalaryInfoDAO.deletePersonalSalaryInfoById(personalInfoId);
+		result=1;
+		return result;
+	}
 
 }

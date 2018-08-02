@@ -39,7 +39,10 @@ public class AdminServiceImpl implements AdminService {
 		return adminDao.getUserById(userid);
 	}
 	
-	
+	@Override
+	public Admin getAdminByInfoId(Integer personalInfoId){
+		return adminDao.getAdminByInfoId(personalInfoId);
+	}
 
 	@Override
 	public List<AdminRole> getAdminRoleByIds(List<Integer> roleids) {
@@ -63,6 +66,13 @@ public class AdminServiceImpl implements AdminService {
 		return adminDao.updateUser(user);
 	}
 	
+	
+	@Override
+	public long addUser(Admin admin) {
+		return adminDao.save(admin);
+	}
+
+	
 	////////////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public Admin getUser(String username, String password) {
@@ -70,21 +80,7 @@ public class AdminServiceImpl implements AdminService {
 		return adminDao.getUser(username, password);
 	}
 
-	@Override
-	public int addUser(String username, String password, int personalInfoId,
-			String email, String realname, int status) {
-		Admin admin = new Admin();
-		admin.setUsername(username);
-		//admin.setPassword(DigestUtils.md5Hex(password));
-		admin.setPassword(password);
-		admin.setPersonalInfoId(personalInfoId);
-		admin.setEmail(email);
-		admin.setRealname(realname);
-		admin.setStatus(status);
-		
-		return adminDao.addUser(admin);
-	}
-
+	
 	@Override
 	public int delUser(int userid) {
 		return adminDao.delUser(userid);

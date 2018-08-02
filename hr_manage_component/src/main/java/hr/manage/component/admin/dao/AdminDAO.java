@@ -13,8 +13,6 @@ import net.paoding.rose.jade.plugin.sql.GenericDAO;
 public interface AdminDAO  extends GenericDAO<Admin, Long>{
 
 	final static String admin = "userid,username,password,personal_info_id,roleids,rolenames,lastloginip,lastlogintime,email,realname,status,mobile_phone,update_time,create_time";
-	
-	
 
 	@SQL("select "+admin+" from admin where username=:1")
 	public Admin getAdminByUsername(String username);
@@ -22,11 +20,19 @@ public interface AdminDAO  extends GenericDAO<Admin, Long>{
 	@SQL("select " + admin + " from admin where userid = :1")
 	public Admin getUserById(int userid);
 	
+
+	@SQL("select "+admin+" from admin where personal_info_id=:1")
+	public Admin getAdminByInfoId(Integer personalInfoId);
+	
 	
 	@SQL("update admin set username=:1.username,password=:1.password,roleids=:1.roleids,lastloginip=:1.lastloginip," +
 			 "lastlogintime=NOW(),email=:1.email,realname=:1.realname,status=:1.status,mobile_phone=:1.mobilePhone,update_time=:1.updateTime where userid=:1.userid")
 		public int updateUser(Admin user);
-		
+			
+	@ReturnGeneratedKeys
+	@SQL("insert into admin ( username,password,personal_info_id,roleids,rolenames,email,realname,status,mobile_phone,create_time ) "
+			+ "values (:1.username,:1.password,:1.personalInfoId,:1.roleids,:1.rolenames,:1.email,:1.realname,:1.status,:1.mobilePhone,NOW() )")
+	public int  addAdmin(Admin admin);
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////
@@ -73,10 +79,6 @@ public interface AdminDAO  extends GenericDAO<Admin, Long>{
 			+ "#if(:3){mobile_phone like '%##(:3)%'  and } #if(:4){email like '%##(:4)%' and } #if(:5){rolenames like '%##(:5)%' and } status=1")
 	public int getSearchAdminCount(String username,String realname,String mobilePhone,String email,String rolenames);
 	
-	@ReturnGeneratedKeys
-	@SQL("insert into admin (username,password,email,realname,mobile_phone,create_time ) "
-			+ "values (:1.username,:1.password,:1.email,:1.realname,:1.mobilePhone,NOW() )")
-	public int  addAdmin(Admin admin);
 	
 	@SQL("update  admin set status=0 where userid in (:1) ")
 	public void deleteAdmin(List<Integer> userids);

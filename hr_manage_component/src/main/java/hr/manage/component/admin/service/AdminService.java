@@ -13,7 +13,8 @@ public interface AdminService {
 
 	public Admin getUserById(int userid);
 	
-
+	public Admin getAdminByInfoId(Integer personalInfoId);
+	
 	public List<AdminRole> getAdminRoleByIds(List<Integer> roleids);   //登陆用
 	
 
@@ -21,6 +22,7 @@ public interface AdminService {
 
 	public int updateUser(Admin user);
 	
+	public long addUser(Admin admin);
 	
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +30,6 @@ public interface AdminService {
 	public Admin getUser(String username, String password);
 	
 	
-	public int addUser(String username, String password, int roleid, String email, String realname, int status);
 	
 	public int delUser(int userid);
 	
