@@ -56,6 +56,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.internal.bind.BigIntegerTypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.hr.manage.config.ServiceConfigFactory;
 import com.hr.manage.web.annotation.AuthorityCheck;
 import com.hr.manage.web.annotation.NotCareLogin;
 import com.hr.manage.web.constant.CodeMsg;
@@ -68,6 +69,13 @@ import com.hr.manage.web.util.MD5Util;
 import com.hr.manage.web.util.StringToListUtil;
 import com.hr.manage.web.util.StringUtil;
 
+/**
+ * 
+* @see 员工基本信息相关API;
+* @see 统一返回JSON串 code,message,data
+* @author  lee
+* @version 1.0
+ */
 @Path("personal")
 public class PersonalController {
 
@@ -78,15 +86,14 @@ public class PersonalController {
 	@Autowired
 	AdminService adminService;
 	private final Log logger = LogFactory.getLog(PersonalController.class);
-	private static final String FILE_UPLOAD_URL="C:/data/uploadfile/";
+	private static final String FILE_UPLOAD_PATH=ServiceConfigFactory.getValue("file.upload.path");
 	
 	/**
      * 
-    * @Title: getPersonalAllInfoBySelfId
-    * @Description: 查询本人基本信息
-    * @Url: personal/getPersonalAllInfoBySelfId
-    * @Param 
-    * @param @return    
+    *  Title:getPersonalAllInfoBySelfId
+    *  Description:查询本人基本信息
+    * Url: personal/getPersonalAllInfoBySelfId
+    * @param   
     * @return String    
     * @throws
      */
@@ -117,13 +124,13 @@ public class PersonalController {
 	
 	/**
      * 
-    * @Title: updatePersonalAllInfoBySelf
-    * @Description: 修改本人基本信息
-    * @Url: personal/updatePersonalAllInfoBySelf
-    * @Param @Param("personalAll")String
-    * @param @return    
+    * Title:updatePersonalAllInfoBySelf
+    * Description:修改本人基本信息
+    * Url: personal/updatePersonalAllInfoBySelf
+    * @param String personalAllJsonStr 基本信息Json串
     * @return String    
     * @throws
+    * @see  PersonalAll
      */
 	@AuthorityCheck(function = FunctionIds.FUNCTION_11)
 	@NotCareLogin
@@ -172,11 +179,10 @@ public class PersonalController {
 	
 	/**
      * 
-    * @Title: importExcel
-    * @Description: 导入员工基本信息excel
-    * @Url: personal/importExcel
-    * @Param @Param("filedata")MultipartFile filedata
-    * @param @return    
+    * Title:importExcel
+    * Description:导入员工基本信息excel
+    * Url: personal/importExcel
+    * @param  MultipartFile filedata  excel文件
     * @return String    
     * @throws
      */
@@ -194,7 +200,7 @@ public class PersonalController {
 			 */
 			String filePathInServer = "";
 			String separator = File.separator;
-			String filepath = FILE_UPLOAD_URL;
+			String filepath = FILE_UPLOAD_PATH;
 			java.util.Date dt = new java.util.Date();
 			SimpleDateFormat fmt = new SimpleDateFormat("yyMMddHHmmssSSSS");
 			String type = filedata
@@ -620,11 +626,10 @@ public class PersonalController {
 	
 	/**
      * 
-    * @Title: getPersonalAllInfoById
-    * @Description: 查询员工基本信息
-    * @Url: personal/getPersonalAllInfoById
-    * @Param @Param("personalInfoId")Integer personalInfoId
-    * @param @return    
+    * Title: getPersonalAllInfoById
+    * Description:查询员工基本信息
+    * Url: personal/getPersonalAllInfoById
+    * @param Integer personalInfoId 员工基本信息ID
     * @return String    
     * @throws
      */
@@ -646,20 +651,20 @@ public class PersonalController {
 	
 	/**
      * 
-    * @Title: updatePersonalAllInfo
-    * @Description: 修改员工基本信息
-    * @Url: personal/updatePersonalAllInfo
-    * @Param  @Param("personalAll")String
-    * @param @return    
+    * Title: updatePersonalAllInfo
+    * Description: 修改员工基本信息
+    * Url: personal/updatePersonalAllInfo
+    * @param String personalAllJsonStr 员工基本信息json串
     * @return String    
     * @throws
+    * @see PersonalAll
      */
 	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
 	@NotCareLogin
 	@Post("updatePersonalAllInfo")
 	@Get("updatePersonalAllInfo")
 	public String updatePersonalAllInfo(
-			@Param("personalAll") String personalAllJsonStr) {
+			@Param("personalAllJsonStr") String personalAllJsonStr) {
 		if(StringUtils.isBlank(personalAllJsonStr)){
 			logger.error("=====参数错误，不应为空=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
@@ -687,11 +692,10 @@ public class PersonalController {
 	
 	/**
      * 
-    * @Title: deletePersonalAllInfo
-    * @Description: 删除员工基本信息
-    * @Url: personal/deletePersonalAllInfo
-    * @Param @Param("personalInfoId")Integer personalInfoId
-    * @param @return    
+    * Title: deletePersonalAllInfo
+    * Description: 删除员工基本信息
+    * Url: personal/deletePersonalAllInfo
+    * @param Integer personalInfoId  员工ID
     * @return String    
     * @throws
      */
@@ -722,11 +726,10 @@ public class PersonalController {
 	
 	/**
      * 
-    * @Title: addAdminByPInfoId
-    * @Description: 分配员工账号；默认密码
-    * @Url: personal/addAdminByid
-    * @Param 
-    * @param @return    
+    * title: addAdminByPInfoId
+    * description: 分配员工账号；默认密码
+    * url: personal/addAdminByid
+    * @param   Integer personalInfoId 员工ID
     * @return String    
     * @throws
      */
@@ -784,17 +787,17 @@ public class PersonalController {
 	
 	/**
      * 
-    * @Title: getList
-    * @Description: 根据条件获取员工信息列表
-    * @Url: personal/getList
-    * @Param("name") String name,
-    * @Param("expatriateUnit") String expatriateUnit,
-    * @Param("postType") String postType,
-    * @Param("department") String department,
-    * @Param("center") String center,
-    * @Param("workingPlace") String workingPlace 	
-    * @Param("pageIndex") int pageIndex, 
-    * @Param("pageSize") int pageSize 	
+    * Title: getList
+    * Description: 根据条件获取员工信息列表
+    * Url: personal/getList
+    * @param String name, 姓名
+    * @param String expatriateUnit,外派单位
+    * @param String postType,岗位
+    * @param String department,部门
+    * @param String center,中心
+    * @param String workingPlace,工作地点 	
+    * @param int pageIndex, 分页页数
+    * @param int pageSize 	行数
     * @return String    
     * @throws
      */
@@ -844,17 +847,17 @@ public class PersonalController {
 	
 	/**
      * 
-    * @Title: exportPersonalAll
-    * @Description: 根据条件导出员工信息列表
-    * @Url: personal/exportPersonalAll
-    * @Param("heads") String heads,
-    * @Param("columns") String columns,
-    * @Param("name") String name,
-    * @Param("expatriateUnit") String expatriateUnit,
-    * @Param("postType") String postType,
-    * @Param("department") String department,
-    * @Param("center") String center,
-    * @Param("workingPlace") String workingPlace 		   
+    * Title: exportPersonalAll
+    *  根据条件导出员工信息列表
+    * Url: personal/exportPersonalAll
+    * @param String heads,导出字段中文名集合;逗号间隔;例如(姓名,年龄,生日)
+    * @param String columns,导出字段名集合;逗号间隔;例如(name,age,birthday)
+    * @param String name, 姓名
+    * @param String expatriateUnit,外派单位
+    * @param String postType,岗位
+    * @param String department,部门
+    * @param String center,中心
+    * @param String workingPlace,工作地点   
     * @return String    
     * @throws
      */

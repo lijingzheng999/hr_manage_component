@@ -28,7 +28,13 @@ import com.hr.manage.web.constant.FunctionIds;
 import com.hr.manage.web.constant.JSONResult;
 import com.hr.manage.web.util.MD5Util;
 
-
+/**
+ * 
+* @see 员工登陆相关API;
+* @see 统一返回JSON串 code,message,data
+* @author  lee
+* @version 1.0
+ */
 @Path("")
 public class HomeController {
 
@@ -44,6 +50,7 @@ public class HomeController {
 	@Autowired
 	private AdminAuthorityServiceHome authorityServiceHome;
 	
+	
 	@NotCareLogin
 	@Get("")
 	public String none(){
@@ -53,11 +60,11 @@ public class HomeController {
 
 	/**
      * 
-    * @Title: login
-    * @Description: 登陆
-    * @Url: login
-    * @Param("username") String username,@Param("password") String password,@Param("captcha") String captcha
-    * @param @return    
+    * Url: login
+    * 登陆
+    * @param String username 用户名
+    * @param String password 密码
+    * @param String captcha 验证码
     * @return String    
     * @throws
      */
@@ -135,6 +142,11 @@ public class HomeController {
 		    	return "batch-add";
 		    }
 	
+			@NotCareLogin
+			@Get("testupload")
+		    public String testupload() {
+		    	return "upload-image";
+		    }
 	@Get("index")
     public String index() {
     	return "index";
@@ -151,74 +163,7 @@ public class HomeController {
     	return "r:"+inv.getRequest().getContextPath()+"/login";
     }
 	
-	@Get("menu/mypanel")
-    public String mypanel() {
-    	return "menu/mypanel";
-    }
-	
-	
-		
-	@Get("menu/product-m")
-    public String productM() {
-    	return "menu/product-manage";
-    }
-	@Get("menu/distribution-m")
-    public String distributionM() {
-    	return "menu/distribution-manage";
-    }
-	@Get("menu/supplier-m")
-	public String supplierM() {
-		return "menu/supplier-manage-new";
-	}
-	
-	@Get("menu/order-m")
-	public String orderM() {
-		return "menu/order-manage";
-	}
-	
-	@Get("menu/authority-m")
-	public String authorityM() {
-		return "menu/authority-manage";
-	}
-	@Get("menu/other-m")
-	public String otherM() {
-		return "menu/other-manage";
-	}
-	@Get("menu/recruit-m")
-	public String recruitM() {
-		return "menu/recruit-manage";
-	}
-	@Get("menu/mapOfBrand-m")
-	public String mapOfBrand() {
-		return "menu/mapOfBrand-manage";
-	}
-	@Get("menu/brand-m")
-	public String brandM() {
-		return "menu/brand-manage";
-	}
-	@Get("menu/settle-m")
-	public String settleM(){
-		return "menu/settle-manage";
-	}
-	
-	@Get("menu/mobileSite-m")
-	public String mobileSite() {
-		return "menu/mobileSite-manage";
-	}
-	
-	@Get("menu/safteyCenter-m")
-	public String safteyCenter() {
-		return "menu/safteyCenter-manage";
-	}
-	
-	@Get("menu/point-m")
-	public String pointM() {
-		return "menu/point-manage";
-	}
-	@Get("menu/bestSelect-m")
-	public String bestSelectM(){
-		return "menu/bestSelect-manage";
-	}
+
 	
 	//取得用户IP
 	public String getIpAddr(HttpServletRequest request) {  
