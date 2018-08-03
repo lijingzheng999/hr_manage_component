@@ -885,7 +885,7 @@ public class PersonalController {
 			condition.setWorkingPlace(workingPlace);
 			
 //		}
-//		condition.setOrderby("id");
+//		condition.setOrderby("name");
 		Long count = 0L;
 		List<PersonalAllExport> personalLists = new ArrayList<>();
 		try {
