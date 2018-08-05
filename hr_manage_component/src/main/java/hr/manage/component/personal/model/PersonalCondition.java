@@ -7,10 +7,10 @@ import java.util.List;
 import net.paoding.rose.jade.plugin.sql.annotations.Column;
 /**
  * 
-* @ClassName: TransactionInfoCondition
-* @Description: 交易明细查询条件对象
-* @author xuemengchao
-* @date 2018年7月6日 下午5:05:04
+* @ClassName: PersonalCondition
+* @Description: 员工查询条件对象
+* @author 
+* @date 
 *
  */
 public class PersonalCondition implements Serializable {

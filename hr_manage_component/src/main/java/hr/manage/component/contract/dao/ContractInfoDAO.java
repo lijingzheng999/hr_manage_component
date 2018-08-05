@@ -1,5 +1,6 @@
 package hr.manage.component.contract.dao;
 
+import hr.manage.component.contract.model.ContractCondition;
 import hr.manage.component.contract.model.ContractInfo;
 
 import java.util.List;
@@ -17,8 +18,25 @@ public interface ContractInfoDAO  extends GenericDAO<ContractInfo,Integer>{
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
-	            "#if(:1.employee_number != null) { and employee_number = :1.employeeNumber } " +
+	            "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
+	            "#if(:1.employeeNumber != null  && :1.employeeNumber !='') { and employee_number = :1.employeeNumber } " +
+	            "#if(:1.startDate != null) { and start_date = :1.startDate } " +
+	            "#if(:1.endDate != null) { and end_date = :1.endDate } " +
+	            " and is_del=1 " +
 	            " order by id ")
-	    List<ContractInfo> listTradeInfo(ContractInfo contractInfo);
+	    List<ContractInfo> listContractInfo(ContractCondition contractInfo);
 
+	    
+	    @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +
+	            "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
+	            "#if(:1.employeeNumber != null  && :1.employeeNumber !='') { and employee_number = :1.employeeNumber } " +
+	            "#if(:1.startDate != null) { and start_date = :1.startDate } " +
+	            "#if(:1.endDate != null) { and end_date = :1.endDate } " +
+	            " and is_del=1 ")
+	    Long countContractInfo(ContractCondition contractInfo);
+	    
+	    @SQL(" update  "+ TABLE
+				+ " set is_del=0 "
+				+ " WHERE id= :1 and is_del=1 ")
+		int deleteContractInfoById(Integer contractInfoId);
 }
