@@ -2,6 +2,8 @@ package hr.manage.component.personal.service.impl;
 
 import hr.manage.component.common.constants.DepartmentConstants;
 import hr.manage.component.common.constants.UnitConstants;
+import hr.manage.component.contract.dao.ContractInfoDAO;
+import hr.manage.component.contract.model.ContractInfo;
 import hr.manage.component.personal.dao.PersonalInfoDAO;
 import hr.manage.component.personal.dao.PersonalSalaryInfoDAO;
 import hr.manage.component.personal.dao.PersonalWorkInfoDAO;
@@ -43,6 +45,8 @@ public class PersonalServiceImpl implements PersonalService {
 	PersonalSalaryInfoDAO personalSalaryInfoDAO;
 	@Autowired
 	PersonalWorkInfoDAO personalWorkInfoDAO;
+	@Autowired
+	ContractInfoDAO contractInfoDAO;
 	
 	@Override
 	public int checkPersonalByNameAndCard(String name, String identityCard){
@@ -79,6 +83,20 @@ public class PersonalServiceImpl implements PersonalService {
              salary.setIsDel(1);
              salary.setCreateTime(new Date());
              Integer salaryId= personalSalaryInfoDAO.save(salary);
+             
+             ContractInfo contractInfo = new ContractInfo();
+             contractInfo.setPersonalInfoId(personalInfoId);
+             contractInfo.setEmployeeNumber(employeeNumber);
+             contractInfo.setName(person.getName());
+             contractInfo.setContractNumber(employeeNumber+"01"); //合同编号=员工编号+"01"
+             contractInfo.setPosition(work.getPosition());
+             contractInfo.setStartDate(work.getContractStartdate());
+             contractInfo.setEndDate(work.getContractEnddate());
+             contractInfo.setContractCount(1);  //导入默认为第一次；
+             contractInfo.setMemo(person.getMemo());
+             contractInfo.setIsDel(1);
+             contractInfo.setCreateTime(new Date());
+             contractInfoDAO.save(contractInfo);
              logger.info("savePersonalAll : 员工编号："+employeeNumber +person.getName());
 		}
 		result=1;
@@ -104,6 +122,7 @@ public class PersonalServiceImpl implements PersonalService {
 		personalInfoDAO.deletePersonalInfoById(personalInfoId);
 		personalWorkInfoDAO.deletePersonalWorkInfoById(personalInfoId);
 		personalSalaryInfoDAO.deletePersonalSalaryInfoById(personalInfoId);
+		contractInfoDAO.deleteContractInfoByPersonId(personalInfoId);
 		result=1;
 		return result;
 	}
@@ -272,7 +291,7 @@ public class PersonalServiceImpl implements PersonalService {
 			PersonalAll.getPersonalWorkInfo().setLevel(newPersonalAll.getPersonalWorkInfo().getLevel());
 			PersonalAll.getPersonalWorkInfo().setExpatriateUnit(newPersonalAll.getPersonalWorkInfo().getExpatriateUnit());
 			PersonalAll.getPersonalWorkInfo().setRecruitChannel(newPersonalAll.getPersonalWorkInfo().getRecruitChannel());
-			PersonalAll.getPersonalWorkInfo().setContractNumber(newPersonalAll.getPersonalWorkInfo().getContractNumber());
+			PersonalAll.getPersonalWorkInfo().setContractCount(newPersonalAll.getPersonalWorkInfo().getContractCount());
 			PersonalAll.getPersonalWorkInfo().setContractStartdate(newPersonalAll.getPersonalWorkInfo().getContractStartdate());
 			PersonalAll.getPersonalWorkInfo().setContractEnddate(newPersonalAll.getPersonalWorkInfo().getContractEnddate());
 			PersonalAll.getPersonalWorkInfo().setContractRenewDate(newPersonalAll.getPersonalWorkInfo().getContractRenewDate());

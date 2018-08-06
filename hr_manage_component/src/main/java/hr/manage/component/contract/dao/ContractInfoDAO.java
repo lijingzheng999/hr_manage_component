@@ -14,7 +14,7 @@ public interface ContractInfoDAO  extends GenericDAO<ContractInfo,Integer>{
 	
 	public static final String TABLE = " contract_info ";
 	
-	public static final String COLUMNS = " id,employee_number,name,contract_number,position,start_date,end_date ,contract_count ,memo ,is_del ,update_time ,create_time  ";
+	public static final String COLUMNS = " id,personal_info_id,employee_number,name,contract_number,position,start_date,end_date ,contract_count ,memo ,is_del ,update_time ,create_time  ";
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
@@ -39,4 +39,9 @@ public interface ContractInfoDAO  extends GenericDAO<ContractInfo,Integer>{
 				+ " set is_del=0 "
 				+ " WHERE id= :1 and is_del=1 ")
 		int deleteContractInfoById(Integer contractInfoId);
+	    
+	    @SQL(" update  "+ TABLE
+				+ " set is_del=0 "
+				+ " WHERE personal_info_id= :1 and is_del=1 ")
+	    int deleteContractInfoByPersonId(Integer personInfoId);
 }

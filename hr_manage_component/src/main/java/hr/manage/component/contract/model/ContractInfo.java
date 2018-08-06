@@ -19,6 +19,10 @@ public class ContractInfo implements java.io.Serializable {
     @Column(pk=true,value = "id")
     private Integer id;
 
+    /** 员工信息表ID */
+    @Column(value = "personal_info_id")
+    private Integer personalInfoId;
+    
     /** 员工编号 项目+部门+自增编号 */
     @Column(value = "employee_number")
     private String employeeNumber;
@@ -83,6 +87,19 @@ public class ContractInfo implements java.io.Serializable {
     }
 
     /**
+     * 获取员工表ID
+     * 
+     * @return 获取员工表ID
+     */
+    public Integer getPersonalInfoId() {
+		return personalInfoId;
+	}
+
+	public void setPersonalInfoId(Integer personalInfoId) {
+		this.personalInfoId = personalInfoId;
+	}
+
+	/**
      * 获取员工编号 项目+部门+自增编号
      * 
      * @return 员工编号 项目+部门+自增编号

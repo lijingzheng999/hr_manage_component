@@ -70,8 +70,8 @@ public class PersonalWorkInfo implements java.io.Serializable {
     private String workingAddress;
 
     /** 合同签署次数 */
-    @Column(value = "contract_number")
-    private Integer contractNumber;
+    @Column(value = "contract_count")
+    private Integer contractCount;
 
     /** 合同生效日期 ;签订日期*/
     @Column(value = "contract_startdate")
@@ -365,8 +365,8 @@ public class PersonalWorkInfo implements java.io.Serializable {
      * 
      * @return 合同签署次数
      */
-    public Integer getContractNumber() {
-        return this.contractNumber;
+    public Integer getContractCount() {
+        return this.contractCount;
     }
 
     /**
@@ -375,8 +375,8 @@ public class PersonalWorkInfo implements java.io.Serializable {
      * @param contractNumber
      *          合同签署次数
      */
-    public void setContractNumber(Integer contractNumber) {
-        this.contractNumber = contractNumber;
+    public void setContractCount(Integer contractCount) {
+        this.contractCount = contractCount;
     }
 
     

@@ -400,7 +400,7 @@ public class PersonalController {
 								break;
 							case 19:// 合同签署次数
 								transforValue = String.valueOf(cellValue).trim();
-								work.setContractNumber(Integer.parseInt(transforValue));
+								work.setContractCount(Integer.parseInt(transforValue));
 								break;
 							case 20:// 合同签订日期
 								transforValue = String.valueOf(cellValue).trim();
