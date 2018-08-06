@@ -26,7 +26,11 @@ public class ResumeInfo implements java.io.Serializable {
     /** 联系电话 */
     @Column(value = "phone")
     private String phone;
-
+    
+    /** 年龄 */
+    @Column(value = "age")
+    private Integer age;
+    
     /** 性别 */
     @Column(value = "sex")
     private String sex;
@@ -148,7 +152,15 @@ public class ResumeInfo implements java.io.Serializable {
         this.phone = phone;
     }
 
-    /**
+    public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	/**
      * 获取性别
      * 
      * @return 性别

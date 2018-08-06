@@ -17,7 +17,12 @@ public interface RecruitInfoDAO  extends GenericDAO<RecruitInfo,Integer>{
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
+	    		" and is_del=1 " +
 	            " order by id desc")
-	    List<RecruitInfo> listTradeInfo(RecruitInfo recruitInfo);
-
+	    List<RecruitInfo> listRecruitInfo(RecruitInfo recruitInfo);
+	   
+	    @SQL(" UPDATE "+TABLE+
+	    		" set is_del=0 " +
+	            " WHERE id= :1 and is_del=1 ")
+	    int deleteRecruitInfo(Integer recruitInfoId);
 }
