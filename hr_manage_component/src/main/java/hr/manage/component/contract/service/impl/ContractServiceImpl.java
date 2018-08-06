@@ -29,13 +29,20 @@ public class ContractServiceImpl implements ContractService {
 	public Long countContractInfo(ContractCondition condition){
 		return contractInfoDAO.countContractInfo(condition);
 	}
-	
+	@Override
 	public ContractInfo getContractInfoById(Integer contractInfoId){
 		return contractInfoDAO.get(contractInfoId);
 	}
-	
+	@Override
 	public int deleteContractInfoById(Integer contractInfoId){
 	    return 	contractInfoDAO.deleteContractInfoById(contractInfoId);
 	}
-	
+	@Override
+	public int addContractInfo(ContractInfo contractInfo){
+		 return 	contractInfoDAO.save(contractInfo);
+	}
+	@Override
+	public boolean updateContractInfo(ContractInfo contractInfo){
+		return contractInfoDAO.update(contractInfo);
+	}
 }

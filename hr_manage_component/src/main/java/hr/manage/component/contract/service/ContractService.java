@@ -25,7 +25,7 @@ public interface ContractService {
 	/**
      * 
     * @Title: deleteContractInfoById
-    * @Description: 删除员工基本信息
+    * @Description: 删除合同信息
     * @Param Integer contractInfoId
     * @param @return    
     * @return int    
@@ -53,4 +53,26 @@ public interface ContractService {
     * @throws
      */
 	public Long countContractInfo(ContractCondition condition);
+	
+
+	/**
+     * 
+    * @Title: addContractInfo
+    * @Description: 新增合同信息
+    * @Param ContractInfo contractInfo
+    * @return int    
+    * @throws
+     */
+	public int addContractInfo(ContractInfo contractInfo);
+	
+
+	/**
+     * 
+    * @Title: updateContractInfo
+    * @Description: 修改合同信息
+    * @Param ContractInfo contractInfo
+    * @return int    
+    * @throws
+     */
+	public boolean updateContractInfo(ContractInfo contractInfo);
 }

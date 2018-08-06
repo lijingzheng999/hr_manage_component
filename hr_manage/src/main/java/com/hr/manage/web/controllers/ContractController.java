@@ -88,6 +88,8 @@ public class ContractController {
 	@Autowired
 	ContractService contractService;
 	@Autowired
+	PersonalService personalService;
+	@Autowired
 	AdminService adminService;
 	private final Log logger = LogFactory.getLog(ContractController.class);
 	
@@ -187,14 +189,13 @@ public class ContractController {
 			logger.error("=====新增合同基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
-		// 进行新
-		ContractInfo oldPContractInfo = contractService.getContractInfoById(contractInfo.getId());
-		if (oldPContractInfo != null) {
-			// 赋予新值
+		//新增需要判断参数；并且要更新基本信息
+		int result = contractService.addContractInfo(contractInfo);
+		if (result >0) {
 			return "@" + JSONResult.success();
 		} else {
-			logger.error("=====根据合同ID未查到合同信息=====");
-			return "@" + JSONResult.error(CodeMsg.ERROR, "根据合同ID未查到合同信息");
+			logger.error("=====数据库操作异常,新增失败=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "数据库操作异常,新增失败");
 		}
 
 	}
@@ -228,13 +229,12 @@ public class ContractController {
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
 		// 进行修改
-		ContractInfo oldPContractInfo = contractService.getContractInfoById(contractInfo.getId());
-		if (oldPContractInfo != null) {
-			// 赋予新值
+		boolean result = contractService.updateContractInfo(contractInfo);
+		if (result) {
 			return "@" + JSONResult.success();
 		} else {
-			logger.error("=====根据合同ID未查到合同信息=====");
-			return "@" + JSONResult.error(CodeMsg.ERROR, "根据合同ID未查到合同信息");
+			logger.error("=====修改合同信息数据库异常=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改合同信息数据库异常");
 		}
 
 	}
@@ -258,6 +258,12 @@ public class ContractController {
 
 		ContractInfo contractInfo = contractService.getContractInfoById(contractInfoId);
 		if (contractInfo != null) {
+			//查找是否有员工信息，如果有禁止删除；
+			PersonalAll personalAll = personalService.getPersonalAllInfoById(contractInfo.getPersonalInfoId());
+			if(personalAll.getPersonalInfo()!=null){
+				logger.error("=====要删除合同的员工基本信息仍存在,请先删除员工信息=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "要删除合同的员工基本信息仍存在,请先删除员工信息");
+			}
 			// 进行逻辑删除
 			try {
 				int result = contractService.deleteContractInfoById(contractInfoId);
