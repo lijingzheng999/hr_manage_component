@@ -160,6 +160,72 @@ public class ResumeController {
 		return "@" + JSONResult.success(recruitLists);
 	}
 	
+	
+	/**
+     * 
+    * Title: deleteRecruitInfo
+    * Description: 删除招聘需求信息
+    * Url: resume/deleteRecruitInfo
+    * @param Integer recruitInfoId
+    * @return String    
+    * @throws
+    * @see RecruitInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_9)
+	@NotCareLogin
+	@Post("deleteRecruitInfo")
+	@Get("deleteRecruitInfo")
+	public String deleteRecruitInfo(
+			@Param("recruitInfoId") Integer recruitInfoId) {
+	
+        int result = resumeService.deleteRecruitInfo(recruitInfoId);
+		if (result >0) {
+			return "@" + JSONResult.success();
+		} else {
+			logger.error("=====删除招聘需求信息失败,数据库保存失败=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "删除招聘需求信息失败,数据库保存失败");
+		}
+
+	}
+	
+	/**
+     * 
+    * Title: updateRecruitInfo
+    * Description: 修改招聘需求信息
+    * Url: resume/updateRecruitInfo
+    * @param String recruitInfoJsonStr  招聘需求信息json串
+    * @return String    
+    * @throws
+    * @see RecruitInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_9)
+	@NotCareLogin
+	@Post("updateRecruitInfo")
+	@Get("updateRecruitInfo")
+	public String updateRecruitInfo(
+			@Param("recruitInfoJsonStr") String recruitInfoJsonStr) {
+		if(StringUtils.isBlank(recruitInfoJsonStr)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		RecruitInfo recruitInfo = null;
+		try {
+			recruitInfo = JSONObject.parseObject(recruitInfoJsonStr, RecruitInfo.class);
+		} catch (Exception e) {
+			logger.error("=====修改招聘需求信息，解析参数出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+		}
+		recruitInfo.setUpdateTime(new Date());
+        int result = resumeService.updateRecruitInfo(recruitInfo);
+		if (result >0) {
+			return "@" + JSONResult.success();
+		} else {
+			logger.error("=====修改招聘需求信息失败,数据库保存失败=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改招聘需求信息失败,数据库保存失败");
+		}
+
+	}
+	
 	/**
      * 
     * Title: addResumeInfo
@@ -250,6 +316,72 @@ public class ResumeController {
 		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
 		Map<String, Object> dataMap = DataMapUtil.getDataMap("resumeViewList", resumeLists, count, pageCount);
 		return "@" + JSONResult.success(dataMap);
+	}
+	
+	/**
+     * 
+    * Title: deleteResumeInfo
+    * Description:  删除简历信息
+    * Url: resume/deleteResumeInfo
+    * @param  Integer resumeInfoId
+    * @return String    
+    * @throws
+    * @see ResumeInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("deleteResumeInfo")
+	@Get("deleteResumeInfo")
+	public String deleteResumeInfo(
+			@Param("resumeInfoId") Integer resumeInfoId) {
+		
+        int result = resumeService.deleteResumeInfo(resumeInfoId);
+		if (result >0) {
+			return "@" + JSONResult.success();
+		} else {
+			logger.error("=====删除简历信息失败,数据库保存失败=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "删除简历信息失败,数据库保存失败");
+		}
+
+	}
+	
+	/**
+     * 
+    * Title: updateResumeInfo
+    * Description: 修改简历信息
+    * Url: resume/updateResumeInfo
+    * @param String resumeInfoJsonStr 招聘简历信息json串
+    * @return String    
+    * @throws
+    * @see ResumeInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateResumeInfo")
+	@Get("updateResumeInfo")
+	public String updateResumeInfo(
+			@Param("resumeInfoJsonStr") String resumeInfoJsonStr) {
+		if(StringUtils.isBlank(resumeInfoJsonStr)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		ResumeInfo resumeInfo = null;
+		try {
+			resumeInfo = JSONObject.parseObject(resumeInfoJsonStr, ResumeInfo.class);
+		} catch (Exception e) {
+			logger.error("=====修改简历信息，解析参数出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+		}
+		
+		resumeInfo.setUpdateTime(new Date());
+        int result = resumeService.updateResumeInfo(resumeInfo);
+		if (result >0) {
+			return "@" + JSONResult.success();
+		} else {
+			logger.error("=====修改简历信息失败,数据库保存失败=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改简历信息失败,数据库保存失败");
+		}
+
 	}
 	
 }
