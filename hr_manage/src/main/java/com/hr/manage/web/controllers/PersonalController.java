@@ -141,28 +141,36 @@ public class PersonalController {
 			logger.error("=====参数错误，不应为空=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
 		}
-		PersonalAll personalAll = null;
+		PersonalAll newPersonalAll = null;
 		try {
-			personalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
+			newPersonalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
 		} catch (Exception e) {
 			logger.error("=====修改本人基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
+		int result =0;
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
 		//判断是否有基本信息
 		if(user.getPersonalInfoId()>0){
 			//判断修改信息是否为本人的
-			if(user.getPersonalInfoId().equals(personalAll.getPersonalInfo().getId())){
+			if(user.getPersonalInfoId().equals(newPersonalAll.getPersonalInfo().getId())){
 				//进行修改
-				PersonalAll oldPersonalAll = personalService.getPersonalAllInfoById(user.getPersonalInfoId());
-				if(oldPersonalAll.getPersonalInfo()!=null){
-					//赋予新值
-					return "@"+JSONResult.success();
+				try {
+					result = personalService.updatePersonalAllInfoBySelf(newPersonalAll);
+				} catch (Exception e) {
+					logger.error("更新数据库异常"+e);
+					return "@"+JSONResult.error(CodeMsg.ERROR,"更新数据库异常"+e);
 				}
-				else{
+				if(result<0){
 					logger.error("根据登陆ID未查到基本信息");
 					return "@"+JSONResult.error(CodeMsg.ERROR,"根据登陆ID未查到基本信息");
 				}
+				if(result==0){
+					logger.error("更新基本信息失败");
+					return "@"+JSONResult.error(CodeMsg.ERROR,"更新基本信息失败");
+				}
+				return "@"+JSONResult.success();
+				
 			}
 			else{
 				logger.error("登陆ID与要修改的员工不一致");
@@ -399,7 +407,6 @@ public class PersonalController {
 								if(!transforValue.equals("")){
 									SimpleDateFormat sdtContractDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date contractDate=sdtContractDate.parse(String.valueOf(cellValue).trim());
-									work.setContractDate(contractDate);
 									work.setContractStartdate(contractDate);
 								}
 								
@@ -669,23 +676,30 @@ public class PersonalController {
 			logger.error("=====参数错误，不应为空=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
 		}
-		PersonalAll personalAll = null;
+		PersonalAll newPersonalAll = null;
 		try {
-			personalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
+			newPersonalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
 		} catch (Exception e) {
 			logger.error("=====修改员工基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
-		// 进行修改
-		PersonalAll oldPersonalAll = personalService
-				.getPersonalAllInfoById(personalAll.getPersonalInfo().getId());
-		if (oldPersonalAll.getPersonalInfo() != null) {
-			// 赋予新值
-			return "@" + JSONResult.success();
-		} else {
-			logger.error("=====根据员工ID未查到基本信息=====");
-			return "@" + JSONResult.error(CodeMsg.ERROR, "根据员工ID未查到基本信息");
+		//进行修改
+		int result =0;
+		try {
+			result = personalService.updatePersonalAllInfo(newPersonalAll);
+		} catch (Exception e) {
+			logger.error("更新数据库异常"+e);
+			return "@"+JSONResult.error(CodeMsg.ERROR,"更新数据库异常"+e);
 		}
+		if(result<0){
+			logger.error("根据员工ID未查到基本信息");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"根据登陆ID未查到基本信息");
+		}
+		if(result==0){
+			logger.error("更新基本信息失败");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"更新基本信息失败");
+		}
+		return "@"+JSONResult.success();
 
 	}
 	

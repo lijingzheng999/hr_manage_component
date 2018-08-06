@@ -77,4 +77,25 @@ public interface PersonalService {
     * @throws
      */
 	public Long countPersonalAllExport(PersonalCondition condition);
+
+	/**
+     * 
+    * @Title: updatePersonalAllInfoBySelf
+    * @Description: 修改本人基本信息;特定字段
+    * @Param PersonalAll newPersonalAll 修改后的
+    * @return int    
+    * @throws
+     */
+	public int updatePersonalAllInfoBySelf(PersonalAll newPersonalAll);
+	
+	/**
+     * 
+    * @Title: updatePersonalAllInfo
+    * @Description: 修改员工基本信息;人事权限
+    * @Param PersonalAll newPersonalAll 修改后的
+    * @return int    
+    * @throws
+     */
+	public int updatePersonalAllInfo(PersonalAll newPersonalAll);
+	
 }

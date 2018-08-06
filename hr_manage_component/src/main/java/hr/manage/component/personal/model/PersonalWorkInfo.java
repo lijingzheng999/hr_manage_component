@@ -25,11 +25,11 @@ public class PersonalWorkInfo implements java.io.Serializable {
     @Column(value = "personal_info_id")
     private Integer personalInfoId;
 
-    /** 工作地点 */
+    /** 工作地点  -员工可修改*/
     @Column(value = "working_place")
     private String workingPlace;
 
-    /** 岗位类别 */
+    /** 岗位类别  -员工可修改*/
     @Column(value = "post_type")
     private String postType;
 
@@ -41,19 +41,19 @@ public class PersonalWorkInfo implements java.io.Serializable {
     @Column(value = "level")
     private String level;
 
-    /** 部门 */
+    /** 部门  -员工可修改*/
     @Column(value = "department")
     private String department;
 
-    /** 中心 */
+    /** 中心  -员工可修改*/
     @Column(value = "center")
     private String center;
 
-    /** 项目 */
+    /** 项目  -员工可修改*/
     @Column(value = "project")
     private String project;
 
-    /** 全通负责人 */
+    /** 全通负责人  -员工可修改*/
     @Column(value = "expatriate_manager")
     private String expatriateManager;
 
@@ -65,7 +65,7 @@ public class PersonalWorkInfo implements java.io.Serializable {
     @Column(value = "recruit_channel")
     private String recruitChannel;
 
-    /** 工作地址 */
+    /** 工作地址  -员工可修改*/
     @Column(value = "working_address")
     private String workingAddress;
 
@@ -73,11 +73,7 @@ public class PersonalWorkInfo implements java.io.Serializable {
     @Column(value = "contract_number")
     private Integer contractNumber;
 
-    /** 合同签订日期 */
-    @Column(value = "contract_date")
-    private Date contractDate;
-
-    /** 合同生效日期 */
+    /** 合同生效日期 ;签订日期*/
     @Column(value = "contract_startdate")
     private Date contractStartdate;
 
@@ -93,15 +89,15 @@ public class PersonalWorkInfo implements java.io.Serializable {
     @Column(value = "contract_renew_enddate")
     private Date contractRenewEnddate;
 
-    /** 是否撤离 */
+    /** 是否撤离  */
     @Column(value = "is_leave")
     private String isLeave;
 
-    /** 是否离职 */
+    /** 是否离职  */
     @Column(value = "leave_working")
     private String leaveWorking;
 
-    /** 离职日期 */
+    /** 离职日期  */
     @Column(value = "leave_working_time")
     private Date leaveWorkingTime;
 
@@ -383,24 +379,7 @@ public class PersonalWorkInfo implements java.io.Serializable {
         this.contractNumber = contractNumber;
     }
 
-    /**
-     * 获取合同签订日期
-     * 
-     * @return 合同签订日期
-     */
-    public Date getContractDate() {
-        return this.contractDate;
-    }
-
-    /**
-     * 设置合同签订日期
-     * 
-     * @param contractDate
-     *          合同签订日期
-     */
-    public void setContractDate(Date contractDate) {
-        this.contractDate = contractDate;
-    }
+    
 
     /**
      * 获取合同生效日期

@@ -12,8 +12,12 @@ import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
 import hr.manage.component.personal.service.PersonalService;
+import hr.manage.component.util.DateTimeUtil;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+
 
 
 @Component
@@ -111,4 +117,205 @@ public class PersonalServiceImpl implements PersonalService {
     public Long countPersonalAllExport(PersonalCondition condition) {
         return personalInfoDAO.countPersonalAllExport(condition);
     }
+	
+	//修改本人-限制字段
+	@Override
+	@Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor={Exception.class})
+	public int updatePersonalAllInfoBySelf(PersonalAll newPersonalAll){
+		int result=0;
+		PersonalAll PersonalAll = getPersonalAllInfoById(newPersonalAll.getPersonalInfo().getId());
+		if(PersonalAll.getPersonalInfo()!=null){
+			//赋予新值--基本信息
+			PersonalAll.getPersonalInfo().setPhone(newPersonalAll.getPersonalInfo().getPhone());
+			PersonalAll.getPersonalInfo().setEmail(newPersonalAll.getPersonalInfo().getEmail());
+			PersonalAll.getPersonalInfo().setIdentityCard(newPersonalAll.getPersonalInfo().getIdentityCard());
+			
+			//取生日-年龄
+			String strBirthDay=newPersonalAll.getPersonalInfo().getIdentityCard().substring(6, 14);
+			SimpleDateFormat sdtAge=new SimpleDateFormat("yyyyMMdd");
+			java.util.Date birthDay = null;
+			try {
+				birthDay = sdtAge.parse(strBirthDay);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String curAge = String.valueOf(DateTimeUtil.yearDateDiff(birthDay,new Date())).trim();
+			PersonalAll.getPersonalInfo().setAge(Integer.parseInt(curAge));
+			
+			// 判断性别
+			String curSex="";
+			if (Integer.parseInt(newPersonalAll.getPersonalInfo().getIdentityCard().substring(16).substring(0, 1)) % 2 == 0) {
+				curSex = "女";
+			} else {
+				curSex = "男";
+			}
+			PersonalAll.getPersonalInfo().setSex(curSex);
+			
+			String curBirthday = newPersonalAll.getPersonalInfo().getIdentityCard().substring(10, 12)+"月"+newPersonalAll.getPersonalInfo().getIdentityCard().substring(12, 14)+"日";
+			PersonalAll.getPersonalInfo().setBirthday(curBirthday);
+			
+			PersonalAll.getPersonalInfo().setHomeProperty(newPersonalAll.getPersonalInfo().getHomeProperty());
+			PersonalAll.getPersonalInfo().setNativePlace(newPersonalAll.getPersonalInfo().getNativePlace());
+			PersonalAll.getPersonalInfo().setMarriage(newPersonalAll.getPersonalInfo().getMarriage());
+			PersonalAll.getPersonalInfo().setNation(newPersonalAll.getPersonalInfo().getNation());
+			PersonalAll.getPersonalInfo().setTitle(newPersonalAll.getPersonalInfo().getTitle());
+			PersonalAll.getPersonalInfo().setEducation(newPersonalAll.getPersonalInfo().getEducation());
+			PersonalAll.getPersonalInfo().setSchool(newPersonalAll.getPersonalInfo().getSchool());
+			PersonalAll.getPersonalInfo().setMajor(newPersonalAll.getPersonalInfo().getMajor());
+			PersonalAll.getPersonalInfo().setEnglish(newPersonalAll.getPersonalInfo().getEnglish());
+			PersonalAll.getPersonalInfo().setGraduationTime(newPersonalAll.getPersonalInfo().getGraduationTime());
+			String curWorkingLife = String.valueOf(DateTimeUtil.yearDateDiff(newPersonalAll.getPersonalInfo().getGraduationTime(),new Date())+"年").trim();
+			PersonalAll.getPersonalInfo().setWorkingLife(curWorkingLife);
+			
+			PersonalAll.getPersonalInfo().setHomeAddress(newPersonalAll.getPersonalInfo().getHomeAddress());
+			PersonalAll.getPersonalInfo().setContactAddress(newPersonalAll.getPersonalInfo().getContactAddress());
+			PersonalAll.getPersonalInfo().setContact(newPersonalAll.getPersonalInfo().getContact());
+			PersonalAll.getPersonalInfo().setContactPhone(newPersonalAll.getPersonalInfo().getContactPhone());
+			PersonalAll.getPersonalInfo().setMemo(newPersonalAll.getPersonalInfo().getMemo());
+			PersonalAll.getPersonalInfo().setUpdateTime(new Date());
+			//赋予新值--工作信息
+			PersonalAll.getPersonalWorkInfo().setWorkingPlace(newPersonalAll.getPersonalWorkInfo().getWorkingPlace());
+			PersonalAll.getPersonalWorkInfo().setPostType(newPersonalAll.getPersonalWorkInfo().getPostType());
+			PersonalAll.getPersonalWorkInfo().setDepartment(newPersonalAll.getPersonalWorkInfo().getDepartment());
+			PersonalAll.getPersonalWorkInfo().setCenter(newPersonalAll.getPersonalWorkInfo().getCenter());
+			PersonalAll.getPersonalWorkInfo().setProject(newPersonalAll.getPersonalWorkInfo().getProject());
+			PersonalAll.getPersonalWorkInfo().setExpatriateManager(newPersonalAll.getPersonalWorkInfo().getExpatriateManager());
+			PersonalAll.getPersonalWorkInfo().setWorkingAddress(newPersonalAll.getPersonalWorkInfo().getWorkingAddress());
+			PersonalAll.getPersonalWorkInfo().setUpdateTime(new Date());
+			//赋予新值--工资信息
+			PersonalAll.getPersonalSalaryInfo().setBankCardNumber(newPersonalAll.getPersonalSalaryInfo().getBankCardNumber());
+			PersonalAll.getPersonalSalaryInfo().setBankOpenPlace(newPersonalAll.getPersonalSalaryInfo().getBankOpenPlace());
+			PersonalAll.getPersonalSalaryInfo().setUpdateTime(new Date());
+			
+			//更新记录
+			personalInfoDAO.update(PersonalAll.getPersonalInfo());
+			personalWorkInfoDAO.update(PersonalAll.getPersonalWorkInfo());
+			personalSalaryInfoDAO.update(PersonalAll.getPersonalSalaryInfo());
+			result =1;
+		}
+		else{
+			logger.error("根据登陆ID未查到基本信息");
+			return -1;
+		}
+		
+		return result;
+	}
+	
+	//修改员工
+	@Override
+	@Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor={Exception.class})
+	public int updatePersonalAllInfo(PersonalAll newPersonalAll){
+		int result=0;
+		PersonalAll PersonalAll = getPersonalAllInfoById(newPersonalAll.getPersonalInfo().getId());
+		if(PersonalAll.getPersonalInfo()!=null){
+			//赋予新值--基本信息
+			PersonalAll.getPersonalInfo().setName(newPersonalAll.getPersonalInfo().getName());
+			PersonalAll.getPersonalInfo().setPhone(newPersonalAll.getPersonalInfo().getPhone());
+			PersonalAll.getPersonalInfo().setEmail(newPersonalAll.getPersonalInfo().getEmail());
+			PersonalAll.getPersonalInfo().setIdentityCard(newPersonalAll.getPersonalInfo().getIdentityCard());
+			
+			//取生日-年龄
+			String strBirthDay=newPersonalAll.getPersonalInfo().getIdentityCard().substring(6, 14);
+			SimpleDateFormat sdtAge=new SimpleDateFormat("yyyyMMdd");
+			java.util.Date birthDay = null;
+			try {
+				birthDay = sdtAge.parse(strBirthDay);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String curAge = String.valueOf(DateTimeUtil.yearDateDiff(birthDay,new Date())).trim();
+			PersonalAll.getPersonalInfo().setAge(Integer.parseInt(curAge));
+			// 判断性别
+			String curSex="";
+			if (Integer.parseInt(newPersonalAll.getPersonalInfo().getIdentityCard().substring(16).substring(0, 1)) % 2 == 0) {
+				curSex = "女";
+			} else {
+				curSex = "男";
+			}
+			PersonalAll.getPersonalInfo().setSex(curSex);
+            //出生年月
+			String curBirthday = newPersonalAll.getPersonalInfo().getIdentityCard().substring(10, 12)+"月"+newPersonalAll.getPersonalInfo().getIdentityCard().substring(12, 14)+"日";
+			PersonalAll.getPersonalInfo().setBirthday(curBirthday);
+			PersonalAll.getPersonalInfo().setHomeProperty(newPersonalAll.getPersonalInfo().getHomeProperty());
+			PersonalAll.getPersonalInfo().setNativePlace(newPersonalAll.getPersonalInfo().getNativePlace());
+			PersonalAll.getPersonalInfo().setMarriage(newPersonalAll.getPersonalInfo().getMarriage());
+			PersonalAll.getPersonalInfo().setNation(newPersonalAll.getPersonalInfo().getNation());
+			PersonalAll.getPersonalInfo().setTitle(newPersonalAll.getPersonalInfo().getTitle());
+			PersonalAll.getPersonalInfo().setEducation(newPersonalAll.getPersonalInfo().getEducation());
+			PersonalAll.getPersonalInfo().setSchool(newPersonalAll.getPersonalInfo().getSchool());
+			PersonalAll.getPersonalInfo().setMajor(newPersonalAll.getPersonalInfo().getMajor());
+			PersonalAll.getPersonalInfo().setEnglish(newPersonalAll.getPersonalInfo().getEnglish());
+			PersonalAll.getPersonalInfo().setGraduationTime(newPersonalAll.getPersonalInfo().getGraduationTime());
+			//工作年限
+			String curWorkingLife = String.valueOf(DateTimeUtil.yearDateDiff(newPersonalAll.getPersonalInfo().getGraduationTime(),new Date())+"年").trim();
+			PersonalAll.getPersonalInfo().setWorkingLife(curWorkingLife);
+			PersonalAll.getPersonalInfo().setHomeAddress(newPersonalAll.getPersonalInfo().getHomeAddress());
+			PersonalAll.getPersonalInfo().setContactAddress(newPersonalAll.getPersonalInfo().getContactAddress());
+			PersonalAll.getPersonalInfo().setContact(newPersonalAll.getPersonalInfo().getContact());
+			PersonalAll.getPersonalInfo().setContactPhone(newPersonalAll.getPersonalInfo().getContactPhone());
+			PersonalAll.getPersonalInfo().setMemo(newPersonalAll.getPersonalInfo().getMemo());
+			PersonalAll.getPersonalInfo().setUpdateTime(new Date());
+			
+			//赋予新值--工作信息-本人可修改值
+			PersonalAll.getPersonalWorkInfo().setWorkingPlace(newPersonalAll.getPersonalWorkInfo().getWorkingPlace());
+			PersonalAll.getPersonalWorkInfo().setPostType(newPersonalAll.getPersonalWorkInfo().getPostType());
+			PersonalAll.getPersonalWorkInfo().setDepartment(newPersonalAll.getPersonalWorkInfo().getDepartment());
+			PersonalAll.getPersonalWorkInfo().setCenter(newPersonalAll.getPersonalWorkInfo().getCenter());
+			PersonalAll.getPersonalWorkInfo().setProject(newPersonalAll.getPersonalWorkInfo().getProject());
+			PersonalAll.getPersonalWorkInfo().setExpatriateManager(newPersonalAll.getPersonalWorkInfo().getExpatriateManager());
+			PersonalAll.getPersonalWorkInfo().setWorkingAddress(newPersonalAll.getPersonalWorkInfo().getWorkingAddress());
+			PersonalAll.getPersonalWorkInfo().setUpdateTime(new Date());
+			//赋予新值--工作信息-人事也可修改值
+			PersonalAll.getPersonalWorkInfo().setPosition(newPersonalAll.getPersonalWorkInfo().getPosition());
+			PersonalAll.getPersonalWorkInfo().setLevel(newPersonalAll.getPersonalWorkInfo().getLevel());
+			PersonalAll.getPersonalWorkInfo().setExpatriateUnit(newPersonalAll.getPersonalWorkInfo().getExpatriateUnit());
+			PersonalAll.getPersonalWorkInfo().setRecruitChannel(newPersonalAll.getPersonalWorkInfo().getRecruitChannel());
+			PersonalAll.getPersonalWorkInfo().setContractNumber(newPersonalAll.getPersonalWorkInfo().getContractNumber());
+			PersonalAll.getPersonalWorkInfo().setContractStartdate(newPersonalAll.getPersonalWorkInfo().getContractStartdate());
+			PersonalAll.getPersonalWorkInfo().setContractEnddate(newPersonalAll.getPersonalWorkInfo().getContractEnddate());
+			PersonalAll.getPersonalWorkInfo().setContractRenewDate(newPersonalAll.getPersonalWorkInfo().getContractRenewDate());
+			PersonalAll.getPersonalWorkInfo().setContractRenewEnddate(newPersonalAll.getPersonalWorkInfo().getContractRenewEnddate());
+			PersonalAll.getPersonalWorkInfo().setIsLeave(newPersonalAll.getPersonalWorkInfo().getIsLeave());
+			PersonalAll.getPersonalWorkInfo().setLeaveWorking(newPersonalAll.getPersonalWorkInfo().getLeaveWorking());
+			PersonalAll.getPersonalWorkInfo().setLeaveWorkingTime(newPersonalAll.getPersonalWorkInfo().getLeaveWorkingTime());
+			
+			
+			//赋予新值--工资信息-本人可修改值
+			PersonalAll.getPersonalSalaryInfo().setBankCardNumber(newPersonalAll.getPersonalSalaryInfo().getBankCardNumber());
+			PersonalAll.getPersonalSalaryInfo().setBankOpenPlace(newPersonalAll.getPersonalSalaryInfo().getBankOpenPlace());
+			PersonalAll.getPersonalSalaryInfo().setUpdateTime(new Date());
+			//赋予新值--工资信息-人事也可修改值
+			PersonalAll.getPersonalSalaryInfo().setEntryTime(newPersonalAll.getPersonalSalaryInfo().getEntryTime());
+			PersonalAll.getPersonalSalaryInfo().setArrivalTime(newPersonalAll.getPersonalSalaryInfo().getArrivalTime());
+			PersonalAll.getPersonalSalaryInfo().setWorkerTime(newPersonalAll.getPersonalSalaryInfo().getWorkerTime());
+			//工龄
+			double f1 = new BigDecimal((float)DateTimeUtil.differentDaysByMillisecond(newPersonalAll.getPersonalSalaryInfo().getArrivalTime(),new Date())/365).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+			PersonalAll.getPersonalSalaryInfo().setWorkingYears(BigDecimal.valueOf(f1));
+			PersonalAll.getPersonalSalaryInfo().setInsuranceBeginDate(newPersonalAll.getPersonalSalaryInfo().getInsuranceBeginDate());
+			PersonalAll.getPersonalSalaryInfo().setInsurancePlace(newPersonalAll.getPersonalSalaryInfo().getInsurancePlace());
+			PersonalAll.getPersonalSalaryInfo().setProbationPeriod(newPersonalAll.getPersonalSalaryInfo().getProbationPeriod());
+			PersonalAll.getPersonalSalaryInfo().setProbationPeriodWelfare(newPersonalAll.getPersonalSalaryInfo().getProbationPeriodWelfare());
+			PersonalAll.getPersonalSalaryInfo().setWorkerWelfare(newPersonalAll.getPersonalSalaryInfo().getWorkerWelfare());
+			PersonalAll.getPersonalSalaryInfo().setBasePay(newPersonalAll.getPersonalSalaryInfo().getBasePay());
+			PersonalAll.getPersonalSalaryInfo().setMeritPay(newPersonalAll.getPersonalSalaryInfo().getMeritPay());
+			PersonalAll.getPersonalSalaryInfo().setSubsidy(newPersonalAll.getPersonalSalaryInfo().getSubsidy());
+			PersonalAll.getPersonalSalaryInfo().setWorkerPay(newPersonalAll.getPersonalSalaryInfo().getWorkerPay());
+			PersonalAll.getPersonalSalaryInfo().setProbationaryPay(newPersonalAll.getPersonalSalaryInfo().getProbationaryPay());
+			PersonalAll.getPersonalSalaryInfo().setSettlementPrice(newPersonalAll.getPersonalSalaryInfo().getSettlementPrice());
+			
+			//更新记录
+			personalInfoDAO.update(PersonalAll.getPersonalInfo());
+			personalWorkInfoDAO.update(PersonalAll.getPersonalWorkInfo());
+			personalSalaryInfoDAO.update(PersonalAll.getPersonalSalaryInfo());
+			result =1;
+		}
+		else{
+			logger.error("根据员工ID未查到基本信息");
+			return -1;
+		}
+		
+		return result;
+	}
 }

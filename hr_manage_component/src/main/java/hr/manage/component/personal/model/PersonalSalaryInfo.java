@@ -49,11 +49,11 @@ public class PersonalSalaryInfo implements java.io.Serializable {
     @Column(value = "insurance_place")
     private String insurancePlace;
 
-    /** 招商银行卡号 */
+    /** 招商银行卡号 -员工可修改*/
     @Column(value = "bank_card_number")
     private String bankCardNumber;
 
-    /** 开户行 */
+    /** 开户行 -员工可修改*/
     @Column(value = "bank_open_place")
     private String bankOpenPlace;
 

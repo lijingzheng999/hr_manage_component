@@ -27,15 +27,15 @@ public class PersonalInfo implements java.io.Serializable {
     @Column(value = "name")
     private String name;
 
-    /** 联系电话 */
+    /** 联系电话-员工可修改 */
     @Column(value = "phone")
     private String phone;
 
-    /** 邮箱 */
+    /** 邮箱 -员工可修改 */
     @Column(value = "email")
     private String email;
 
-    /** 身份证 */
+    /** 身份证-员工可修改  */
     @Column(value = "identity_card")
     private String identityCard;
 
@@ -51,43 +51,43 @@ public class PersonalInfo implements java.io.Serializable {
     @Column(value = "birthday")
     private String birthday;
 
-    /** 户口性质 */
+    /** 户口性质-员工可修改  */
     @Column(value = "home_property")
     private String homeProperty;
 
-    /** 籍贯 */
+    /** 籍贯-员工可修改  */
     @Column(value = "native_place")
     private String nativePlace;
 
-    /** 婚姻状况 */
+    /** 婚姻状况 -员工可修改 */
     @Column(value = "marriage")
     private String marriage;
 
-    /** 民族 */
+    /** 民族 -员工可修改 */
     @Column(value = "nation")
     private String nation;
 
-    /** 职称 */
+    /** 职称 -员工可修改 */
     @Column(value = "title")
     private String title;
 
-    /** 学历 */
+    /** 学历 -员工可修改 */
     @Column(value = "education")
     private String education;
 
-    /** 毕业学校 */
+    /** 毕业学校-员工可修改  */
     @Column(value = "school")
     private String school;
 
-    /** 毕业专业 */
+    /** 毕业专业 -员工可修改 */
     @Column(value = "major")
     private String major;
 
-    /** 英语 */
+    /** 英语 -员工可修改 */
     @Column(value = "english")
     private String english;
 
-    /** 毕业时间 */
+    /** 毕业时间 -员工可修改 */
     @Column(value = "graduation_time")
     private Date graduationTime;
 
@@ -95,23 +95,23 @@ public class PersonalInfo implements java.io.Serializable {
     @Column(value = "working_life")
     private String workingLife;
 
-    /** 联系地址 */
+    /** 联系地址 -员工可修改 */
     @Column(value = "contact_address")
     private String contactAddress;
 
-    /** 户籍地址 */
+    /** 户籍地址 -员工可修改 */
     @Column(value = "home_address")
     private String homeAddress;
 
-    /** 紧急联系人 */
+    /** 紧急联系人 -员工可修改 */
     @Column(value = "contact")
     private String contact;
 
-    /** 紧急联系人电话 */
+    /** 紧急联系人电话 -员工可修改 */
     @Column(value = "contact_phone")
     private String contactPhone;
 
-    /** 备注 */
+    /** 备注 -员工可修改 */
     @Column(value = "memo")
     private String memo;
 
