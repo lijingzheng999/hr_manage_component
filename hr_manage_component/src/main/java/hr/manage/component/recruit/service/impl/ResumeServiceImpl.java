@@ -40,8 +40,8 @@ public class ResumeServiceImpl implements ResumeService {
 	}
 	
 	@Override
-	public int updateRecruitInfo(RecruitInfo recruitInfo){
-		return recruitInfoDAO.save(recruitInfo);
+	public boolean updateRecruitInfo(RecruitInfo recruitInfo){
+		return recruitInfoDAO.update(recruitInfo);
 	}
 	
 	@Override
@@ -65,8 +65,8 @@ public class ResumeServiceImpl implements ResumeService {
 	}
 	
 	@Override
-	public int updateResumeInfo(ResumeInfo resumeInfo){
-		return resumeInfoDAO.save(resumeInfo);
+	public boolean updateResumeInfo(ResumeInfo resumeInfo){
+		return resumeInfoDAO.update(resumeInfo);
 	}
 	
 }

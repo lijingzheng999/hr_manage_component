@@ -25,6 +25,6 @@ public interface PersonalSalaryInfoDAO  extends GenericDAO<PersonalSalaryInfo,In
 
 	@SQL(" update  "+ TABLE
 			+ " set is_del=0 "
-			+ " WHERE id= :1 and is_del=1 ")
+			+ " WHERE personal_info_id= :1 and is_del=1 ")
 	int deletePersonalSalaryInfoById(Integer personalInfoId);
 }

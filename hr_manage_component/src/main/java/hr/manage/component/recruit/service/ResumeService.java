@@ -48,7 +48,7 @@ public interface ResumeService {
     * @return int    
     * @throws
      */
-	public int updateRecruitInfo(RecruitInfo recruitInfo);
+	public boolean updateRecruitInfo(RecruitInfo recruitInfo);
 	
 	/**
      * 
@@ -101,7 +101,7 @@ public interface ResumeService {
     * @return int    
     * @throws
      */
-	public int updateResumeInfo(ResumeInfo resumeInfo);
+	public boolean updateResumeInfo(ResumeInfo resumeInfo);
 	
 	
 	

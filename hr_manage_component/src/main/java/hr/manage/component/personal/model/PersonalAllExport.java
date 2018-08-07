@@ -120,10 +120,8 @@ public class PersonalAllExport implements java.io.Serializable {
     private String workingAddress;
 
     /** 合同签署次数 */
-    private Integer contractNumber;
+    private Integer contractCount;
 
-    /** 合同签订日期 */
-    private Date contractDate;
 
     /** 合同生效日期 */
     private Date contractStartdate;
@@ -495,21 +493,14 @@ public class PersonalAllExport implements java.io.Serializable {
 		this.workingAddress = workingAddress;
 	}
 
-	public Integer getContractNumber() {
-		return contractNumber;
+	public Integer getContractCount() {
+		return contractCount;
 	}
 
-	public void setContractNumber(Integer contractNumber) {
-		this.contractNumber = contractNumber;
+	public void setContractCount(Integer contractCount) {
+		this.contractCount = contractCount;
 	}
 
-	public Date getContractDate() {
-		return contractDate;
-	}
-
-	public void setContractDate(Date contractDate) {
-		this.contractDate = contractDate;
-	}
 
 	public Date getContractStartdate() {
 		return contractStartdate;

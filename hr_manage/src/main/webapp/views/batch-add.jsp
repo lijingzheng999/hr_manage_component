@@ -33,11 +33,7 @@ input.span2{width: 135px;}
 </style>
 </head>
 <body>
-	<ul id="myTab" class="nav nav-tabs">
-	  <li id="tab_1" class="active"><a href="#home" data-toggle="tab">上传选项</a></li>
-	  <li id="tab_2" class=""><a id="addSuperAdmin"
-			href="#"><em>导入亚信商品情况</em></a></li>
-	</ul>
+	
 	
 	<div id="first" class="main-content" style="display:block;">
 		<div class="pad-10">

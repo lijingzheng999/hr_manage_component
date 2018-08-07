@@ -17,7 +17,7 @@ public interface CommonTypeDAO  extends GenericDAO<CommonType,Integer>{
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
-	            "#if(:1.type != null) { and type = :1 } " +
+	            "#if(:1 != null) { and type = :1 } " +
 	            " and is_del=1 " +
 	            " order by id ")
 	    List<CommonType> listCommonType(Integer type);

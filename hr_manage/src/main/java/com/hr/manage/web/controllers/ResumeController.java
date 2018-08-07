@@ -216,8 +216,8 @@ public class ResumeController {
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
 		recruitInfo.setUpdateTime(new Date());
-        int result = resumeService.updateRecruitInfo(recruitInfo);
-		if (result >0) {
+		boolean result = resumeService.updateRecruitInfo(recruitInfo);
+		if (result) {
 			return "@" + JSONResult.success();
 		} else {
 			logger.error("=====修改招聘需求信息失败,数据库保存失败=====");
@@ -374,8 +374,8 @@ public class ResumeController {
 		}
 		
 		resumeInfo.setUpdateTime(new Date());
-        int result = resumeService.updateResumeInfo(resumeInfo);
-		if (result >0) {
+		boolean result = resumeService.updateResumeInfo(resumeInfo);
+		if (result) {
 			return "@" + JSONResult.success();
 		} else {
 			logger.error("=====修改简历信息失败,数据库保存失败=====");

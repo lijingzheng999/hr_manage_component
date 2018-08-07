@@ -130,8 +130,12 @@ public class ContractController {
 			Date curStartDate=null;
 			Date curEndDate=null;
 			try {
-				curStartDate = sdt.parse(String.valueOf(startDate).trim());
-				curEndDate = sdt.parse(String.valueOf(endDate).trim());
+				if(StringUtils.isNotBlank(startDate)){
+					curStartDate = sdt.parse(String.valueOf(startDate).trim());			
+				}
+				if(StringUtils.isNotBlank(endDate)){
+					curEndDate = sdt.parse(String.valueOf(endDate).trim());
+				}
 			} catch (ParseException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

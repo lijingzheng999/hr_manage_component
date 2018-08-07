@@ -20,8 +20,8 @@ public interface UploadFileDAO  extends GenericDAO<UploadFile,Integer>{
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
-	            "#if(:1.personalInfoId != null && :1.personalInfoId >0) { and personal_info_id = :1 } " +
-	            "#if(:1.type != null && :1.type >0) { and type = :1 } " +
+	            "#if(:1 != null && :1 >0) { and personal_info_id = :1 } " +
+	            "#if(:2 != null && :2 >0) { and type = :2 } " +
 	            " and is_del=1 " +
 	    		" order by id ")
 	    List<UploadFile> listUploadFile(Integer personalInfoId,Integer type);
