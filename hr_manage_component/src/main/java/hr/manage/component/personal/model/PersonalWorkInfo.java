@@ -93,10 +93,6 @@ public class PersonalWorkInfo implements java.io.Serializable {
     @Column(value = "is_leave")
     private String isLeave;
 
-    /** 是否离职  */
-    @Column(value = "leave_working")
-    private String leaveWorking;
-
     /** 离职日期  */
     @Column(value = "leave_working_time")
     private Date leaveWorkingTime;
@@ -476,39 +472,22 @@ public class PersonalWorkInfo implements java.io.Serializable {
         this.isLeave = isLeave;
     }
 
-    /**
-     * 获取是否离职
-     * 
-     * @return 是否离职
-     */
-    public String getLeaveWorking() {
-        return this.leaveWorking;
-    }
+   
 
     /**
-     * 设置是否离职
+     * 获取离职时间
      * 
-     * @param leaveWorking
-     *          是否离职
-     */
-    public void setLeaveWorking(String leaveWorking) {
-        this.leaveWorking = leaveWorking;
-    }
-
-    /**
-     * 获取离职原因
-     * 
-     * @return 离职原因
+     * @return 离职时间
      */
     public Date getLeaveWorkingTime() {
         return this.leaveWorkingTime;
     }
 
     /**
-     * 设置离职原因
+     * 设置离职时间
      * 
      * @param leaveWorkingReasons
-     *          离职原因
+     *         离职时间
      */
     public void setLeaveWorkingTime(Date leaveWorkingTime) {
         this.leaveWorkingTime = leaveWorkingTime;

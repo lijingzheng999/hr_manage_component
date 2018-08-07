@@ -19,7 +19,7 @@ public interface PersonalInfoDAO extends GenericDAO<PersonalInfo, Integer> {
 
 	public static final String COLUMNS_INFO = " a.id,a.employee_number,a.name,a.phone,a.email,a.identity_card,a.sex,a.age,a.birthday,a.home_property,a.native_place,a.marriage,a.nation,a.title,a.education,a.school,a.major,a.english,a.graduation_time,a.working_life,a.contact_address,a.home_address,a.contact,a.contact_phone,a.memo,a.create_time   ";
 
-	public static final String COLUMNS_WORK = " b.working_place,b.post_type,b.position,b.level,b.department,b.center,b.project,b.expatriate_manager,b.expatriate_unit,b.recruit_channel,b.working_address,b.contract_count,b.contract_startdate,b.contract_enddate,b.contract_renew_date,b.contract_renew_enddate,b.is_leave,b.leave_working,b.leave_working_time ";
+	public static final String COLUMNS_WORK = " b.working_place,b.post_type,b.position,b.level,b.department,b.center,b.project,b.expatriate_manager,b.expatriate_unit,b.recruit_channel,b.working_address,b.contract_count,b.contract_startdate,b.contract_enddate,b.contract_renew_date,b.contract_renew_enddate,b.is_leave,b.leave_working_time ";
 
 	public static final String COLUMNS_SALARY= " c.entry_time,c.arrival_time,c.worker_time,c.working_years,c.insurance_begin_date,c.insurance_place,c.bank_card_number,c.bank_open_place,c.probation_period,c.probation_period_welfare,c.worker_welfare,c.base_pay,c.merit_pay,c.subsidy,c.worker_pay,c.probationary_pay,c.settlement_price ";
 

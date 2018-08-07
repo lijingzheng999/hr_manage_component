@@ -138,9 +138,6 @@ public class PersonalAllExport implements java.io.Serializable {
     /** 是否撤离 */
     private String isLeave;
 
-    /** 是否离职 */
-    private String leaveWorking;
-
     /** 离职日期 */
     private Date leaveWorkingTime;
     
@@ -542,13 +539,7 @@ public class PersonalAllExport implements java.io.Serializable {
 		this.isLeave = isLeave;
 	}
 
-	public String getLeaveWorking() {
-		return leaveWorking;
-	}
 
-	public void setLeaveWorking(String leaveWorking) {
-		this.leaveWorking = leaveWorking;
-	}
 
 	public Date getLeaveWorkingTime() {
 		return leaveWorkingTime;

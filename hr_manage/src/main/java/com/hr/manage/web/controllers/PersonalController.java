@@ -267,7 +267,7 @@ public class PersonalController {
 	                    	if (DateUtil.isCellDateFormatted(cell)) {
 								Date d = cell.getDateCellValue(); // 对日期处理
 								DateFormat formater = new SimpleDateFormat(
-										"yyyy-MM-dd hh:mm:ss");
+										"yyyy-MM-dd HH:mm:ss");
 								cellValue = formater.format(d);
 							} else {// 其余按照数字处理
 									// 防止科学计数法
@@ -535,9 +535,9 @@ public class PersonalController {
 								transforValue = String.valueOf(cellValue).trim();
 								salary.setBankOpenPlace(transforValue);
 								break;
-							case 45://工作地点 
+							case 45://工作地址
 								transforValue = String.valueOf(cellValue).trim();
-								work.setWorkingPlace(transforValue);
+								work.setWorkingAddress(transforValue);
 								break;
 							case 46:// 试用期
 								transforValue = String.valueOf(cellValue).trim();
@@ -619,7 +619,7 @@ public class PersonalController {
 	        
 		}catch(Exception e){
 			logger.error("upload personalInfo throws Exception", e);
-			return "@"+JSONResult.error(CodeMsg.ERROR,"上传员工基本信息文件失败，请稍后重试"+e.getMessage());  
+			return "@"+JSONResult.error(CodeMsg.ERROR,"上传员工基本信息文件失败，请稍后重试"+e);  
 		}
 		if(result){
 			logger.info("adminUser : "+user.getUsername()+"upload timeOutFile ; fileNumber : OT"+fileNumber);
