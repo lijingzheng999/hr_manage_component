@@ -291,11 +291,11 @@ public class PersonalServiceImpl implements PersonalService {
 			PersonalAll.getPersonalWorkInfo().setLevel(newPersonalAll.getPersonalWorkInfo().getLevel());
 			PersonalAll.getPersonalWorkInfo().setExpatriateUnit(newPersonalAll.getPersonalWorkInfo().getExpatriateUnit());
 			PersonalAll.getPersonalWorkInfo().setRecruitChannel(newPersonalAll.getPersonalWorkInfo().getRecruitChannel());
-			PersonalAll.getPersonalWorkInfo().setContractCount(newPersonalAll.getPersonalWorkInfo().getContractCount());
-			PersonalAll.getPersonalWorkInfo().setContractStartdate(newPersonalAll.getPersonalWorkInfo().getContractStartdate());
-			PersonalAll.getPersonalWorkInfo().setContractEnddate(newPersonalAll.getPersonalWorkInfo().getContractEnddate());
-			PersonalAll.getPersonalWorkInfo().setContractRenewDate(newPersonalAll.getPersonalWorkInfo().getContractRenewDate());
-			PersonalAll.getPersonalWorkInfo().setContractRenewEnddate(newPersonalAll.getPersonalWorkInfo().getContractRenewEnddate());
+//			PersonalAll.getPersonalWorkInfo().setContractCount(newPersonalAll.getPersonalWorkInfo().getContractCount());
+//			PersonalAll.getPersonalWorkInfo().setContractStartdate(newPersonalAll.getPersonalWorkInfo().getContractStartdate());
+//			PersonalAll.getPersonalWorkInfo().setContractEnddate(newPersonalAll.getPersonalWorkInfo().getContractEnddate());
+//			PersonalAll.getPersonalWorkInfo().setContractRenewDate(newPersonalAll.getPersonalWorkInfo().getContractRenewDate());
+//			PersonalAll.getPersonalWorkInfo().setContractRenewEnddate(newPersonalAll.getPersonalWorkInfo().getContractRenewEnddate());
 			PersonalAll.getPersonalWorkInfo().setIsLeave(newPersonalAll.getPersonalWorkInfo().getIsLeave());
 			PersonalAll.getPersonalWorkInfo().setLeaveWorking(newPersonalAll.getPersonalWorkInfo().getLeaveWorking());
 			PersonalAll.getPersonalWorkInfo().setLeaveWorkingTime(newPersonalAll.getPersonalWorkInfo().getLeaveWorkingTime());

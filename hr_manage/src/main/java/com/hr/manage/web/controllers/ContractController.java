@@ -193,13 +193,30 @@ public class ContractController {
 			logger.error("=====新增合同基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
+		if(contractInfo.getContractCount()<2){
+			logger.error("=====新增合同基本信息失败，合同签订次数不能小于2");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"新增合同基本信息失败，合同签订次数不能小于2");
+		}
+		if(contractInfo.getPersonalInfoId()==null || StringUtils.isBlank(contractInfo.getEmployeeNumber())){
+			logger.error("=====新增合同基本信息失败，员工信息ID和员工编号不能为空");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"新增合同基本信息失败，员工信息ID和员工编号不能为空");
+		}
+		//验证修改的合同签订次数是否递增；
+		int curContractCount  = contractService.countContractInfoByPersonalId(contractInfo.getPersonalInfoId());
+		if(!contractInfo.getContractCount().equals(curContractCount+1)){
+			logger.error("=====新增合同基本信息失败，合同签订次数不是递增的;curContractCount:"+curContractCount);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"新增合同基本信息失败，合同签订次数不是递增;curContractCount:"+curContractCount);
+				
+		}
+		String strContractCount = new DecimalFormat("00").format(contractInfo.getContractCount());
+		contractInfo.setContractNumber(contractInfo.getEmployeeNumber()+strContractCount);
 		//新增需要判断参数；并且要更新基本信息
 		int result = contractService.addContractInfo(contractInfo);
 		if (result >0) {
 			return "@" + JSONResult.success();
 		} else {
-			logger.error("=====数据库操作异常,新增失败=====");
-			return "@" + JSONResult.error(CodeMsg.ERROR, "数据库操作异常,新增失败");
+			logger.error("=====数据库操作异常,新增失败=====result="+result);
+			return "@" + JSONResult.error(CodeMsg.ERROR, "数据库操作异常,新增失败;result="+result);
 		}
 
 	}
@@ -232,13 +249,39 @@ public class ContractController {
 			logger.error("=====修改合同基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
+//		if(contractInfo.getContractCount()<2){
+//			logger.error("=====修改合同基本信息失败，合同签订次数不能小于2");
+//			return "@" + JSONResult.error(CodeMsg.ERROR,"新增合同基本信息失败，合同签订次数不能小于2");
+//		}
+		if(contractInfo.getPersonalInfoId()==null || StringUtils.isBlank(contractInfo.getEmployeeNumber())){
+			logger.error("=====修改合同基本信息失败，员工信息ID和员工编号不能为空");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"新增合同基本信息失败，员工信息ID和员工编号不能为空");
+		}
+		//验证修改的合同ID是否是最新的一条合同；
+		int maxContractCount  = contractService.getMaxContractCountById(contractInfo.getPersonalInfoId());
+		if(!contractInfo.getId().equals(maxContractCount)){
+			logger.error("=====修改合同基本信息失败，修改的合同ID不是此员工最新的合同");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"修改合同基本信息失败，修改的合同ID不是此员工最新的合同");
+		
+		}
+		//验证修改的合同签订次数是否相等；
+		int curContractCount  = contractService.countContractInfoByPersonalId(contractInfo.getPersonalInfoId());
+		if(!contractInfo.getContractCount().equals(curContractCount)){
+			logger.error("=====修改合同基本信息失败，修改了合同签订次数;curContractCount:"+curContractCount);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"修改合同基本信息失败，修改的合同签订次数;curContractCount:"+curContractCount);
+		
+		}
+		
+		String strContractCount = new DecimalFormat("00").format(contractInfo.getContractCount());
+		contractInfo.setContractNumber(contractInfo.getEmployeeNumber()+strContractCount);
+		
 		// 进行修改
-		boolean result = contractService.updateContractInfo(contractInfo);
-		if (result) {
+		int result  = contractService.updateContractInfo(contractInfo);
+		if (result>0) {
 			return "@" + JSONResult.success();
 		} else {
-			logger.error("=====修改合同信息数据库异常=====");
-			return "@" + JSONResult.error(CodeMsg.ERROR, "修改合同信息数据库异常");
+			logger.error("=====修改合同信息数据库异常=====result="+result);
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改合同信息数据库异常result="+result);
 		}
 
 	}

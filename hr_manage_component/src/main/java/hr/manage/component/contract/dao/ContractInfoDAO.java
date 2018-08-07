@@ -44,4 +44,12 @@ public interface ContractInfoDAO  extends GenericDAO<ContractInfo,Integer>{
 				+ " set is_del=0 "
 				+ " WHERE personal_info_id= :1 and is_del=1 ")
 	    int deleteContractInfoByPersonId(Integer personInfoId);
+	    
+	    @SQL(" select max(id) from "+ TABLE
+				+ " WHERE personal_info_id= :1 and is_del=1 ")
+	    int getMaxContractCountById(Integer personalInfoId);
+	    
+	    @SQL(" select " + COLUMNS + " from "+ TABLE
+				+ " WHERE personal_info_id= :1 and is_del=1 ")
+	    int countContractInfoByPersonalId(Integer personalInfoId);
 }

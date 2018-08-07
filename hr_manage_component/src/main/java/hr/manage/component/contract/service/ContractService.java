@@ -74,5 +74,25 @@ public interface ContractService {
     * @return int    
     * @throws
      */
-	public boolean updateContractInfo(ContractInfo contractInfo);
+	public int updateContractInfo(ContractInfo contractInfo);
+	
+
+	/**
+     * 
+    * @Title: getMaxContractCountById
+    * @Description: 根据员工ID查找最新一条的合同；
+    * @Param Integer personalInfoId
+    * @return int    
+    * @throws
+     */
+	public int getMaxContractCountById(Integer personalInfoId);
+	/**
+     * 
+    * @Title: countContractInfoByPersonalId
+    * @Description: 根据员工ID查找有多少条合同；
+    * @Param Integer personalInfoId
+    * @return int    
+    * @throws
+     */
+	public int countContractInfoByPersonalId(Integer personalInfoId);
 }
