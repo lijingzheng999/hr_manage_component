@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.JsonObject;
 import com.hr.manage.web.annotation.AuthorityCheck;
 import com.hr.manage.web.constant.CodeMsg;
 import com.hr.manage.web.constant.Constants;

@@ -20,10 +20,11 @@ public interface ContractInfoDAO  extends GenericDAO<ContractInfo,Integer>{
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
 	            "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
 	            "#if(:1.employeeNumber != null  && :1.employeeNumber !='') { and employee_number = :1.employeeNumber } " +
-	            "#if(:1.startDate != null) { and start_date = :1.startDate } " +
-	            "#if(:1.endDate != null) { and end_date = :1.endDate } " +
+	            "#if(:1.startDate != null) { and start_date >= :1.startDate } " +
+	            "#if(:1.endDate != null) { and end_date <= :1.endDate } " +
 	            " and is_del=1 " +
-	            " order by id ")
+	            " order by id " +
+	             "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
 	    List<ContractInfo> listContractInfo(ContractCondition contractInfo);
 
 	    

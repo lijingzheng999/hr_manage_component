@@ -1,9 +1,6 @@
 package hr.manage.component.personal.dao;
 
-import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
-
-import java.util.List;
 
 import net.paoding.rose.jade.annotation.DAO;
 import net.paoding.rose.jade.annotation.SQL;

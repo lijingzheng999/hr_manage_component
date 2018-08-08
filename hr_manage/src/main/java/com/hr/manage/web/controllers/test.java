@@ -1,36 +1,15 @@
 package com.hr.manage.web.controllers;
 
-import hr.manage.component.personal.model.PersonalAll;
-import hr.manage.component.personal.service.PersonalService;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.map.HashedMap;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-
-
-
-
-
-
-
-
-import com.alibaba.fastjson.JSONObject;
 
 
 
 public class test {
-	
-	 private static ClassPathXmlApplicationContext context;
+//	
+//	 private static ClassPathXmlApplicationContext context;
 
 
 //		static PersonalController controller = new PersonalController();

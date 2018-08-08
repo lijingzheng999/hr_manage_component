@@ -1,6 +1,5 @@
 package hr.manage.component.common.dao;
 
-import hr.manage.component.common.model.CommonType;
 import hr.manage.component.common.model.UploadFile;
 
 import java.util.List;

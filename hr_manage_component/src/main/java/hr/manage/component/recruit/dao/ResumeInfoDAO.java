@@ -22,7 +22,8 @@ public interface ResumeInfoDAO  extends GenericDAO<ResumeInfo,Integer>{
 	            "#if(:1.age != null  && :1.age >0) { and age <= :1.age } " +
 	            "#if(:1.experience != null  && :1.experience >0) { and experience >= :1.experience } " +
 	    		" and is_del = 1 " +
-	            " order by id ")
+	            " order by id " +
+	             "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
 	    List<ResumeInfo> listResumeInfo(ResumeCondition condition);
 	 
 	    

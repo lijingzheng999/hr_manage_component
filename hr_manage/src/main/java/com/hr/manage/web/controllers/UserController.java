@@ -3,27 +3,13 @@ package com.hr.manage.web.controllers;
 import hr.manage.component.admin.model.Admin;
 import hr.manage.component.admin.service.AdminService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.paoding.rose.web.Invocation;
 import net.paoding.rose.web.annotation.Param;
 import net.paoding.rose.web.annotation.Path;
 import net.paoding.rose.web.annotation.rest.Get;
 import net.paoding.rose.web.annotation.rest.Post;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
-
-
-
-
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.hr.manage.web.annotation.AuthorityCheck;
 import com.hr.manage.web.constant.CodeMsg;
 import com.hr.manage.web.constant.FunctionIds;
@@ -37,8 +23,6 @@ public class UserController {
 	Invocation inv;
 	@Autowired
 	AdminService adminService;
-	
-	private final int PAGE_SIZE = 20;
 	
 	
 	/**

@@ -1,10 +1,6 @@
 package hr.manage.component.personal.model;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import net.paoding.rose.jade.plugin.sql.annotations.Column;
 /**
  * 
 * @ClassName: PersonalCondition

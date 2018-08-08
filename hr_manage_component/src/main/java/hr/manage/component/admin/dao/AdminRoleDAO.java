@@ -1,6 +1,5 @@
 package hr.manage.component.admin.dao;
 
-import hr.manage.component.admin.model.Admin;
 import hr.manage.component.admin.model.AdminRole;
 
 import java.util.List;

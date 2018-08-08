@@ -20,11 +20,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -297,7 +294,7 @@ public class PersonalServiceImpl implements PersonalService {
 //			PersonalAll.getPersonalWorkInfo().setContractRenewDate(newPersonalAll.getPersonalWorkInfo().getContractRenewDate());
 //			PersonalAll.getPersonalWorkInfo().setContractRenewEnddate(newPersonalAll.getPersonalWorkInfo().getContractRenewEnddate());
 			PersonalAll.getPersonalWorkInfo().setIsLeave(newPersonalAll.getPersonalWorkInfo().getIsLeave());
-			PersonalAll.getPersonalWorkInfo().setLeaveWorking(newPersonalAll.getPersonalWorkInfo().getLeaveWorking());
+//			PersonalAll.getPersonalWorkInfo().setLeaveWorking(newPersonalAll.getPersonalWorkInfo().getLeaveWorking());
 			PersonalAll.getPersonalWorkInfo().setLeaveWorkingTime(newPersonalAll.getPersonalWorkInfo().getLeaveWorkingTime());
 			
 			

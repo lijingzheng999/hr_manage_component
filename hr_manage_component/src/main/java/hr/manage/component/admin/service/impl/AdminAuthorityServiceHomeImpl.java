@@ -7,10 +7,8 @@ import hr.manage.component.admin.service.AdminService;
 import hr.manage.component.admin.util.AdminUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,8 +17,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdminAuthorityServiceHomeImpl implements AdminAuthorityServiceHome{
 	
-	private static final int PAGE = 1;
-	private static final int PAGESIZE_MAX=999999999;
 	
 	@Autowired
 	private AdminService adminService;

@@ -74,6 +74,7 @@ public class ContractServiceImpl implements ContractService {
 		return result;	
 	}
 	@Override
+	@Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor={Exception.class})
 	public int updateContractInfo(ContractInfo contractInfo){
 		int result =0;
 		//保存合同信息

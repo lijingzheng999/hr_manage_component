@@ -11,19 +11,9 @@ import net.paoding.rose.web.Invocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
-
-
-
-
-
-
-import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.hr.manage.web.annotation.NotCareLogin;
 import com.hr.manage.web.constant.CodeMsg;
 import com.hr.manage.web.constant.JSONResult;
-import com.hr.manage.web.constant.ResultInfo;
 
 @Component
 public class SiteInterceptor extends ControllerInterceptorAdapter {

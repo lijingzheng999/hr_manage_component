@@ -13,7 +13,7 @@ public class UploadFile implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3572796393978709332L;
+	private static final long serialVersionUID = 3881162222229699275L;
 
 
 	/**

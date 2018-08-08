@@ -1,9 +1,5 @@
 package hr.manage.component.personal.model;
 
-import java.util.Date;
-
-import net.paoding.rose.jade.plugin.sql.annotations.Column;
-import net.paoding.rose.jade.plugin.sql.annotations.Table;
 /**
  * PersonalAll
  * 

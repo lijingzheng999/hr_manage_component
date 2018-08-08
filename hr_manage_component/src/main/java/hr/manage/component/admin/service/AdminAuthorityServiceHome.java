@@ -1,11 +1,7 @@
 package hr.manage.component.admin.service;
 
-import hr.manage.component.admin.model.Admin;
-import hr.manage.component.admin.model.AdminRole;
 
 import java.util.List;
-import java.util.Map;
-
 import org.springframework.stereotype.Component;
 
 @Component
