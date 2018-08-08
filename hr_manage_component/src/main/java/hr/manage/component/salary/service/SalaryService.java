@@ -1,9 +1,5 @@
 package hr.manage.component.salary.service;
 
-
-import hr.manage.component.contract.model.ContractCondition;
-import hr.manage.component.contract.model.ContractInfo;
-import hr.manage.component.personal.model.PersonalAll;
 import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
 

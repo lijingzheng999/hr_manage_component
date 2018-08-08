@@ -2,9 +2,7 @@ package hr.manage.component.salary.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import net.paoding.rose.jade.plugin.sql.annotations.Column;
 /**
  * 
 * @ClassName: SalaryChangeCondition

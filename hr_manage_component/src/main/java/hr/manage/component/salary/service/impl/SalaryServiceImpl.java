@@ -1,13 +1,7 @@
 package hr.manage.component.salary.service.impl;
 
-import hr.manage.component.contract.dao.ContractInfoDAO;
-import hr.manage.component.contract.model.ContractCondition;
-import hr.manage.component.contract.model.ContractInfo;
-import hr.manage.component.contract.service.ContractService;
 import hr.manage.component.personal.dao.PersonalSalaryInfoDAO;
-import hr.manage.component.personal.dao.PersonalWorkInfoDAO;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
-import hr.manage.component.personal.model.PersonalWorkInfo;
 import hr.manage.component.salary.dao.SalaryChangeDAO;
 import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
