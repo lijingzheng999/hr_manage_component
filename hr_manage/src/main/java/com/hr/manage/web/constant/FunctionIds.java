@@ -29,8 +29,8 @@ public class FunctionIds {
 	public static final int FUNCTION_16 = 16;			//成都物联网考勤明细  1-4
 	public static final int FUNCTION_17= 17;			//百度考勤明细  1-4
 	public static final int FUNCTION_18 = 18;			//考勤管理  1-4
-	public static final int FUNCTION_19= 19;			//离职管理  1-5
-	public static final int FUNCTION_20 = 20;			//工资管理  1-5
+	public static final int FUNCTION_19= 19;			//工资管理  1-5
+	public static final int FUNCTION_20 = 20;			//奖惩管理  1-5
 	public static final int FUNCTION_21 = 21;			//查询管理  1-5
 	public static final int FUNCTION_22 = 22;			//利润测算表  1-6
 	

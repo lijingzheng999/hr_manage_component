@@ -293,8 +293,9 @@ public class PersonalServiceImpl implements PersonalService {
 //			PersonalAll.getPersonalWorkInfo().setContractEnddate(newPersonalAll.getPersonalWorkInfo().getContractEnddate());
 //			PersonalAll.getPersonalWorkInfo().setContractRenewDate(newPersonalAll.getPersonalWorkInfo().getContractRenewDate());
 //			PersonalAll.getPersonalWorkInfo().setContractRenewEnddate(newPersonalAll.getPersonalWorkInfo().getContractRenewEnddate());
-			PersonalAll.getPersonalWorkInfo().setIsLeave(newPersonalAll.getPersonalWorkInfo().getIsLeave());
-//			PersonalAll.getPersonalWorkInfo().setLeaveWorking(newPersonalAll.getPersonalWorkInfo().getLeaveWorking());
+			PersonalAll.getPersonalWorkInfo().setLeaveType(newPersonalAll.getPersonalWorkInfo().getLeaveType());
+			PersonalAll.getPersonalWorkInfo().setLeaveStatus(newPersonalAll.getPersonalWorkInfo().getLeaveStatus());
+			PersonalAll.getPersonalWorkInfo().setLeaveReason(newPersonalAll.getPersonalWorkInfo().getLeaveReason());
 			PersonalAll.getPersonalWorkInfo().setLeaveWorkingTime(newPersonalAll.getPersonalWorkInfo().getLeaveWorkingTime());
 			
 			
@@ -333,5 +334,15 @@ public class PersonalServiceImpl implements PersonalService {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public int addLeaveInfo(PersonalWorkInfo work){
+		if(personalWorkInfoDAO.update(work)){
+			return 1;
+		}
+		else{
+			return 0;
+		}
 	}
 }

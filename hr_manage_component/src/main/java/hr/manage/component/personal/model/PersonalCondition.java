@@ -1,6 +1,9 @@
 package hr.manage.component.personal.model;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import net.paoding.rose.jade.plugin.sql.annotations.Column;
 /**
  * 
 * @ClassName: PersonalCondition
@@ -26,7 +29,21 @@ public class PersonalCondition implements Serializable {
     private String center;
     /**工作地点 */
     private String workingPlace;
-   
+    /** 离职状态：0：已离职；1：在职  */
+    private Integer leaveStatus;
+    /**入职时间查询的开始时间 */
+    private Date entryStartDate;
+    /**入职时间查询的截止时间 */
+    private Date entryEndDate;
+    /**转正时间查询的开始时间 */
+    private Date workerStartDate;
+    /**转正时间查询的截止时间 */
+    private Date workerEndDate;
+    /**离职时间查询的开始时间 */
+    private Date leaveStartDate;
+    /**离职时间查询的截止时间 */
+    private Date leaveEndDate;
+    
     /**分页开始位置*/
     private Integer offset;
     /**每次取的条数*/
@@ -68,6 +85,49 @@ public class PersonalCondition implements Serializable {
 	}
 	public void setWorkingPlace(String workingPlace) {
 		this.workingPlace = workingPlace;
+	}
+	
+	public Integer getLeaveStatus() {
+		return leaveStatus;
+	}
+	public void setLeaveStatus(Integer leaveStatus) {
+		this.leaveStatus = leaveStatus;
+	}
+	public Date getEntryStartDate() {
+		return entryStartDate;
+	}
+	public void setEntryStartDate(Date entryStartDate) {
+		this.entryStartDate = entryStartDate;
+	}
+	public Date getEntryEndDate() {
+		return entryEndDate;
+	}
+	public void setEntryEndDate(Date entryEndDate) {
+		this.entryEndDate = entryEndDate;
+	}
+	public Date getWorkerStartDate() {
+		return workerStartDate;
+	}
+	public void setWorkerStartDate(Date workerStartDate) {
+		this.workerStartDate = workerStartDate;
+	}
+	public Date getWorkerEndDate() {
+		return workerEndDate;
+	}
+	public void setWorkerEndDate(Date workerEndDate) {
+		this.workerEndDate = workerEndDate;
+	}
+	public Date getLeaveStartDate() {
+		return leaveStartDate;
+	}
+	public void setLeaveStartDate(Date leaveStartDate) {
+		this.leaveStartDate = leaveStartDate;
+	}
+	public Date getLeaveEndDate() {
+		return leaveEndDate;
+	}
+	public void setLeaveEndDate(Date leaveEndDate) {
+		this.leaveEndDate = leaveEndDate;
 	}
 	public Integer getOffset() {
 		return offset;

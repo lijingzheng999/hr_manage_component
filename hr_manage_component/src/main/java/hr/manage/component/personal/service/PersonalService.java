@@ -3,6 +3,7 @@ package hr.manage.component.personal.service;
 import hr.manage.component.personal.model.PersonalAll;
 import hr.manage.component.personal.model.PersonalAllExport;
 import hr.manage.component.personal.model.PersonalCondition;
+import hr.manage.component.personal.model.PersonalWorkInfo;
 
 import java.util.List;
 
@@ -98,4 +99,14 @@ public interface PersonalService {
      */
 	public int updatePersonalAllInfo(PersonalAll newPersonalAll);
 	
+
+	/**
+     * 
+    * @Title: addLeaveInfo
+    * @Description: 办理离职
+    * @Param PersonalWorkInfo work
+    * @return int    
+    * @throws
+     */
+	public int addLeaveInfo(PersonalWorkInfo work);
 }

@@ -110,7 +110,7 @@ public class SalaryController {
     * @return String    
     * @throws
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_20)
 	@NotCareLogin
 	@Get("getList")
 	@Post("getList")
@@ -171,7 +171,7 @@ public class SalaryController {
     * @throws
     * @see SalaryChange
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_20)
 	@NotCareLogin
 	@Post("addSalaryChange")
 	@Get("addSalaryChange")

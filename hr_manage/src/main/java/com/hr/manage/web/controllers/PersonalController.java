@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import net.paoding.rose.web.annotation.Param;
 import net.paoding.rose.web.annotation.Path;
 import net.paoding.rose.web.annotation.rest.Get;
 import net.paoding.rose.web.annotation.rest.Post;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -563,7 +565,12 @@ public class PersonalController {
 								break;
 							case 54:// 是否撤离
 								transforValue = String.valueOf(cellValue).trim();
-								work.setIsLeave(transforValue);
+								if(transforValue.equals("是")){
+									work.setLeaveStatus(0); //离职
+								}
+								else{
+									work.setLeaveStatus(1); //在职
+								}
 								break;
 							case 55:// 离职日期
 								transforValue = String.valueOf(cellValue).trim();
@@ -781,7 +788,7 @@ public class PersonalController {
 				
 			} catch (Exception e) {
 				logger.error("=====分配员工账号异常====="+e);
-				return "@" + JSONResult.error(CodeMsg.ERROR, "分配员工账号异常,"+e.getMessage());
+				return "@" + JSONResult.error(CodeMsg.ERROR, "分配员工账号异常,"+e);
 			}	
 		} else {
 			logger.error("=====根据员工ID未查到基本信息=====");
@@ -926,9 +933,81 @@ public class PersonalController {
 				e.printStackTrace();
 			}
 		}
-		return null;
-		
-		
+		return null;	
 //		return "@" + JSONResult.success();
 	}
+	
+
+	/**
+     * 
+    * title: addLeaveInfo
+    * description: 办理离职
+    * url: personal/addLeaveInfo
+    * @param  Integer personalInfoId,
+	* @param  Integer leaveType,
+	* @param  String leaveReason,
+	* @param  String leaveWorkingTime
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Post("addLeaveInfo")
+	@Get("addLeaveInfo")
+	public String addLeaveInfo(
+			@Param("personalInfoId")Integer personalInfoId,
+			@Param("leaveType")Integer leaveType,
+			@Param("leaveReason")String leaveReason,
+			@Param("leaveWorkingTime")String leaveWorkingTime) {
+		SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
+		Date curLeaveTime=null;
+		try {
+			if(StringUtils.isNotBlank(leaveWorkingTime)){
+				curLeaveTime = sdt.parse(String.valueOf(leaveWorkingTime).trim());			
+			}
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			logger.error("=====参数错误，日期格式不对，转换错误=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，日期格式不对，转换错误！");
+		}
+		// 验证员工信息是否存在
+		PersonalAll personalAll = personalService
+				.getPersonalAllInfoById(personalInfoId);
+		if (personalAll.getPersonalWorkInfo() != null) {
+			// 验证员工离职状态是否为在职
+			try {
+				if(!personalAll.getPersonalWorkInfo().getLeaveStatus().equals(1)){
+					logger.error("=====此员工已不是在职状态=====");
+					return "@" + JSONResult.error(CodeMsg.ERROR, "此员工已不是在职状态");
+				}
+				else{
+					PersonalWorkInfo work = new PersonalWorkInfo();
+					work= personalAll.getPersonalWorkInfo();
+					work.setLeaveStatus(0); //离职状态
+                    work.setLeaveType(leaveType);
+                    work.setLeaveReason(leaveReason);
+                    work.setLeaveWorkingTime(curLeaveTime);
+                    work.setUpdateTime(new Date());
+					int result = (int) personalService.addLeaveInfo(work);
+					if(result>0){
+						return "@" + JSONResult.success();
+					}
+					else{
+						logger.error("=====入库异常,办理离职失败=====");
+						return "@" + JSONResult.error(CodeMsg.ERROR, "入库异常,办理离职失败");
+					}
+				}
+				
+				
+			} catch (Exception e) {
+				logger.error("=====办理离职异常====="+e);
+				return "@" + JSONResult.error(CodeMsg.ERROR, "办理离职异常,"+e);
+			}	
+		} else {
+			logger.error("=====根据员工ID未查到基本信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据员工ID未查到基本信息");
+		}
+	}
+	
 }

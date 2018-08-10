@@ -2,6 +2,8 @@ package hr.manage.component.personal.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
+import net.paoding.rose.jade.plugin.sql.annotations.Column;
 public class PersonalAllExport implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = -7685182439356101440L;
@@ -135,9 +137,17 @@ public class PersonalAllExport implements java.io.Serializable {
     /** 续签合同失效日期 */
     private Date contractRenewEnddate;
 
-    /** 是否撤离 */
-    private String isLeave;
-
+    /** 离职状态：0：已离职；1：在职  */
+    @Column(value = "leave_status")
+    private Integer leaveStatus;
+    
+    /** 离职类型：1：辞职；2：退休；3：合同期满；4：试用期未通过  */
+    @Column(value = "leave_type")
+    private Integer leaveType;
+    
+    /** 离职原因  */
+    @Column(value = "leave_reason")
+    private String leaveReason;
     /** 离职日期 */
     private Date leaveWorkingTime;
     
@@ -531,15 +541,29 @@ public class PersonalAllExport implements java.io.Serializable {
 		this.contractRenewEnddate = contractRenewEnddate;
 	}
 
-	public String getIsLeave() {
-		return isLeave;
+	public Integer getLeaveStatus() {
+		return leaveStatus;
 	}
 
-	public void setIsLeave(String isLeave) {
-		this.isLeave = isLeave;
+	public void setLeaveStatus(Integer leaveStatus) {
+		this.leaveStatus = leaveStatus;
 	}
 
+	public Integer getLeaveType() {
+		return leaveType;
+	}
 
+	public void setLeaveType(Integer leaveType) {
+		this.leaveType = leaveType;
+	}
+
+	public String getLeaveReason() {
+		return leaveReason;
+	}
+
+	public void setLeaveReason(String leaveReason) {
+		this.leaveReason = leaveReason;
+	}
 
 	public Date getLeaveWorkingTime() {
 		return leaveWorkingTime;

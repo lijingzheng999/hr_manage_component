@@ -89,10 +89,18 @@ public class PersonalWorkInfo implements java.io.Serializable {
     @Column(value = "contract_renew_enddate")
     private Date contractRenewEnddate;
 
-    /** 是否撤离  */
-    @Column(value = "is_leave")
-    private String isLeave;
-
+    /** 离职状态：0：已离职；1：在职  */
+    @Column(value = "leave_status")
+    private Integer leaveStatus;
+    
+    /** 离职类型：1：辞职；2：退休；3：合同期满；4：试用期未通过  */
+    @Column(value = "leave_type")
+    private Integer leaveType;
+    
+    /** 离职原因  */
+    @Column(value = "leave_reason")
+    private String leaveReason;
+    
     /** 离职日期  */
     @Column(value = "leave_working_time")
     private Date leaveWorkingTime;
@@ -453,28 +461,34 @@ public class PersonalWorkInfo implements java.io.Serializable {
         this.contractRenewEnddate = contractRenewEnddate;
     }
 
-    /**
-     * 获取是否撤离
-     * 
-     * @return 是否撤离
-     */
-    public String getIsLeave() {
-        return this.isLeave;
-    }
-
-    /**
-     * 设置是否撤离
-     * 
-     * @param leave
-     *          是否撤离
-     */
-    public void setIsLeave(String isLeave) {
-        this.isLeave = isLeave;
-    }
-
+    
    
 
-    /**
+    public Integer getLeaveStatus() {
+		return leaveStatus;
+	}
+
+	public void setLeaveStatus(Integer leaveStatus) {
+		this.leaveStatus = leaveStatus;
+	}
+
+	public Integer getLeaveType() {
+		return leaveType;
+	}
+
+	public void setLeaveType(Integer leaveType) {
+		this.leaveType = leaveType;
+	}
+
+	public String getLeaveReason() {
+		return leaveReason;
+	}
+
+	public void setLeaveReason(String leaveReason) {
+		this.leaveReason = leaveReason;
+	}
+
+	/**
      * 获取离职时间
      * 
      * @return 离职时间
