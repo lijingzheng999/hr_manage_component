@@ -21,7 +21,7 @@ public interface PersonalInfoDAO extends GenericDAO<PersonalInfo, Integer> {
 
 	public static final String COLUMNS_WORK = " b.working_place,b.post_type,b.position,b.level,b.department,b.center,b.project,b.expatriate_manager,b.expatriate_unit,b.recruit_channel,b.working_address,b.contract_count,b.contract_startdate,b.contract_enddate,b.contract_renew_date,b.contract_renew_enddate,b.leave_status,b.leave_type,b.leave_reason,b.leave_working_time ";
 
-	public static final String COLUMNS_SALARY= " c.entry_time,c.arrival_time,c.worker_time,c.working_years,c.insurance_begin_date,c.insurance_place,c.bank_card_number,c.bank_open_place,c.probation_period,c.probation_period_welfare,c.worker_welfare,c.base_pay,c.merit_pay,c.subsidy,c.worker_pay,c.probationary_pay,c.settlement_price ";
+	public static final String COLUMNS_SALARY= " c.entry_time,c.arrival_time,c.worker_time,c.working_years,c.insurance_begin_date,c.insurance_real_date,c.insurance_place,c.bank_card_number,c.bank_open_place,c.probation_period,c.probation_period_welfare,c.worker_welfare,c.base_pay,c.merit_pay,c.subsidy,c.worker_pay,c.probationary_pay,c.settlement_price ";
 
 	
 	@SQL("SELECT  "

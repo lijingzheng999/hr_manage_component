@@ -45,6 +45,10 @@ public class PersonalSalaryInfo implements java.io.Serializable {
     @Column(value = "insurance_begin_date")
     private String insuranceBeginDate;
 
+    /** 实际缴纳社保起始月份 */
+    @Column(value = "insurance_real_date")
+    private String insuranceRealDate;
+    
     /** 社保缴纳地点 */
     @Column(value = "insurance_place")
     private String insurancePlace;
@@ -238,7 +242,16 @@ public class PersonalSalaryInfo implements java.io.Serializable {
         this.insuranceBeginDate = insuranceBeginDate;
     }
 
-    /**
+    
+    public String getInsuranceRealDate() {
+		return insuranceRealDate;
+	}
+
+	public void setInsuranceRealDate(String insuranceRealDate) {
+		this.insuranceRealDate = insuranceRealDate;
+	}
+
+	/**
      * 获取社保缴纳地点
      * 
      * @return 社保缴纳地点

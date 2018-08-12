@@ -10,7 +10,7 @@ public interface PersonalSalaryInfoDAO  extends GenericDAO<PersonalSalaryInfo,In
 	
 	public static final String TABLE = " personal_salary_info ";
 	
-	public static final String COLUMNS = "  id,personal_info_id,entry_time,arrival_time,worker_time,working_years,insurance_begin_date,insurance_place,bank_card_number,bank_open_place,probation_period,probation_period_welfare,worker_welfare,base_pay,merit_pay,subsidy,worker_pay,probationary_pay,settlement_price,is_del,update_time,create_time ";
+	public static final String COLUMNS = "  id,personal_info_id,entry_time,arrival_time,worker_time,working_years,insurance_begin_date,insurance_real_date,insurance_place,bank_card_number,bank_open_place,probation_period,probation_period_welfare,worker_welfare,base_pay,merit_pay,subsidy,worker_pay,probationary_pay,settlement_price,is_del,update_time,create_time ";
 
 	@SQL("SELECT  "
 			+ COLUMNS
