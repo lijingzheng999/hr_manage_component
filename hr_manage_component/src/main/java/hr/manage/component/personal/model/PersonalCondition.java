@@ -23,6 +23,10 @@ public class PersonalCondition implements Serializable {
     private String expatriateUnit;
     /**岗位 */
     private String postType;
+    /**职位 */
+    private String position;
+    /**级别*/
+    private String level;
     /**部门 */
     private String department;
     /**中心 */
@@ -43,6 +47,10 @@ public class PersonalCondition implements Serializable {
     private Date leaveStartDate;
     /**离职时间查询的截止时间 */
     private Date leaveEndDate;
+    /**生日查询的开始时间 */
+    private Date birthdayStartDate;
+    /**生日查询的截止时间 */
+    private Date birthdayEndDate;
     
     /**分页开始位置*/
     private Integer offset;
@@ -87,6 +95,30 @@ public class PersonalCondition implements Serializable {
 		this.workingPlace = workingPlace;
 	}
 	
+	public String getPosition() {
+		return position;
+	}
+	public void setPosition(String position) {
+		this.position = position;
+	}
+	public String getLevel() {
+		return level;
+	}
+	public void setLevel(String level) {
+		this.level = level;
+	}
+	public Date getBirthdayStartDate() {
+		return birthdayStartDate;
+	}
+	public void setBirthdayStartDate(Date birthdayStartDate) {
+		this.birthdayStartDate = birthdayStartDate;
+	}
+	public Date getBirthdayEndDate() {
+		return birthdayEndDate;
+	}
+	public void setBirthdayEndDate(Date birthdayEndDate) {
+		this.birthdayEndDate = birthdayEndDate;
+	}
 	public Integer getLeaveStatus() {
 		return leaveStatus;
 	}

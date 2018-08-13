@@ -61,10 +61,22 @@ public interface PersonalInfoDAO extends GenericDAO<PersonalInfo, Integer> {
             + "#if(:1.name != null && :1.name !=''){ and a.name = :1.name } " 
             + "#if(:1.expatriateUnit != null && :1.expatriateUnit !='') { and b.expatriate_unit = :1.expatriateUnit } "
             + "#if(:1.postType != null && :1.postType !=''){ and b.post_type = :1.postType } " 
+            + "#if(:1.position != null && :1.position !=''){ and b.position = :1.position } " 
+            + "#if(:1.level != null && :1.level !=''){ and b.level = :1.level } " 
             + "#if(:1.department != null && :1.department !=''){ and b.department = :1.department } " 
             + "#if(:1.center != null && :1.center !=''){ and b.center = :1.center } " 
             + "#if(:1.workingPlace != null && :1.workingPlace !=''){ and b.working_place like concat('%',:1.workingPlace,'%') } " 
-            + " order by a.id "
+            + "#if(:1.leaveStatus != null && :1.leaveStatus >0){ and b.leave_status = :1.leaveStatus } " 
+            + "#if(:1.entryStartDate != null) { and c.entry_time >= :1.entryStartDate } " 
+            + "#if(:1.entryEndDate != null) { and c.entry_time <= :1.entryEndDate } " 
+            + "#if(:1.workerStartDate != null) { and c.worker_time >= :1.workerStartDate } " 
+            + "#if(:1.workerEndDate != null) { and c.worker_time <= :1.workerEndDate } "
+            + "#if(:1.leaveStartDate != null) { and b.leave_working_time >= :1.leaveStartDate } " 
+            + "#if(:1.leaveEndDate != null) { and b.leave_working_time <= :1.leaveEndDate } "
+            + "#if(:1.birthdayStartDate != null) { and DATE_FORMAT(a.birthday,'%m%d') >=  DATE_FORMAT(:1.birthdayStartDate,'%m%d') } " 
+            + "#if(:1.birthdayEndDate != null) { and DATE_FORMAT(a.birthday,'%m%d') <= DATE_FORMAT(:1.birthdayEndDate,'%m%d')  } "
+            + " and a.is_del=1  and b.is_del=1  and c.is_del=1 " 
+            + " order by a.id " 
             + "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
 	List<PersonalAllExport> listPersonalAllExport(PersonalCondition condition);
 	
@@ -76,9 +88,21 @@ public interface PersonalInfoDAO extends GenericDAO<PersonalInfo, Integer> {
             + "#if(:1.name != null && :1.name !=''){ and a.name = :1.name } " 
             + "#if(:1.expatriateUnit != null && :1.expatriateUnit !='') { and b.expatriate_unit = :1.expatriateUnit } "
             + "#if(:1.postType != null && :1.postType !=''){ and b.post_type = :1.postType } " 
+            + "#if(:1.position != null && :1.position !=''){ and b.position = :1.position } " 
+            + "#if(:1.level != null && :1.level !=''){ and b.level = :1.level } " 
             + "#if(:1.department != null && :1.department !=''){ and b.department = :1.department } " 
             + "#if(:1.center != null && :1.center !=''){ and b.center = :1.center } " 
-            + "#if(:1.workingPlace != null && :1.workingPlace !=''){ and b.working_place like concat('%',:1.workingPlace,'%') } " )
-    Long countPersonalAllExport(PersonalCondition condition);
+            + "#if(:1.workingPlace != null && :1.workingPlace !=''){ and b.working_place like concat('%',:1.workingPlace,'%') } " 
+            + "#if(:1.leaveStatus != null && :1.leaveStatus >0){ and b.leave_status = :1.leaveStatus } " 
+            + "#if(:1.entryStartDate != null) { and c.entry_time >= :1.entryStartDate } " 
+            + "#if(:1.entryEndDate != null) { and c.entry_time <= :1.entryEndDate } " 
+            + "#if(:1.workerStartDate != null) { and c.worker_time >= :1.workerStartDate } " 
+            + "#if(:1.workerEndDate != null) { and c.worker_time <= :1.workerEndDate } "
+            + "#if(:1.leaveStartDate != null) { and b.leave_working_time >= :1.leaveStartDate } " 
+            + "#if(:1.leaveEndDate != null) { and b.leave_working_time <= :1.leaveEndDate } "
+            + "#if(:1.birthdayStartDate != null) { and DATE_FORMAT(a.birthday,'%m%d') >=  DATE_FORMAT(:1.birthdayStartDate,'%m%d') } " 
+            + "#if(:1.birthdayEndDate != null) { and DATE_FORMAT(a.birthday,'%m%d') <= DATE_FORMAT(:1.birthdayEndDate,'%m%d')  } "
+            + " and a.is_del=1  and b.is_del=1  and c.is_del=1 " )
+            Long countPersonalAllExport(PersonalCondition condition);
 
 }

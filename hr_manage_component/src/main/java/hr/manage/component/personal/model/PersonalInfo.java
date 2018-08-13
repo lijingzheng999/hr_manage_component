@@ -49,7 +49,7 @@ public class PersonalInfo implements java.io.Serializable {
 
     /** 出生日期 */
     @Column(value = "birthday")
-    private String birthday;
+    private Date birthday;
 
     /** 户口性质-员工可修改  */
     @Column(value = "home_property")
@@ -284,7 +284,7 @@ public class PersonalInfo implements java.io.Serializable {
      * 
      * @return 出生日期
      */
-    public String getBirthday() {
+    public Date getBirthday() {
         return this.birthday;
     }
 
@@ -294,7 +294,7 @@ public class PersonalInfo implements java.io.Serializable {
      * @param birthday
      *          出生日期
      */
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 

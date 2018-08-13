@@ -168,8 +168,8 @@ public class PersonalServiceImpl implements PersonalService {
 			}
 			PersonalAll.getPersonalInfo().setSex(curSex);
 			
-			String curBirthday = newPersonalAll.getPersonalInfo().getIdentityCard().substring(10, 12)+"月"+newPersonalAll.getPersonalInfo().getIdentityCard().substring(12, 14)+"日";
-			PersonalAll.getPersonalInfo().setBirthday(curBirthday);
+//			String curBirthday = newPersonalAll.getPersonalInfo().getIdentityCard().substring(10, 12)+"月"+newPersonalAll.getPersonalInfo().getIdentityCard().substring(12, 14)+"日";
+			PersonalAll.getPersonalInfo().setBirthday(birthDay);
 			
 			PersonalAll.getPersonalInfo().setHomeProperty(newPersonalAll.getPersonalInfo().getHomeProperty());
 			PersonalAll.getPersonalInfo().setNativePlace(newPersonalAll.getPersonalInfo().getNativePlace());
@@ -252,8 +252,8 @@ public class PersonalServiceImpl implements PersonalService {
 			}
 			PersonalAll.getPersonalInfo().setSex(curSex);
             //出生年月
-			String curBirthday = newPersonalAll.getPersonalInfo().getIdentityCard().substring(10, 12)+"月"+newPersonalAll.getPersonalInfo().getIdentityCard().substring(12, 14)+"日";
-			PersonalAll.getPersonalInfo().setBirthday(curBirthday);
+//			String curBirthday = newPersonalAll.getPersonalInfo().getIdentityCard().substring(10, 12)+"月"+newPersonalAll.getPersonalInfo().getIdentityCard().substring(12, 14)+"日";
+			PersonalAll.getPersonalInfo().setBirthday(birthDay);
 			PersonalAll.getPersonalInfo().setHomeProperty(newPersonalAll.getPersonalInfo().getHomeProperty());
 			PersonalAll.getPersonalInfo().setNativePlace(newPersonalAll.getPersonalInfo().getNativePlace());
 			PersonalAll.getPersonalInfo().setMarriage(newPersonalAll.getPersonalInfo().getMarriage());
@@ -311,6 +311,7 @@ public class PersonalServiceImpl implements PersonalService {
 			double f1 = new BigDecimal((float)DateTimeUtil.differentDaysByMillisecond(newPersonalAll.getPersonalSalaryInfo().getArrivalTime(),new Date())/365).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 			PersonalAll.getPersonalSalaryInfo().setWorkingYears(BigDecimal.valueOf(f1));
 			PersonalAll.getPersonalSalaryInfo().setInsuranceBeginDate(newPersonalAll.getPersonalSalaryInfo().getInsuranceBeginDate());
+			PersonalAll.getPersonalSalaryInfo().setInsuranceRealDate(newPersonalAll.getPersonalSalaryInfo().getInsuranceRealDate());
 			PersonalAll.getPersonalSalaryInfo().setInsurancePlace(newPersonalAll.getPersonalSalaryInfo().getInsurancePlace());
 			PersonalAll.getPersonalSalaryInfo().setProbationPeriod(newPersonalAll.getPersonalSalaryInfo().getProbationPeriod());
 			PersonalAll.getPersonalSalaryInfo().setProbationPeriodWelfare(newPersonalAll.getPersonalSalaryInfo().getProbationPeriodWelfare());

@@ -33,7 +33,7 @@ public class PersonalAllExport implements java.io.Serializable {
     private Integer age;
 
     /** 出生日期 */
-    private String birthday;
+    private Date birthday;
 
     /** 户口性质 */
     private String homeProperty;
@@ -171,6 +171,9 @@ public class PersonalAllExport implements java.io.Serializable {
     /** 社保缴纳地点 */
     private String insurancePlace;
 
+    /** 实际缴纳社保起始月份 */
+    private String insuranceRealDate;
+    
     /** 招商银行卡号 */
     private String bankCardNumber;
 
@@ -268,11 +271,11 @@ public class PersonalAllExport implements java.io.Serializable {
 		this.age = age;
 	}
 
-	public String getBirthday() {
+	public Date getBirthday() {
 		return birthday;
 	}
 
-	public void setBirthday(String birthday) {
+	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
 
@@ -611,6 +614,14 @@ public class PersonalAllExport implements java.io.Serializable {
 
 	public void setInsuranceBeginDate(String insuranceBeginDate) {
 		this.insuranceBeginDate = insuranceBeginDate;
+	}
+
+	public String getInsuranceRealDate() {
+		return insuranceRealDate;
+	}
+
+	public void setInsuranceRealDate(String insuranceRealDate) {
+		this.insuranceRealDate = insuranceRealDate;
 	}
 
 	public String getInsurancePlace() {

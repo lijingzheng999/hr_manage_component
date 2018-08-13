@@ -364,6 +364,10 @@ public class PersonalController {
 									SimpleDateFormat sdtarray=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date arraydate=sdtarray.parse(String.valueOf(cellValue).trim());
 									salary.setArrivalTime(arraydate);
+									//工齡=(TODAY()-到崗時間)/365
+									double f1 = new BigDecimal((float)DateTimeUtil.differentDaysByMillisecond(arraydate,new Date())/365).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+									
+									salary.setWorkingYears(BigDecimal.valueOf(f1));
 								}
 								
 								break;
@@ -378,9 +382,9 @@ public class PersonalController {
 
 								break;
 							case 16:// 工齡=(TODAY()-到崗時間)/365
-								double f1 = new BigDecimal((float)DateTimeUtil.differentDaysByMillisecond(salary.getArrivalTime(),new Date())/365).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-								
-								salary.setWorkingYears(BigDecimal.valueOf(f1));
+//								double f1 = new BigDecimal((float)DateTimeUtil.differentDaysByMillisecond(salary.getArrivalTime(),new Date())/365).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+//								
+//								salary.setWorkingYears(BigDecimal.valueOf(f1));
 								break;
 							case 17:// 缴纳社保起始月份
 								transforValue = String.valueOf(cellValue).trim();
@@ -433,26 +437,42 @@ public class PersonalController {
 							case 24:// 身份证411024199101118518
 								transforValue = String.valueOf(cellValue).trim();
 								person.setIdentityCard(transforValue);
+								// 年龄=YEAR(TODAY())-MID(身份证,7,4)
+								String strBirthDay=transforValue.substring(6, 14);
+								SimpleDateFormat sdtAge=new SimpleDateFormat("yyyyMMdd");
+								java.util.Date birthDay=sdtAge.parse(strBirthDay);
+								String curAge = String.valueOf(DateTimeUtil.yearDateDiff(birthDay,new Date())).trim();
+								person.setAge(Integer.parseInt(curAge));
+								// 性别=IF(MOD(MID(身份证,15,3),2),"男","女")
+								String curSexString="";
+								if (Integer.parseInt(transforValue.substring(16).substring(0, 1)) % 2 == 0) {// 判断性别
+									curSexString = "女";
+								} else {
+									curSexString = "男";
+								}
+								person.setSex(curSexString);
+								// 出生日期=MID(身份证,11,2)&"月"&MID(身份证,13,2)&"日"
+								person.setBirthday(birthDay);
 								break;
 							case 25:// 年龄=YEAR(TODAY())-MID(身份证,7,4)
 								//取生日
-								String strBirthDay=person.getIdentityCard().substring(6, 14);
-								SimpleDateFormat sdtAge=new SimpleDateFormat("yyyyMMdd");
-								java.util.Date birthDay=sdtAge.parse(strBirthDay);
-								transforValue = String.valueOf(DateTimeUtil.yearDateDiff(birthDay,new Date())).trim();
-								person.setAge(Integer.parseInt(transforValue));
+//								String strBirthDay=person.getIdentityCard().substring(6, 14);
+//								SimpleDateFormat sdtAge=new SimpleDateFormat("yyyyMMdd");
+//								java.util.Date birthDay=sdtAge.parse(strBirthDay);
+//								transforValue = String.valueOf(DateTimeUtil.yearDateDiff(birthDay,new Date())).trim();
+//								person.setAge(Integer.parseInt(transforValue));
 								break;
 							case 26:// 性别=IF(MOD(MID(身份证,15,3),2),"男","女")
-								if (Integer.parseInt(person.getIdentityCard().substring(16).substring(0, 1)) % 2 == 0) {// 判断性别
-									transforValue = "女";
-								} else {
-									transforValue = "男";
-								}
-								person.setSex(transforValue);
+//								if (Integer.parseInt(person.getIdentityCard().substring(16).substring(0, 1)) % 2 == 0) {// 判断性别
+//									transforValue = "女";
+//								} else {
+//									transforValue = "男";
+//								}
+//								person.setSex(transforValue);
 								break;
 							case 27:// 出生日期=MID(身份证,11,2)&"月"&MID(身份证,13,2)&"日"
-								transforValue = person.getIdentityCard().substring(10, 12)+"月"+person.getIdentityCard().substring(12, 14)+"日";
-								person.setBirthday(transforValue);
+//								transforValue = person.getIdentityCard().substring(10, 12)+"月"+person.getIdentityCard().substring(12, 14)+"日";
+//								person.setBirthday(transforValue);
 								break;
 							case 28:// 户口性质
 								transforValue = String.valueOf(cellValue).trim();
@@ -496,12 +516,15 @@ public class PersonalController {
 									SimpleDateFormat sdtGraduationTime=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									Date graduationTime=sdtGraduationTime.parse(String.valueOf(cellValue).trim());
 									person.setGraduationTime(graduationTime);
+									// 工作年限=DATEDIF(毕业时间,TODAY(),"Y")&"年"
+									String curWorkingLife = String.valueOf(DateTimeUtil.yearDateDiff(graduationTime,new Date())+"年").trim();
+									person.setWorkingLife(curWorkingLife);
 								}
 								
 								break;
 							case 38:// 工作年限=DATEDIF(毕业时间,TODAY(),"Y")&"年"
-								transforValue = String.valueOf(DateTimeUtil.yearDateDiff(person.getGraduationTime(),new Date())+"年").trim();
-								person.setWorkingLife(transforValue);
+//								transforValue = String.valueOf(DateTimeUtil.yearDateDiff(person.getGraduationTime(),new Date())+"年").trim();
+//								person.setWorkingLife(transforValue);
 								break;
 							case 39:// 联系地址
 								transforValue = String.valueOf(cellValue).trim();
@@ -591,6 +614,10 @@ public class PersonalController {
 							case 57:// 邮箱
 								transforValue = String.valueOf(cellValue).trim();
 								person.setEmail(transforValue);	
+								break;
+							case 58:// 社保实缴月份
+								transforValue = String.valueOf(cellValue).trim();
+								salary.setInsuranceRealDate(transforValue);
 								break;
 						}
 	                }  
@@ -804,9 +831,20 @@ public class PersonalController {
     * @param String name, 姓名
     * @param String expatriateUnit,外派单位
     * @param String postType,岗位
+    * @param String position,职位
+    * @param String level, 级别
     * @param String department,部门
     * @param String center,中心
-    * @param String workingPlace,工作地点 	
+    * @param String workingPlace,工作地点 
+    * @param Integer leaveStatus,离职状态：0：已离职；1：在职  
+    * @param String entryStartDate,入职时间查询的开始时间
+    * @param String entryEndDate,入职时间查询的截止时间	
+    * @param String workerStartDate,转正时间查询的开始时间
+    * @param String workerEndDate,转正时间查询的截止时间	
+    * @param String leaveStartDate,离职时间查询的开始时间
+    * @param String leaveEndDate,离职时间查询的截止时间	
+    * @param String birthdayStartDate,生日查询的开始时间
+    * @param String birthdayEndDate,生日查询的截止时间	
     * @param int pageIndex, 分页页数
     * @param int pageSize 	行数
     * @return String    
@@ -819,24 +857,81 @@ public class PersonalController {
 	public String getPersonalAllList(@Param("name") String name,
 			@Param("expatriateUnit") String expatriateUnit,
 			@Param("postType") String postType,
+			@Param("position") String position,
+			@Param("level") String level,
 			@Param("department") String department,
 			@Param("center") String center,
 			@Param("workingPlace") String workingPlace,
+			@Param("leaveStatus") Integer leaveStatus, 
+			@Param("entryStartDate")String  entryStartDate,
+			@Param("entryEndDate")String  entryEndDate,
+			@Param("workerStartDate")String  workerStartDate,
+			@Param("workerEndDate")String  workerEndDate,
+			@Param("leaveStartDate")String  leaveStartDate,
+			@Param("leaveEndDate")String  leaveEndDate,
+			@Param("birthdayStartDate")String  birthdayStartDate,
+			@Param("birthdayEndDate")String  birthdayEndDate,
 			@Param("pageIndex") int pageIndex, 
 			@Param("pageSize") int pageSize) {
 		PersonalCondition condition = new PersonalCondition();
-//		if(StringUtils.isNotBlank(name)){
-//			// 当查询条件有姓名时，只需要根据姓名查出该单，其他条件忽略
-//			condition.setName(name);
-//		} else {
 			condition.setName(name);
 			condition.setExpatriateUnit(expatriateUnit);
 			condition.setPostType(postType);
+			condition.setPosition(position);
+			condition.setLevel(level);
 			condition.setDepartment(department);
 			condition.setCenter(center);
 			condition.setWorkingPlace(workingPlace);
+			condition.setLeaveStatus(leaveStatus);
+			SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
+			Date curEntryStartDate=null;
+			Date curEntryEndDate=null;
+			Date curWorkerStartDate=null;
+			Date curWorkerEndDate=null;
+			Date curLeaveStartDate=null;
+			Date curLeaveEndDate=null;
+			Date curBirthdayStartDate=null;
+			Date curBirthdayEndDate=null;
+			try {
+				if(StringUtils.isNotBlank(entryStartDate)){
+					curEntryStartDate = sdt.parse(String.valueOf(entryStartDate).trim());			
+				}
+				if(StringUtils.isNotBlank(entryEndDate)){
+					curEntryEndDate = sdt.parse(String.valueOf(entryEndDate).trim());
+				}
+				if(StringUtils.isNotBlank(workerStartDate)){
+					curWorkerStartDate = sdt.parse(String.valueOf(workerStartDate).trim());			
+				}
+				if(StringUtils.isNotBlank(workerEndDate)){
+					curWorkerEndDate = sdt.parse(String.valueOf(workerEndDate).trim());
+				}
+				if(StringUtils.isNotBlank(leaveStartDate)){
+					curLeaveStartDate = sdt.parse(String.valueOf(leaveStartDate).trim());			
+				}
+				if(StringUtils.isNotBlank(leaveEndDate)){
+					curLeaveEndDate = sdt.parse(String.valueOf(leaveEndDate).trim());
+				}
+				if(StringUtils.isNotBlank(birthdayStartDate)){
+					curBirthdayStartDate = sdt.parse(String.valueOf(birthdayStartDate).trim());			
+				}
+				if(StringUtils.isNotBlank(birthdayEndDate)){
+					curBirthdayEndDate = sdt.parse(String.valueOf(birthdayEndDate).trim());
+				}
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				logger.error("=====参数错误，日期格式不对，转换错误=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，日期格式不对，转换错误！");
+			}
+			condition.setEntryStartDate(curEntryStartDate);
+			condition.setEntryEndDate(curEntryEndDate);
+			condition.setWorkerStartDate(curWorkerStartDate);
+			condition.setWorkerEndDate(curWorkerEndDate);
+			condition.setLeaveStartDate(curLeaveStartDate);
+			condition.setLeaveEndDate(curLeaveEndDate);
+			condition.setBirthdayStartDate(curBirthdayStartDate);
+			condition.setBirthdayEndDate(curBirthdayEndDate);
 			
-//		}
 		pageIndex = pageIndex < 0 ? 0 : pageIndex;
 		pageSize = pageSize < 1 ? 1 : pageSize;
 //		condition.setOrderby("id");
