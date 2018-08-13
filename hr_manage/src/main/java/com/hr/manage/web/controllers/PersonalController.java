@@ -177,6 +177,58 @@ public class PersonalController {
 		
 	}
 	
+	
+	/**
+     * 
+    * Title: addPersonalAllInfo
+    * Description: 新增员工基本信息
+    * Url: personal/addPersonalAllInfo
+    * @param String personalAllJsonStr 员工基本信息json串
+    * @return String    
+    * @throws
+    * @see PersonalAll
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Post("addPersonalAllInfo")
+	@Get("addPersonalAllInfo")
+	public String addPersonalAllInfo(
+			@Param("personalAllJsonStr") String personalAllJsonStr) {
+		if(StringUtils.isBlank(personalAllJsonStr)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		PersonalAll personalAll = null;
+		try {
+			personalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
+		} catch (Exception e) {
+			logger.error("=====新增员工基本信息，解析参数出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+		}
+		//验证员工信息是否存在
+        int checkNum = personalService.checkPersonalByNameAndCard(personalAll.getPersonalInfo().getName(), personalAll.getPersonalInfo().getIdentityCard());
+        if(checkNum>0){
+        	logger.error("====="+String.format("员工信息已存在,姓名:%s,身份证:%s", personalAll.getPersonalInfo().getName(), personalAll.getPersonalInfo().getIdentityCard())+"=====");
+        	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工信息已存在,姓名:%s,身份证:%s", personalAll.getPersonalInfo().getName(), personalAll.getPersonalInfo().getIdentityCard())); 
+        }
+		//进行新增
+		int result =0;
+		try {
+			result = personalService.addPersonalAllInfo(personalAll);
+		} catch (Exception e) {
+			logger.error("新增数据时数据库异常"+e);
+			return "@"+JSONResult.error(CodeMsg.ERROR,"增数据时数据库异常"+e);
+		}
+		if(result<=0){
+			logger.error("新增基本信息失败");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"新增基本信息失败");
+		}
+		return "@"+JSONResult.success();
+
+	}
+	
+	
+	
 	/**
      * 
     * Title:importExcel

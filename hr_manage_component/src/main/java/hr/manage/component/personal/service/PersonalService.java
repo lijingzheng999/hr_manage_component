@@ -99,7 +99,16 @@ public interface PersonalService {
      */
 	public int updatePersonalAllInfo(PersonalAll newPersonalAll);
 	
-
+	/**
+     * 
+    * @Title: addPersonalAllInfo
+    * @Description: 新增员工基本信息;人事权限
+    * @Param PersonalAll personalAll 
+    * @return int    
+    * @throws
+     */
+	public int addPersonalAllInfo(PersonalAll personalAll);
+	
 	/**
      * 
     * @Title: addLeaveInfo
