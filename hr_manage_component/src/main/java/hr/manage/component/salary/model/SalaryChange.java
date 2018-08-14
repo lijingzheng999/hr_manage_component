@@ -1,4 +1,5 @@
 package hr.manage.component.salary.model;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import net.paoding.rose.jade.plugin.sql.annotations.Column;
@@ -37,11 +38,11 @@ public class SalaryChange implements java.io.Serializable {
 
     /** 调薪幅度 */
     @Column(value = "change_range")
-    private Integer changeRange;
+    private BigDecimal changeRange;
 
     /** 调薪后工资 */
     @Column(value = "final_salary")
-    private Integer finalSalary;
+    private BigDecimal finalSalary;
 
     /** 调薪原因 */
     @Column(value = "reason")
@@ -100,19 +101,19 @@ public class SalaryChange implements java.io.Serializable {
 		this.type = type;
 	}
 
-	public Integer getChangeRange() {
+	public BigDecimal getChangeRange() {
 		return changeRange;
 	}
 
-	public void setChangeRange(Integer changeRange) {
+	public void setChangeRange(BigDecimal changeRange) {
 		this.changeRange = changeRange;
 	}
 
-	public Integer getFinalSalary() {
+	public BigDecimal getFinalSalary() {
 		return finalSalary;
 	}
 
-	public void setFinalSalary(Integer finalSalary) {
+	public void setFinalSalary(BigDecimal finalSalary) {
 		this.finalSalary = finalSalary;
 	}
 

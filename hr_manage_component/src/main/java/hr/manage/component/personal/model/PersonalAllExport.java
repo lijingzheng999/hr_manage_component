@@ -190,19 +190,19 @@ public class PersonalAllExport implements java.io.Serializable {
     private String workerWelfare;
 
     /** 基本工资 */
-    private Integer basePay;
+    private BigDecimal basePay;
 
     /** 绩效工资 */
-    private Integer meritPay;
+    private BigDecimal meritPay;
 
     /** 补贴 */
-    private Integer subsidy;
+    private BigDecimal subsidy;
 
     /** 转正工资 */
-    private Integer workerPay;
+    private BigDecimal workerPay;
 
     /** 试用期工资 */
-    private Integer probationaryPay;
+    private BigDecimal probationaryPay;
 
     /** 结算价 */
     private BigDecimal settlementPrice;
@@ -672,43 +672,43 @@ public class PersonalAllExport implements java.io.Serializable {
 		this.workerWelfare = workerWelfare;
 	}
 
-	public Integer getBasePay() {
+	public BigDecimal getBasePay() {
 		return basePay;
 	}
 
-	public void setBasePay(Integer basePay) {
+	public void setBasePay(BigDecimal basePay) {
 		this.basePay = basePay;
 	}
 
-	public Integer getMeritPay() {
+	public BigDecimal getMeritPay() {
 		return meritPay;
 	}
 
-	public void setMeritPay(Integer meritPay) {
+	public void setMeritPay(BigDecimal meritPay) {
 		this.meritPay = meritPay;
 	}
 
-	public Integer getSubsidy() {
+	public BigDecimal getSubsidy() {
 		return subsidy;
 	}
 
-	public void setSubsidy(Integer subsidy) {
+	public void setSubsidy(BigDecimal subsidy) {
 		this.subsidy = subsidy;
 	}
 
-	public Integer getWorkerPay() {
+	public BigDecimal getWorkerPay() {
 		return workerPay;
 	}
 
-	public void setWorkerPay(Integer workerPay) {
+	public void setWorkerPay(BigDecimal workerPay) {
 		this.workerPay = workerPay;
 	}
 
-	public Integer getProbationaryPay() {
+	public BigDecimal getProbationaryPay() {
 		return probationaryPay;
 	}
 
-	public void setProbationaryPay(Integer probationaryPay) {
+	public void setProbationaryPay(BigDecimal probationaryPay) {
 		this.probationaryPay = probationaryPay;
 	}
 

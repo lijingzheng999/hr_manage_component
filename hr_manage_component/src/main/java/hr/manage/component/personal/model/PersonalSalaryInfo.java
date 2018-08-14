@@ -75,23 +75,23 @@ public class PersonalSalaryInfo implements java.io.Serializable {
 
     /** 基本工资 */
     @Column(value = "base_pay")
-    private Integer basePay;
+    private BigDecimal basePay;
 
     /** 绩效工资 */
     @Column(value = "merit_pay")
-    private Integer meritPay;
+    private BigDecimal meritPay;
 
     /** 补贴 */
     @Column(value = "subsidy")
-    private Integer subsidy;
+    private BigDecimal subsidy;
 
     /** 转正工资 */
     @Column(value = "worker_pay")
-    private Integer workerPay;
+    private BigDecimal workerPay;
 
     /** 试用期工资 */
     @Column(value = "probationary_pay")
-    private Integer probationaryPay;
+    private BigDecimal probationaryPay;
 
     /** 结算价 */
     @Column(value = "settlement_price")
@@ -370,7 +370,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * 
      * @return 基本工资
      */
-    public Integer getBasePay() {
+    public BigDecimal getBasePay() {
         return this.basePay;
     }
 
@@ -380,7 +380,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * @param basePay
      *          基本工资
      */
-    public void setBasePay(Integer basePay) {
+    public void setBasePay(BigDecimal basePay) {
         this.basePay = basePay;
     }
 
@@ -389,7 +389,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * 
      * @return 绩效工资
      */
-    public Integer getMeritPay() {
+    public BigDecimal getMeritPay() {
         return this.meritPay;
     }
 
@@ -399,7 +399,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * @param meritPay
      *          绩效工资
      */
-    public void setMeritPay(Integer meritPay) {
+    public void setMeritPay(BigDecimal meritPay) {
         this.meritPay = meritPay;
     }
 
@@ -408,7 +408,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * 
      * @return 补贴
      */
-    public Integer getSubsidy() {
+    public BigDecimal getSubsidy() {
         return this.subsidy;
     }
 
@@ -418,7 +418,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * @param subsidy
      *          补贴
      */
-    public void setSubsidy(Integer subsidy) {
+    public void setSubsidy(BigDecimal subsidy) {
         this.subsidy = subsidy;
     }
 
@@ -427,7 +427,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * 
      * @return 转正工资
      */
-    public Integer getWorkerPay() {
+    public BigDecimal getWorkerPay() {
         return this.workerPay;
     }
 
@@ -437,7 +437,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * @param workerPay
      *          转正工资
      */
-    public void setWorkerPay(Integer workerPay) {
+    public void setWorkerPay(BigDecimal workerPay) {
         this.workerPay = workerPay;
     }
 
@@ -446,7 +446,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * 
      * @return 试用期工资
      */
-    public Integer getProbationaryPay() {
+    public BigDecimal getProbationaryPay() {
         return this.probationaryPay;
     }
 
@@ -456,7 +456,7 @@ public class PersonalSalaryInfo implements java.io.Serializable {
      * @param probationaryPay
      *          试用期工资
      */
-    public void setProbationaryPay(Integer probationaryPay) {
+    public void setProbationaryPay(BigDecimal probationaryPay) {
         this.probationaryPay = probationaryPay;
     }
 
