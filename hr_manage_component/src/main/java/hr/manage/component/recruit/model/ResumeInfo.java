@@ -23,29 +23,34 @@ public class ResumeInfo implements java.io.Serializable {
     @Column(value = "name")
     private String name;
 
-    /** 联系电话 */
-    @Column(value = "phone")
-    private String phone;
-    
-    /** 年龄 */
-    @Column(value = "age")
-    private Integer age;
-    
-    /** 性别 */
-    @Column(value = "sex")
-    private String sex;
+    /** 邀约时间 */
+    @Column(value = "invite_time")
+    private Date inviteTime;
 
-    /** 种类(邀约人员、面试通过者和未通过者) 暂留 */
-    @Column(value = "type")
-    private String type;
-
+    /** 面试时间 */
+    @Column(value = "interview_time")
+    private Date interviewTime;
+    
     /** 岗位名称(职位) */
     @Column(value = "position")
     private String position;
 
+    /** 性别 */
+    @Column(value = "sex")
+    private String sex;
+    
+    /** 出生日期 */
+    @Column(value = "birthday")
+    private String birthday;
+    
     /** 经验要求(工作年限,单位年) */
     @Column(value = "experience")
     private Integer experience;
+    
+    /** 联系电话 */
+    @Column(value = "phone")
+    private String phone;
+    
 
     /** 邮箱 */
     @Column(value = "email")
@@ -63,25 +68,9 @@ public class ResumeInfo implements java.io.Serializable {
     @Column(value = "education")
     private String education;
 
-    /** 出生日期 */
-    @Column(value = "birthday")
-    private String birthday;
-
-    /** 邀约时间 */
-    @Column(value = "invite_time")
-    private Date inviteTime;
-
-    /** 面试时间 */
-    @Column(value = "interview_time")
-    private Date interviewTime;
-
-    /** 面试是否通过 1通过 0未通过 */
-    @Column(value = "is_pass")
-    private Integer isPass;
-
-    /** 是否入职  1入职 0未入职 */
-    @Column(value = "is_entry")
-    private Integer isEntry;
+    /** 面试状态 1:进行中;0:未通过;2:面试通过 */
+    @Column(value = "status")
+    private Integer status;
 
     /** 是否删除 1未删除 0已删除 */
     @Column(value = "is_del")
@@ -152,14 +141,6 @@ public class ResumeInfo implements java.io.Serializable {
         this.phone = phone;
     }
 
-    public Integer getAge() {
-		return age;
-	}
-
-	public void setAge(Integer age) {
-		this.age = age;
-	}
-
 	/**
      * 获取性别
      * 
@@ -179,24 +160,7 @@ public class ResumeInfo implements java.io.Serializable {
         this.sex = sex;
     }
 
-    /**
-     * 获取种类(邀约人员、面试通过者和未通过者) 暂留
-     * 
-     * @return 种类(邀约人员、面试通过者和未通过者) 暂留
-     */
-    public String getType() {
-        return this.type;
-    }
-
-    /**
-     * 设置种类(邀约人员、面试通过者和未通过者) 暂留
-     * 
-     * @param type
-     *          种类(邀约人员、面试通过者和未通过者) 暂留
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
+ 
 
     /**
      * 获取岗位名称(职位)
@@ -369,45 +333,16 @@ public class ResumeInfo implements java.io.Serializable {
         this.interviewTime = interviewTime;
     }
 
-    /**
-     * 获取面试是否通过 1通过 0未通过
-     * 
-     * @return 面试是否通过 1通过 0未通过
-     */
-    public Integer getIsPass() {
-        return this.isPass;
-    }
 
-    /**
-     * 设置面试是否通过 1通过 0未通过
-     * 
-     * @param isPass
-     *          面试是否通过 1通过 0未通过
-     */
-    public void setIsPass(Integer isPass) {
-        this.isPass = isPass;
-    }
+    public Integer getStatus() {
+		return status;
+	}
 
-    /**
-     * 获取是否入职  1入职 0未入职
-     * 
-     * @return 是否入职  1入职 0未入职
-     */
-    public Integer getIsEntry() {
-        return this.isEntry;
-    }
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
-    /**
-     * 设置是否入职  1入职 0未入职
-     * 
-     * @param isEntry
-     *          是否入职  1入职 0未入职
-     */
-    public void setIsEntry(Integer isEntry) {
-        this.isEntry = isEntry;
-    }
-
-    /**
+	/**
      * 获取是否删除 1未删除 0已删除
      * 
      * @return 是否删除 1未删除 0已删除

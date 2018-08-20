@@ -22,8 +22,8 @@ public class ResumeCondition implements Serializable {
     private String position;
     /** 经验要求(工作年限,单位年) */
     private Integer experience;
-    /** 年龄 */
-    private Integer age;
+    /** 面试状态 1:进行中;0:未通过;2:面试通过 */
+    private Integer status;
   
    
     /**分页开始位置*/
@@ -44,11 +44,12 @@ public class ResumeCondition implements Serializable {
 	public void setExperience(Integer experience) {
 		this.experience = experience;
 	}
-	public Integer getAge() {
-		return age;
+	
+	public Integer getStatus() {
+		return status;
 	}
-	public void setAge(Integer age) {
-		this.age = age;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 	public Integer getOffset() {
 		return offset;

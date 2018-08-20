@@ -228,6 +228,66 @@ public class ResumeController {
 	
 	/**
      * 
+    * Title: updateRecruitStatusComplete
+    * Description: 更改状态为已完成
+    * Url: resume/updateRecruitStatusComplete
+    * @param Integer recruitInfoId
+    * @return String    
+    * @throws
+    * @see RecruitInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_9)
+	@NotCareLogin
+	@Post("updateRecruitStatusComplete")
+	@Get("updateRecruitStatusComplete")
+	public String updateRecruitStatusComplete(
+			@Param("recruitInfoId") Integer recruitInfoId) {
+	
+		RecruitInfo recruit = resumeService.getRecruitInfo(recruitInfoId);
+		if (recruit !=null) {
+			if(recruit.getStatus().equals(1)){
+				resumeService.updateStatusComplete(recruitInfoId);
+				return "@" + JSONResult.success();
+			}else{
+				logger.error("=====此招聘需求数据不是进行中状态=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "此招聘需求数据不是进行中状态");
+			}
+		} else {
+			logger.error("===== 获取招聘需求数据失败,没有此ID数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID没有找到数据");
+		}
+
+	}
+	
+	/**
+     * 
+    * Title: getRecruitInfo
+    * Description: 获取招聘需求数据
+    * Url: resume/getRecruitInfo
+    * @param Integer recruitInfoId
+    * @return String    
+    * @throws
+    * @see RecruitInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_9)
+	@NotCareLogin
+	@Post("getRecruitInfo")
+	@Get("getRecruitInfo")
+	public String getRecruitInfo(
+			@Param("recruitInfoId") Integer recruitInfoId) {
+	
+		RecruitInfo recruit = resumeService.getRecruitInfo(recruitInfoId);
+		if (recruit !=null) {
+			return "@" + JSONResult.success(recruit);
+		} else {
+			logger.error("===== 获取招聘需求数据失败,没有此ID数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID没有找到数据");
+		}
+
+	}
+	
+	/**
+     * 
     * Title: addResumeInfo
     * Description: 新增简历信息
     * Url: resume/addResumeInfo
@@ -290,15 +350,10 @@ public class ResumeController {
 			@Param("pageIndex") int pageIndex, 
 			@Param("pageSize") int pageSize) {
 		ResumeCondition condition = new ResumeCondition();
-//		if(StringUtils.isNotBlank(name)){
-//			// 当查询条件有姓名时，只需要根据姓名查出该单，其他条件忽略
-//			condition.setName(name);
-//		} else {
+
 			condition.setPosition(position);
-			condition.setAge(age);
 			condition.setExperience(experience);
 			
-//		}
 		pageIndex = pageIndex < 0 ? 0 : pageIndex;
 		pageSize = pageSize < 1 ? 1 : pageSize;
 //		condition.setOrderby("createtime");
@@ -345,6 +400,35 @@ public class ResumeController {
 
 	}
 	
+
+	/**
+     * 
+    * Title: getResumeInfo
+    * Description:  根据ID获取简历信息
+    * Url: resume/getResumeInfo
+    * @param  Integer resumeInfoId
+    * @return String    
+    * @throws
+    * @see ResumeInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("getResumeInfo")
+	@Get("getResumeInfo")
+	public String getResumeInfo(
+			@Param("resumeInfoId") Integer resumeInfoId) {
+		
+		ResumeInfo resume = resumeService.getResumeInfo(resumeInfoId);
+		if (resume !=null) {
+			return "@" + JSONResult.success(resume);
+		} else {
+			logger.error("=====根据ID获取简历信息失败,没有此数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID获取简历信息失败,没有此数据");
+		}
+
+	}
+	
+	
 	/**
      * 
     * Title: updateResumeInfo
@@ -384,4 +468,44 @@ public class ResumeController {
 
 	}
 	
+	/**
+     * 
+    * Title: updateResumeStatus
+    * Description: 面试是否通过; status=2通过；status=0未通过
+    * Url: resume/updateResumeStatus
+    * @param Integer resumeInfoId
+    * @param Integer status
+    * @return String    
+    * @throws
+    * @see ResumeInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateResumeStatus")
+	@Get("updateResumeStatus")
+	public String updateResumeStatus(
+			@Param("resumeInfoId") Integer resumeInfoId,@Param("status") Integer status) {
+		
+		ResumeInfo resume = resumeService.getResumeInfo(resumeInfoId);
+		if (resume !=null) {
+			if(resume.getStatus()!=1){
+				logger.error("=====简历状态不是进行中=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "变更状态失败,简历状态不是进行中");
+			}
+			resume.setUpdateTime(new Date());
+			resume.setStatus(status);//status=2通过；status=0未通过
+			boolean result = resumeService.updateResumeInfo(resume);
+			if (result) {
+				return "@" + JSONResult.success();
+			} else {
+				logger.error("=====修改简历信息失败,数据库保存失败=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "修改简历信息失败,数据库保存失败");
+			}
+		} else {
+			logger.error("=====根据ID获取简历信息失败,没有此数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID获取简历信息失败,没有此数据");
+		}
+		
+
+	}
 }

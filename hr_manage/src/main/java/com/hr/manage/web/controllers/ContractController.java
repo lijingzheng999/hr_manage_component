@@ -326,5 +326,29 @@ public class ContractController {
 		}
 	}
 	
+	/**
+     * 
+    * Title: getContractInfoById
+    * Description: 删除合同信息
+    * Url: contract/getContractInfoById
+    * @param Integer contractInfoId  合同ID
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_13)
+	@NotCareLogin
+	@Post("getContractInfoById")
+	@Get("getContractInfoById")
+	public String getContractInfoById(
+			@Param("contractInfoId")Integer contractInfoId) {
+
+		ContractInfo contractInfo = contractService.getContractInfoById(contractInfoId);
+		if (contractInfo != null) {
+			return "@" + JSONResult.success(contractInfo);			
+		} else {
+			logger.error("=====根据合同ID未查到基本信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据合同ID未查到基本信息");
+		}
+	}
 	
 }

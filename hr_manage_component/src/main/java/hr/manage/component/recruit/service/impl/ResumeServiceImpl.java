@@ -40,10 +40,19 @@ public class ResumeServiceImpl implements ResumeService {
 	}
 	
 	@Override
+	public int updateStatusComplete(Integer recruitInfoId){
+		return recruitInfoDAO.updateStatusComplete(recruitInfoId);
+	}
+	
+	
+	@Override
 	public boolean updateRecruitInfo(RecruitInfo recruitInfo){
 		return recruitInfoDAO.update(recruitInfo);
 	}
-	
+	@Override
+	public RecruitInfo getRecruitInfo(Integer recruitInfoId){
+		return recruitInfoDAO.get(recruitInfoId);
+	}
 	@Override
 	public int addResumeInfo(ResumeInfo resumeInfo){
 		return resumeInfoDAO.save(resumeInfo);
@@ -62,6 +71,11 @@ public class ResumeServiceImpl implements ResumeService {
 	@Override
 	public int deleteResumeInfo(Integer resumeInfoId){
 		return resumeInfoDAO.deleteResumeInfo(resumeInfoId);
+	}
+	
+	@Override
+	public ResumeInfo getResumeInfo(Integer resumeInfoId){
+		return resumeInfoDAO.get(resumeInfoId);
 	}
 	
 	@Override

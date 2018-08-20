@@ -19,21 +19,33 @@ public class RecruitInfo implements java.io.Serializable {
     @Column(pk=true,value = "id")
     private Integer id;
 
+    /** 外派单位 */
+    @Column(value = "expatriate_unit")
+    private String expatriateUnit;
+    
+    /** 中心 */
+    @Column(value = "center")
+    private String center;
+    
+    /** 地市 */
+    @Column(value = "city")
+    private String city;
+    
+    /** 所在职场 */
+    @Column(value = "work_place")
+    private String workPlace;
+    
+    /** 人员缺口 */
+    @Column(value = "pepole_need")
+    private Integer pepoleNeed;
+    
     /** 岗位名称(职位) */
     @Column(value = "position")
     private String position;
 
-    /** 工作地点 */
-    @Column(value = "working_place")
-    private String workingPlace;
-
-    /** 经验要求(工作年限,单位年) */
-    @Column(value = "experience")
-    private Integer experience;
-
-    /** 学历要求 */
-    @Column(value = "education")
-    private String education;
+    /** 状态; 0:已完成；1:进行中 */
+    @Column(value = "status")
+    private Integer status;
 
     /** 岗位职责 */
     @Column(value = "post_duty")
@@ -55,193 +67,109 @@ public class RecruitInfo implements java.io.Serializable {
     @Column(value = "create_time")
     private Date createTime;
 
-    /**
-     * 获取表的主键
-     * 
-     * @return 表的主键
-     */
-    public Integer getId() {
-        return this.id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    /**
-     * 设置表的主键
-     * 
-     * @param id
-     *          表的主键
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    /**
-     * 获取岗位名称(职位)
-     * 
-     * @return 岗位名称(职位)
-     */
-    public String getPosition() {
-        return this.position;
-    }
+	public String getExpatriateUnit() {
+		return expatriateUnit;
+	}
 
-    /**
-     * 设置岗位名称(职位)
-     * 
-     * @param position
-     *          岗位名称(职位)
-     */
-    public void setPosition(String position) {
-        this.position = position;
-    }
+	public void setExpatriateUnit(String expatriateUnit) {
+		this.expatriateUnit = expatriateUnit;
+	}
 
-    /**
-     * 获取工作地点
-     * 
-     * @return 工作地点
-     */
-    public String getWorkingPlace() {
-        return this.workingPlace;
-    }
+	public String getCenter() {
+		return center;
+	}
 
-    /**
-     * 设置工作地点
-     * 
-     * @param workingPlace
-     *          工作地点
-     */
-    public void setWorkingPlace(String workingPlace) {
-        this.workingPlace = workingPlace;
-    }
+	public void setCenter(String center) {
+		this.center = center;
+	}
 
-    /**
-     * 获取经验要求(工作年限,单位年)
-     * 
-     * @return 经验要求(工作年限
-     */
-    public Integer getExperience() {
-        return this.experience;
-    }
+	public String getCity() {
+		return city;
+	}
 
-    /**
-     * 设置经验要求(工作年限,单位年)
-     * 
-     * @param experience
-     *          经验要求(工作年限
-     */
-    public void setExperience(Integer experience) {
-        this.experience = experience;
-    }
+	public void setCity(String city) {
+		this.city = city;
+	}
 
-    /**
-     * 获取学历要求
-     * 
-     * @return 学历要求
-     */
-    public String getEducation() {
-        return this.education;
-    }
+	public String getWorkPlace() {
+		return workPlace;
+	}
 
-    /**
-     * 设置学历要求
-     * 
-     * @param education
-     *          学历要求
-     */
-    public void setEducation(String education) {
-        this.education = education;
-    }
+	public void setWorkPlace(String workPlace) {
+		this.workPlace = workPlace;
+	}
 
-    /**
-     * 获取岗位职责
-     * 
-     * @return 岗位职责
-     */
-    public String getPostDuty() {
-        return this.postDuty;
-    }
+	public Integer getPepoleNeed() {
+		return pepoleNeed;
+	}
 
-    /**
-     * 设置岗位职责
-     * 
-     * @param postDuty
-     *          岗位职责
-     */
-    public void setPostDuty(String postDuty) {
-        this.postDuty = postDuty;
-    }
+	public void setPepoleNeed(Integer pepoleNeed) {
+		this.pepoleNeed = pepoleNeed;
+	}
 
-    /**
-     * 获取创建人
-     * 
-     * @return 创建人
-     */
-    public String getCreateUser() {
-        return this.createUser;
-    }
+	public String getPosition() {
+		return position;
+	}
 
-    /**
-     * 设置创建人
-     * 
-     * @param createUser
-     *          创建人
-     */
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
+	public void setPosition(String position) {
+		this.position = position;
+	}
 
-    /**
-     * 获取是否删除 1未删除 0已删除
-     * 
-     * @return 是否删除 1未删除 0已删除
-     */
-    public Integer getIsDel() {
-        return this.isDel;
-    }
+	public Integer getStatus() {
+		return status;
+	}
 
-    /**
-     * 设置是否删除 1未删除 0已删除
-     * 
-     * @param isDel
-     *          是否删除 1未删除 0已删除
-     */
-    public void setIsDel(Integer isDel) {
-        this.isDel = isDel;
-    }
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
-    /**
-     * 获取修改时间
-     * 
-     * @return 修改时间
-     */
-    public Date getUpdateTime() {
-        return this.updateTime;
-    }
+	public String getPostDuty() {
+		return postDuty;
+	}
 
-    /**
-     * 设置修改时间
-     * 
-     * @param updateTime
-     *          修改时间
-     */
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+	public void setPostDuty(String postDuty) {
+		this.postDuty = postDuty;
+	}
 
-    /**
-     * 获取创建时间
-     * 
-     * @return 创建时间
-     */
-    public Date getCreateTime() {
-        return this.createTime;
-    }
+	public String getCreateUser() {
+		return createUser;
+	}
 
-    /**
-     * 设置创建时间
-     * 
-     * @param createTime
-     *          创建时间
-     */
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
+	public Integer getIsDel() {
+		return isDel;
+	}
+
+	public void setIsDel(Integer isDel) {
+		this.isDel = isDel;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+  
 }

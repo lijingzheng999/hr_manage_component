@@ -39,16 +39,35 @@ public interface ResumeService {
     * @throws
      */
 	public int deleteRecruitInfo(Integer recruitInfoId);
-	
+	/**
+     * 
+    * @Title: updateStatusComplete
+    * @Description: 更改状态为已完成
+    * @Param Integer recruitInfoId
+    * @return int    
+    * @throws
+     */
+	public int updateStatusComplete(Integer recruitInfoId);
 	/**
      * 
     * @Title: updateRecruitInfo
     * @Description: 修改招聘需求信息
     * @Param RecruitInfo recruitInfo
-    * @return int    
+    * @return boolean    
     * @throws
      */
 	public boolean updateRecruitInfo(RecruitInfo recruitInfo);
+	
+	/**
+     * 
+    * @Title: getRecruitInfo
+    * @Description: 通过ID获取招聘需求信息
+    * @Param Integer recruitInfoId
+    * @return RecruitInfo    
+    * @throws
+     */
+	public RecruitInfo getRecruitInfo(Integer recruitInfoId);
+	
 	
 	/**
      * 
@@ -82,7 +101,6 @@ public interface ResumeService {
      */
 	public Long countResumeInfo(ResumeCondition condition);
 
-	
 	/**
      * 
     * @Title: deleteResumeInfo
@@ -92,6 +110,16 @@ public interface ResumeService {
     * @throws
      */
 	public int deleteResumeInfo(Integer resumeInfoId);
+
+	/**
+     * 
+    * @Title: getResumeInfo
+    * @Description: 根据ID获取简历信息
+    * @Param Integer resumeInfoId
+    * @return ResumeInfo    
+    * @throws
+     */
+	public ResumeInfo getResumeInfo(Integer resumeInfoId);
 	
 	/**
      * 

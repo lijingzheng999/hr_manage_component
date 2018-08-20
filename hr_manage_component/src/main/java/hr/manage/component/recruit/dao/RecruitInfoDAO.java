@@ -13,7 +13,7 @@ public interface RecruitInfoDAO  extends GenericDAO<RecruitInfo,Integer>{
 	
 	public static final String TABLE = " recruit_info ";
 	
-	public static final String COLUMNS = " id,position,working_place,experience,education,post_duty,create_user ,is_del ,update_time ,create_time  ";
+	public static final String COLUMNS = " id,expatriate_unit,center,city,work_place,pepole_need,position,status,post_duty,create_user ,is_del ,update_time ,create_time  ";
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
@@ -22,7 +22,12 @@ public interface RecruitInfoDAO  extends GenericDAO<RecruitInfo,Integer>{
 	    List<RecruitInfo> listRecruitInfo(RecruitInfo recruitInfo);
 	   
 	    @SQL(" UPDATE "+TABLE+
-	    		" set is_del=0 " +
+	    		" set is_del=0 ,update_time = now() " +
 	            " WHERE id= :1 and is_del=1 ")
 	    int deleteRecruitInfo(Integer recruitInfoId);
+	    
+	    @SQL(" UPDATE "+TABLE+
+	    		" set status=0 ,update_time = now()  " +
+	            " WHERE id= :1 and is_del=1 ")
+	    int updateStatusComplete(Integer recruitInfoId);
 }

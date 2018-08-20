@@ -14,14 +14,14 @@ public interface ResumeInfoDAO  extends GenericDAO<ResumeInfo,Integer>{
 	
 	public static final String TABLE = " resume_info ";
 	
-	public static final String COLUMNS = " id,name,phone,age,sex,type,position,experience ,email ,school ,major ,education ,birthday,invite_time,interview_time,is_pass,is_entry,is_del,update_time,create_time ";
+	public static final String COLUMNS = " id,name,invite_time,interview_time,position,sex,birthday,experience,phone,email ,school ,major ,education ,status,is_del,update_time,create_time ";
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
 	            "#if(:1.position != null  && :1.position !='') { and position = :1.position } " +
-	            "#if(:1.age != null  && :1.age >0) { and age <= :1.age } " +
 	            "#if(:1.experience != null  && :1.experience >0) { and experience >= :1.experience } " +
-	    		" and is_del = 1 " +
+	            "#if(:1.status != null ) { and status = :1.status } " +
+	            " and is_del = 1 " +
 	            " order by id " +
 	             "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
 	    List<ResumeInfo> listResumeInfo(ResumeCondition condition);
@@ -29,13 +29,13 @@ public interface ResumeInfoDAO  extends GenericDAO<ResumeInfo,Integer>{
 	    
 	    @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +
 	    		"#if(:1.position != null  && :1.position !='') { and position = :1.position } " +
-	            "#if(:1.age != null  && :1.age >0) { and age <= :1.age } " +
 	            "#if(:1.experience != null  && :1.experience >0) { and experience >= :1.experience } " +
-	    		" and is_del=1 ")
+	            "#if(:1.status != null ) { and status = :1.status } " +
+	            " and is_del=1 ")
 	    Long countResumeInfo(ResumeCondition condition);
 	    
 	    @SQL(" UPDATE "+TABLE+
-	    		" set is_del=0 " +
+	    		" set is_del=0 ,update_time = now()" +
 	            " WHERE id= :1 and is_del=1 ")
 	    int deleteResumeInfo(Integer resumeInfoId);
 }
