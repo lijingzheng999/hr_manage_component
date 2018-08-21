@@ -25,11 +25,11 @@ public class ResumeInfo implements java.io.Serializable {
 
     /** 邀约时间 */
     @Column(value = "invite_time")
-    private Date inviteTime;
+    private String inviteTime;
 
     /** 面试时间 */
     @Column(value = "interview_time")
-    private Date interviewTime;
+    private String interviewTime;
     
     /** 岗位名称(职位) */
     @Column(value = "position")
@@ -300,7 +300,7 @@ public class ResumeInfo implements java.io.Serializable {
      * 
      * @return 邀约时间
      */
-    public Date getInviteTime() {
+    public String getInviteTime() {
         return this.inviteTime;
     }
 
@@ -310,7 +310,7 @@ public class ResumeInfo implements java.io.Serializable {
      * @param inviteTime
      *          邀约时间
      */
-    public void setInviteTime(Date inviteTime) {
+    public void setInviteTime(String inviteTime) {
         this.inviteTime = inviteTime;
     }
 
@@ -319,7 +319,7 @@ public class ResumeInfo implements java.io.Serializable {
      * 
      * @return 面试时间
      */
-    public Date getInterviewTime() {
+    public String getInterviewTime() {
         return this.interviewTime;
     }
 
@@ -329,7 +329,7 @@ public class ResumeInfo implements java.io.Serializable {
      * @param interviewTime
      *          面试时间
      */
-    public void setInterviewTime(Date interviewTime) {
+    public void setInterviewTime(String interviewTime) {
         this.interviewTime = interviewTime;
     }
 

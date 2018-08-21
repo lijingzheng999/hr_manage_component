@@ -13,18 +13,18 @@ import net.paoding.rose.jade.plugin.sql.annotations.Column;
 * @date 
 *
  */
-public class ResumeCondition implements Serializable {
+public class ResumeInterviewCondition implements Serializable {
 
     /**@Fields serialVersionUID : TODO*/
      
     private static final long serialVersionUID = -905122817335164026L;
     /** 姓名 */
     private String name;
+    /**外派单位*/
+    private String expatriateUnit;
     /** 岗位名称(职位) */
     private String position;
-    /** 经验要求(工作年限,单位年) */
-    private Integer experience;
-    /** 面试状态 1:进行中;0:未通过;2:面试通过 */
+    /** 入职状态：2：已入职，1：待入职；0：未入职（未入职来个原因） */
     private Integer status;
   
    
@@ -42,19 +42,20 @@ public class ResumeCondition implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getExpatriateUnit() {
+		return expatriateUnit;
+	}
+	public void setExpatriateUnit(String expatriateUnit) {
+		this.expatriateUnit = expatriateUnit;
+	}
 	public String getPosition() {
 		return position;
 	}
 	public void setPosition(String position) {
 		this.position = position;
 	}
-	public Integer getExperience() {
-		return experience;
-	}
-	public void setExperience(Integer experience) {
-		this.experience = experience;
-	}
-	
+		
 	public Integer getStatus() {
 		return status;
 	}

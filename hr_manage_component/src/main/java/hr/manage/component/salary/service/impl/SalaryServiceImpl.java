@@ -7,6 +7,7 @@ import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
 import hr.manage.component.salary.service.SalaryService;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -50,15 +51,31 @@ public class SalaryServiceImpl implements SalaryService {
 		PersonalSalaryInfo salary = personalSalaryInfoDAO.getPersonalSalaryInfoById(salaryChange.getPersonalInfoId());
 		if(salary!=null){
 			//调级--修改基本工资
-			Integer oldBasePay = salary.getBasePay();
-			Integer oldMeritPay = salary.getMeritPay();
+			BigDecimal oldBasePay = salary.getBasePay();
+			BigDecimal oldMeritPay = salary.getMeritPay();
 			if(salaryChange.getType()==1){
-				salary.setBasePay(oldBasePay+salaryChange.getChangeRange());
-				salary.setWorkerPay(salaryChange.getChangeRange()+salary.getWorkerPay());
+				// 新基本工资=原基本工资+调薪幅度
+				BigDecimal basePay= BigDecimal.ZERO;
+				basePay=basePay.add(oldBasePay);
+				basePay=basePay.add( salaryChange.getChangeRange());
+				salary.setBasePay(basePay);
+				// 转正工资=原转正工资+调薪幅度
+				BigDecimal workerPay= BigDecimal.ZERO;
+				workerPay=workerPay.add(salaryChange.getChangeRange());
+				workerPay=workerPay.add(salary.getWorkerPay());
+				salary.setWorkerPay(workerPay);
 			}
 			else{ //调薪或其他--修改绩效工资
-				salary.setMeritPay(oldMeritPay+salaryChange.getChangeRange());
-				salary.setWorkerPay(salaryChange.getChangeRange()+salary.getWorkerPay());			
+				// 新绩效工资=原绩效工资+调薪幅度
+				BigDecimal meritPay= BigDecimal.ZERO;
+				meritPay=meritPay.add(oldMeritPay);
+				meritPay=meritPay.add(salaryChange.getChangeRange());
+				salary.setMeritPay(meritPay);
+				// 转正工资=原转正工资+调薪幅度
+				BigDecimal workerPay= BigDecimal.ZERO;
+				workerPay=workerPay.add(salaryChange.getChangeRange());
+				workerPay=workerPay.add(salary.getWorkerPay());
+				salary.setWorkerPay(workerPay);
 			}
 			salary.setUpdateTime(new Date());
 			boolean curResult = personalSalaryInfoDAO.update(salary);

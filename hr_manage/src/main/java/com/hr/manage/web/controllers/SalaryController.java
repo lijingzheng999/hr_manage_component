@@ -194,7 +194,10 @@ public class SalaryController {
 			return "@" + JSONResult.error(CodeMsg.ERROR,"新增工资调整信息失败，查不到此员工的工资信息");
 		}
 		//判断调薪幅度加上原来的转正工资是否等于 调薪后工资
-		if(!salaryChange.getFinalSalary().equals(salaryChange.getChangeRange()+personalAll.getPersonalSalaryInfo().getWorkerPay())){
+		BigDecimal newPay= BigDecimal.ZERO;
+		newPay=newPay.add(salaryChange.getChangeRange());
+		newPay=newPay.add(personalAll.getPersonalSalaryInfo().getWorkerPay());
+		if(!salaryChange.getFinalSalary().equals(newPay)){
 			logger.error("=====新增工资调整信息失败，调薪幅度加上原来的转正工资不等于填写的调薪后工资;原有转正工资为:"+personalAll.getPersonalSalaryInfo().getWorkerPay());
 			return "@" + JSONResult.error(CodeMsg.ERROR,"新增工资调整信息失败，调薪幅度加上原来的转正工资不等于填写的调薪后工资;原有转正工资为:"+personalAll.getPersonalSalaryInfo().getWorkerPay());
 	    }

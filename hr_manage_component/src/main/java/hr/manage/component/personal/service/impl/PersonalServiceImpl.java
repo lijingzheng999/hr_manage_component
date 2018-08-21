@@ -14,6 +14,7 @@ import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
 import hr.manage.component.personal.service.PersonalService;
+import hr.manage.component.util.BigDecimalUtil;
 import hr.manage.component.util.DateTimeUtil;
 
 import java.math.BigDecimal;
@@ -522,10 +523,16 @@ public class PersonalServiceImpl implements PersonalService {
 				BigDecimal.ROUND_HALF_UP).doubleValue();
 		salary.setWorkingYears(BigDecimal.valueOf(f1));
 		// 转正工资=基本工资+绩效工资+补贴
-		salary.setWorkerPay(salary.getBasePay() + salary.getMeritPay()
-				+ salary.getSubsidy());
+		BigDecimal workerPay= BigDecimal.ZERO;
+		workerPay=workerPay.add(salary.getBasePay());
+		workerPay=workerPay.add( salary.getMeritPay());
+		workerPay=workerPay.add(salary.getSubsidy());
+		salary.setWorkerPay(workerPay);
 		// 试用期工资=转正工资*80%
-		salary.setProbationaryPay((int) Math.round(salary.getWorkerPay() * 0.8));
+		BigDecimal probationaryPay= BigDecimal.ZERO;
+		probationaryPay= workerPay.multiply(new BigDecimal("0.8"));
+		probationaryPay=probationaryPay.setScale(2, BigDecimal.ROUND_HALF_UP);
+		salary.setProbationaryPay(probationaryPay);
 
 		Integer salaryId = personalSalaryInfoDAO.save(salary);
 

@@ -620,23 +620,32 @@ public class PersonalController {
 								break;
 							case 49:// 基本工资
 								transforValue = String.valueOf(cellValue).trim();
-								salary.setBasePay(Integer.parseInt(transforValue));
+								salary.setBasePay(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 50:// 绩效工资
 								transforValue = String.valueOf(cellValue).trim();
-								salary.setMeritPay(Integer.parseInt(transforValue));
+								salary.setMeritPay(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 51:// 补贴
 								transforValue = String.valueOf(cellValue).trim();
-								salary.setSubsidy(Integer.parseInt(transforValue));
+								salary.setSubsidy(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 52:// 转正工资=基本工资+绩效工资+补贴
 //								transforValue = String.valueOf(cellValue).trim();
-								salary.setWorkerPay(salary.getBasePay()+salary.getMeritPay()+salary.getSubsidy());
+								BigDecimal workerPay= BigDecimal.ZERO;
+								workerPay=workerPay.add(salary.getBasePay());
+								workerPay=workerPay.add( salary.getMeritPay());
+								workerPay=workerPay.add(salary.getSubsidy());
+								salary.setWorkerPay(workerPay);
+//								salary.setWorkerPay(salary.getBasePay()+salary.getMeritPay()+salary.getSubsidy());
 								break;
 							case 53:// 试用期工资=转正工资*80%
 //								transforValue = String.valueOf(cellValue).trim();
-								salary.setProbationaryPay((int)Math.round(salary.getWorkerPay()*0.8));
+								BigDecimal probationaryPay= BigDecimal.ZERO;
+								probationaryPay= salary.getWorkerPay().multiply(new BigDecimal("0.8"));
+								probationaryPay=probationaryPay.setScale(2, BigDecimal.ROUND_HALF_UP);
+								salary.setProbationaryPay(probationaryPay);
+//								salary.setProbationaryPay((int)Math.round(salary.getWorkerPay()*0.8));
 								break;
 							case 54:// 是否撤离
 								transforValue = String.valueOf(cellValue).trim();

@@ -5,6 +5,8 @@ import hr.manage.component.admin.service.AdminService;
 import hr.manage.component.recruit.model.RecruitInfo;
 import hr.manage.component.recruit.model.ResumeCondition;
 import hr.manage.component.recruit.model.ResumeInfo;
+import hr.manage.component.recruit.model.ResumeInterview;
+import hr.manage.component.recruit.model.ResumeInterviewCondition;
 import hr.manage.component.recruit.service.ResumeService;
 
 import com.hr.manage.web.constant.JSONResult;
@@ -470,21 +472,20 @@ public class ResumeController {
 	
 	/**
      * 
-    * Title: updateResumeStatus
+    * Title: updateResumeNotPass
     * Description: 面试是否通过; status=2通过；status=0未通过
-    * Url: resume/updateResumeStatus
+    * Url: resume/updateResumeNotPass
     * @param Integer resumeInfoId
-    * @param Integer status
     * @return String    
     * @throws
     * @see ResumeInfo
      */
 	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
 	@NotCareLogin
-	@Post("updateResumeStatus")
-	@Get("updateResumeStatus")
-	public String updateResumeStatus(
-			@Param("resumeInfoId") Integer resumeInfoId,@Param("status") Integer status) {
+	@Post("updateResumeNotPass")
+	@Get("updateResumeNotPass")
+	public String updateResumeNotPass(
+			@Param("resumeInfoId") Integer resumeInfoId) {
 		
 		ResumeInfo resume = resumeService.getResumeInfo(resumeInfoId);
 		if (resume !=null) {
@@ -493,7 +494,7 @@ public class ResumeController {
 				return "@" + JSONResult.error(CodeMsg.ERROR, "变更状态失败,简历状态不是进行中");
 			}
 			resume.setUpdateTime(new Date());
-			resume.setStatus(status);//status=2通过；status=0未通过
+			resume.setStatus(0);//status=2通过；status=0未通过
 			boolean result = resumeService.updateResumeInfo(resume);
 			if (result) {
 				return "@" + JSONResult.success();
@@ -505,7 +506,285 @@ public class ResumeController {
 			logger.error("=====根据ID获取简历信息失败,没有此数据=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID获取简历信息失败,没有此数据");
 		}
+	}
+	
+	/**
+     * 
+    * Title: updateResumePass
+    * Description: 面试是否通过; status=2通过
+    * Url: resume/updateResumePass
+    * @param Integer resumeInfoId
+    * @return String    
+    * @throws
+    * @see ResumeInfo
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateResumePass")
+	@Get("updateResumePass")
+	public String updateResumePass(
+			@Param("resumeInfoId") Integer resumeInfoId) {
 		
+		ResumeInfo resume = resumeService.getResumeInfo(resumeInfoId);
+		if (resume !=null) {
+			if(resume.getStatus()!=1){
+				logger.error("=====简历状态不是进行中=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "变更状态失败,简历状态不是进行中");
+			}
+			resume.setUpdateTime(new Date());
+			resume.setStatus(2);//status=2通过；status=0未通过
+			int result = resumeService.updateResumeInfoPass(resume);
+			if (result>0) {
+				return "@" + JSONResult.success();
+			} else {
+				logger.error("=====面试通过失败,数据库保存失败=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "面试通过失败,数据库保存失败");
+			}
+		} else {
+			logger.error("=====根据ID获取简历信息失败,没有此数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID获取简历信息失败,没有此数据");
+		}
+	}
+	
 
+	/**
+     * 
+    * Title: getResumeInterview
+    * Description: 获取沟通表数据
+    * Url: resume/getResumeInterview
+    * @param Integer resumeInterviewId
+    * @return String    
+    * @throws
+    * @see ResumeInterview
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_9)
+	@NotCareLogin
+	@Post("getResumeInterview")
+	@Get("getResumeInterview")
+	public String getResumeInterview(
+			@Param("resumeInterviewId") Integer resumeInterviewId) {
+	
+		ResumeInterview interview = resumeService.getResumeInterview(resumeInterviewId);
+		if (interview !=null) {
+			return "@" + JSONResult.success(interview);
+		} else {
+			logger.error("===== 获取沟通表数据失败,没有此ID数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID没有找到数据");
+		}
+
+	}
+	
+	/**
+     * 
+    * Title: updateResumeInterview
+    * Description: 修改沟通表信息
+    * Url: resume/updateResumeInterview
+    * @param String resumeInterviewJsonStr 沟通表信息json串
+    * @return String    
+    * @throws
+    * @see ResumeInterview
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateResumeInterview")
+	@Get("updateResumeInterview")
+	public String updateResumeInterview(
+			@Param("resumeInterviewJsonStr") String resumeInterviewJsonStr) {
+		if(StringUtils.isBlank(resumeInterviewJsonStr)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		ResumeInterview resumeInterview = null;
+		try {
+			resumeInterview = JSONObject.parseObject(resumeInterviewJsonStr, ResumeInterview.class);
+		} catch (Exception e) {
+			logger.error("=====修改简历信息，解析参数出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+		}
+		
+		resumeInterview.setUpdateTime(new Date());
+		boolean result = resumeService.updateResumeInterview(resumeInterview);
+		if (result) {
+			return "@" + JSONResult.success();
+		} else {
+			logger.error("=====修改沟通表信息失败,数据库保存失败=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改沟通表信息失败,数据库保存失败");
+		}
+	}
+	
+	/**
+     * 
+    * Title: updateInterviewNotEntry
+    * Description: 变更不入职
+    * Url: resume/updateInterviewNotEntry
+    * @param Integer resumeInterviewId
+    * @param String reson
+    * @return String    
+    * @throws
+    * @see ResumeInterview
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateInterviewNotEntry")
+	@Get("updateInterviewNotEntry")
+	public String updateInterviewNotEntry(
+			@Param("resumeInterviewId") Integer resumeInterviewId,@Param("reson") String reson) {
+		
+		ResumeInterview interview = resumeService.getResumeInterview(resumeInterviewId);
+		if (interview !=null) {
+			if(interview.getStatus()!=1){
+				logger.error("=====沟通表状态不是待入职=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "变更状态失败,沟通表状态不是待入职");
+			}
+			interview.setUpdateTime(new Date());
+			interview.setStatus(0);
+			//status=0未入职
+			interview.setMemo(reson);
+			//未入职原因
+			boolean result = resumeService.updateResumeInterview(interview);
+			if (result) {
+				return "@" + JSONResult.success();
+			} else {
+				logger.error("=====办理未入职失败,数据库保存失败=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "办理未入职,数据库保存失败");
+			}
+		} else {
+			logger.error("=====根据ID获取沟通表信息失败,没有此数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID获取沟通表信息失败,没有此数据");
+		}
+	}
+	
+	/**
+     * 
+    * Title: updateInterviewEntry
+    * Description: 办理入职
+    * Url: resume/updateInterviewEntry
+    * @param Integer resumeInterviewId
+    * @param String reson
+    * @return String    
+    * @throws
+    * @see ResumeInterview
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateInterviewEntry")
+	@Get("updateInterviewEntry")
+	public String updateInterviewEntry(
+			@Param("resumeInterviewId") Integer resumeInterviewId,@Param("reson") String reson) {
+		
+		ResumeInterview interview = resumeService.getResumeInterview(resumeInterviewId);
+		if (interview !=null) {
+			if(interview.getStatus()!=1){
+				logger.error("=====沟通表状态不是待入职=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "变更状态失败,沟通表状态不是待入职");
+			}
+			interview.setUpdateTime(new Date());
+			//status=2 已入职
+			interview.setStatus(2);
+            //备注
+			interview.setMemo(reson);
+			int result = resumeService.updateResumeInterviewEntry(interview);
+			if (result>0) {
+				//获取简历信息
+				ResumeInfo resume = resumeService.getResumeInfo(interview.getResumeId());
+				Map<String, Object> dataMap = new HashMap<>();
+				dataMap.put("resumeInterview", interview);
+				if (resume !=null) {
+					dataMap.put("resumeInfo", resume);
+				}
+				return "@" + JSONResult.success(dataMap);
+			} else {
+				logger.error("=====办理入职失败,数据库保存失败=====");
+				return "@" + JSONResult.error(CodeMsg.ERROR, "办理入职失败,数据库保存失败");
+			}
+		} else {
+			logger.error("=====根据ID获取沟通表信息失败,没有此数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID获取沟通表信息失败,没有此数据");
+		}
+	}
+	
+	/**
+     * 
+    * Title: updateInterviewReEntry
+    * Description: 再次办理入职
+    * Url: resume/updateInterviewReEntry
+    * @param Integer resumeInterviewId
+    * @return String    
+    * @throws
+    * @see ResumeInterview
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateInterviewReEntry")
+	@Get("updateInterviewReEntry")
+	public String updateInterviewReEntry(
+			@Param("resumeInterviewId") Integer resumeInterviewId) {
+		
+		ResumeInterview interview = resumeService.getResumeInterview(resumeInterviewId);
+		if (interview !=null) {
+				//获取简历信息
+				ResumeInfo resume = resumeService.getResumeInfo(interview.getResumeId());
+				Map<String, Object> dataMap = new HashMap<>();
+				dataMap.put("resumeInterview", interview);
+				if (resume !=null) {
+					dataMap.put("resumeInfo", resume);
+				}
+				return "@" + JSONResult.success(dataMap);
+			
+		} else {
+			logger.error("=====根据ID获取沟通表信息失败,没有此数据=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID获取沟通表信息失败,没有此数据");
+		}
+	}
+	
+	
+	/**
+     * 
+    * Title: getInterViewList
+    * Description: 根据条件筛选简历信息列表
+    * Url: resume/getInterViewList
+    * @param String name, 姓名
+    * @param String position, 岗位
+    * @param String expatriateUnit,外派单位
+    * @param int status,入职状态：2：已入职，1：待入职；0：未入职（未入职来个原因） 
+    * @param int pageIndex, 分页页数
+    * @param int pageSize 	行数
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Get("getInterViewList")
+	@Post("getInterViewList")
+	public String getInterViewList(@Param("name") String name,
+			@Param("position") String position,
+			@Param("expatriateUnit") String expatriateUnit,
+			@Param("status") Integer status,
+			@Param("pageIndex") int pageIndex, 
+			@Param("pageSize") int pageSize) {
+		ResumeInterviewCondition condition = new ResumeInterviewCondition();
+
+			condition.setName(name);
+			condition.setPosition(position);
+			condition.setExpatriateUnit(expatriateUnit);
+			condition.setStatus(status);
+			
+		pageIndex = pageIndex < 0 ? 0 : pageIndex;
+		pageSize = pageSize < 1 ? 1 : pageSize;
+//		condition.setOrderby("createtime");
+		condition.setOffset(pageIndex * pageSize);
+		condition.setLimit(pageSize);
+		Long count = 0L;
+		List<ResumeInterview> interviewLists = new ArrayList<>();
+		try {
+			interviewLists = resumeService.listResumeInterview(condition);
+			count = resumeService.countResumeInterview(condition);
+		} catch (Exception e) {
+			logger.error("=====根据条件筛选沟通表信息列表查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+		Map<String, Object> dataMap = DataMapUtil.getDataMap("interviewLists", interviewLists, count, pageCount);
+		return "@" + JSONResult.success(dataMap);
 	}
 }

@@ -3,6 +3,8 @@ package hr.manage.component.recruit.service;
 import hr.manage.component.recruit.model.RecruitInfo;
 import hr.manage.component.recruit.model.ResumeCondition;
 import hr.manage.component.recruit.model.ResumeInfo;
+import hr.manage.component.recruit.model.ResumeInterview;
+import hr.manage.component.recruit.model.ResumeInterviewCondition;
 
 import java.util.List;
 
@@ -126,11 +128,91 @@ public interface ResumeService {
     * @Title: updateResumeInfo
     * @Description: 修改简历信息
     * @Param ResumeInfo resumeInfo
-    * @return int    
+    * @return boolean    
     * @throws
      */
 	public boolean updateResumeInfo(ResumeInfo resumeInfo);
 	
+	/**
+     * 
+    * @Title: updateResumeInfoPass
+    * @Description: 修改简历信息-面试通过；新增沟通表
+    * @Param ResumeInfo resumeInfo
+    * @return int    
+    * @throws
+     */
+	public int updateResumeInfoPass(ResumeInfo resumeInfo);
 	
+
+	/**
+     * 
+    * @Title: addResumeInterview
+    * @Description: 面试通过后;新增沟通表数据;
+    * @Param ResumeInterview resumeInterview
+    * @return int    
+    * @throws
+     */
+	public int addResumeInterview(ResumeInterview resumeInterview);
 	
+	/**
+     * 
+    * @Title: listResumeInterview
+    * @Description: 条件查询沟通表
+    * @param @param ResumeInterviewCondition
+    * @param @return    
+    * @return List<ResumeInterview>    
+    * @throws
+     */
+	public List<ResumeInterview> listResumeInterview(ResumeInterviewCondition condition);
+	
+	/**
+     * 
+    * @Title: countResumeInterview
+    * @Description: 条件查询沟通表个数
+    * @param @param ResumeInterviewCondition
+    * @param @return    
+    * @return Long
+    * @throws
+     */
+	public Long countResumeInterview(ResumeInterviewCondition condition);
+
+	/**
+     * 
+    * @Title: deleteResumeInterview
+    * @Description: 删除沟通表信息
+    * @Param Integer resumeInterviewId
+    * @return int    
+    * @throws
+     */
+	public int deleteResumeInterview(Integer resumeInterviewId);
+
+	/**
+     * 
+    * @Title: getResumeInterview
+    * @Description: 根据ID获取沟通表信息
+    * @Param Integer resumeInterviewId
+    * @return ResumeInterview    
+    * @throws
+     */
+	public ResumeInterview getResumeInterview(Integer resumeInterviewId);
+	
+	/**
+     * 
+    * @Title: updateResumeInterview
+    * @Description: 修改沟通表信息
+    * @Param ResumeInterview resumeInterview
+    * @return boolean    
+    * @throws
+     */
+	public boolean updateResumeInterview(ResumeInterview resumeInterview);
+	
+	/**
+     * 
+    * @Title: updateResumeInterviewEntry
+    * @Description: 修改简历信息-面试通过；新增沟通表
+    * @Param ResumeInterview resumeInterview
+    * @return int    
+    * @throws
+     */
+	public int updateResumeInterviewEntry(ResumeInterview resumeInterview);
 }

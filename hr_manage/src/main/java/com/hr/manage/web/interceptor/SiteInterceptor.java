@@ -24,6 +24,11 @@ public class SiteInterceptor extends ControllerInterceptorAdapter {
 
 	@Override
 	protected Object before(Invocation inv) throws Exception {
+		inv.getResponse().setHeader("Access-Control-Allow-Origin", "*");
+		inv.getResponse().setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		inv.getResponse().setHeader("Access-Control-Allow-Headers", "x-requested-with");
+		inv.getResponse().setHeader("Content-Type", "application/json;charset=utf-8");
+		
 		Class<? extends Object> controller = inv.getController().getClass();
 		boolean isPresent = controller.isAnnotationPresent(NotCareLogin.class)
 				|| inv.getMethod().isAnnotationPresent(NotCareLogin.class);
@@ -89,7 +94,8 @@ public class SiteInterceptor extends ControllerInterceptorAdapter {
 
 	@Override
 	protected Object after(Invocation inv, Object instruction) throws Exception {
-		
+		inv.getResponse().setCharacterEncoding("UTF-8");
+		inv.getResponse().setContentType("text/html;charset=UTF-8");
 		System.out.println("adminUrl:"+inv.getRequest().getContextPath());
 		inv.addModel("adminUrl", inv.getRequest().getContextPath());
 		inv.getResponse().setCharacterEncoding("UTF-8");
