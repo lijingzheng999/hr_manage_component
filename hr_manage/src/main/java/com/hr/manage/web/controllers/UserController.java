@@ -65,13 +65,17 @@ public class UserController {
 		return "@"+JSONResult.success();
 	}
 	
-//	
-//	@Get("user/admin/manage")
-//	public String adminManage(){
-//		List<Admin> adminList = adminService.getUserList(1, 0, 0);
-//		inv.addModel("adminList", adminList);
-//		return "user/admin-manage";
-//	}
+	
+	@Get("user/getRoles")
+	public String getRoles(){
+		Admin user = (Admin) inv.getRequest().getSession().getAttribute("user");
+		if (user != null) {
+			return "@"+JSONResult.success(user);
+		}
+		else{
+			return "@"+JSONResult.error(CodeMsg.ERROR,"没有登录");
+		}
+	}
 //	
 //	@Get("user/admin/add")
 //	public String addAdmin(){
