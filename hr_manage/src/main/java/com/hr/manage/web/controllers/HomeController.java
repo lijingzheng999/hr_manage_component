@@ -69,6 +69,60 @@ public class HomeController {
     * @throws
      */
 	@NotCareLogin
+	@Post("logintest")
+	@Get("logintest")
+	public String logintest(@Param("username") String username, 
+			@Param("password") String password,
+			@Param("captcha") String captcha){
+		HttpSession userSession = inv.getRequest().getSession();
+//		if(userSession.getAttribute("validate_code")==null){
+//          return "@"+JSONResult.error(CodeMsg.ERROR,"请等待验证码加载完成！");
+//		}
+//		String code = userSession.getAttribute("validate_code").toString();
+//		if( "".equals(captcha)  || captcha==null ){
+//	        return "@"+JSONResult.error(CodeMsg.ERROR,"请输入验证码！");
+//			
+//		}
+//		//测试时if条件置为false
+//		if( !code.equalsIgnoreCase(captcha)){
+//		    return "@"+JSONResult.error(CodeMsg.ERROR,"验证码错误");
+//		}
+		Admin user = adminService.getAdminByUsername(username);
+		if (user == null){
+			return "@"+JSONResult.error(CodeMsg.ERROR,"用户不存在");
+		} 
+		if(user.getStatus() == 0){
+			return "@"+JSONResult.error(CodeMsg.ERROR,"该用户已注销");
+		}
+		
+		String md5Password = user.getPassword();
+		if(!md5Password.equals(MD5Util.GetMD5Code(password))){
+			return "@"+JSONResult.error(CodeMsg.ERROR,"密码错误");
+		}
+		userSession.setAttribute("user", user);
+		userSession.setAttribute(Constants.LOGIN_USER_ID_TAG_FOR_AUTH, String.valueOf(user.getUserid()));
+//		userSession.setAttribute("loginUserId", admin.getUserid());
+		userSession.setAttribute("lastloginip", user.getLastloginip());
+		userSession.setAttribute("lastlogintime", user.getLastlogintime());
+		user.setLastloginip(this.getIpAddr(inv.getRequest()));
+		user.setLastlogintime(new Date());
+		adminService.updateUser(user);
+		logger.info(" operater  do : user "+user.getUsername()+"  login  hr-manage " );
+		//获取权限列表
+		List<Integer> functionList= authorityServiceHome.getFunctionIds(user.getUserid());
+		return "@"+JSONResult.success(functionList);
+	}
+	/**
+     * 
+    * Url: login
+    * 登陆
+    * @param String username 用户名
+    * @param String password 密码
+    * @param String captcha 验证码
+    * @return String    
+    * @throws
+     */
+	@NotCareLogin
 	@Post("login")
 	@Get("login")
 	public String login(@Param("username") String username, 
