@@ -17,13 +17,13 @@ public class FunctionIds {
 	public static final int FUNCTION_4 = 4;				//职场管理0
 	public static final int FUNCTION_5 = 5;				//薪酬管理  0
 	public static final int FUNCTION_6 = 6;				//项目经管  0
-	public static final int FUNCTION_7 = 7;				//账号管理  1-1
+	public static final int FUNCTION_7 = 7;				//账号管理  1-1预留
 	public static final int FUNCTION_8 = 8;				//修改密码  1-1
 	public static final int FUNCTION_9 = 9;				//招聘需求  1-2
 	public static final int FUNCTION_10 = 10;			//简历筛选  1-2
-	public static final int FUNCTION_11= 11;			//个人信息(登陆者本人) 1-3
-	public static final int FUNCTION_12 = 12;			//员工管理(人事权限)   1-3
-	public static final int FUNCTION_13 = 13;			//合同管理  1-3
+	public static final int FUNCTION_11= 11;			//个人信息(登陆者本人) 1-1
+	public static final int FUNCTION_12 = 12;			//入职员工管理   1-3
+	public static final int FUNCTION_13 = 13;			//合同管理  0
 	public static final int FUNCTION_14 = 14;			//全通考勤明细  1-4
 	public static final int FUNCTION_15 = 15;			//北京物联网考勤明细  1-4
 	public static final int FUNCTION_16 = 16;			//成都物联网考勤明细  1-4
@@ -33,6 +33,9 @@ public class FunctionIds {
 	public static final int FUNCTION_20 = 20;			//奖惩管理  1-5
 	public static final int FUNCTION_21 = 21;			//查询管理  1-5
 	public static final int FUNCTION_22 = 22;			//利润测算表  1-6
+	public static final int FUNCTION_23 = 23;			//合同管理  1-13
+	public static final int FUNCTION_24 = 24;			//转正员工查询   1-3
+	public static final int FUNCTION_25 = 25;			//离职员工查询   1-3
 	
 	///////////////////后续添加
 	
