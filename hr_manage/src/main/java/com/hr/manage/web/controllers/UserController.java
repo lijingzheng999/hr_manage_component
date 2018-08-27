@@ -40,7 +40,8 @@ public class UserController {
 	@Get("user/editpwd")
 	public String editAdminUser(@Param("userid") int userid, @Param("password") String password,@Param("repassword") String repassword,
 			                    @Param("confirmpwd") String confirmpwd){
-		Admin user = adminService.getUserById(userid);
+//		Admin user = adminService.getUserById(userid);
+		Admin user = (Admin) inv.getRequest().getSession().getAttribute("user");
 		if(!StringUtils.isEmpty(password)){
 			if(!MD5Util.GetMD5Code(password).equals(user.getPassword())){
 				return "@"+JSONResult.error(CodeMsg.ERROR,"原密码不正确,请重新输入");

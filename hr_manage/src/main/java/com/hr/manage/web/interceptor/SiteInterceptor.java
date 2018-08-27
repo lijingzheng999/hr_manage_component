@@ -26,8 +26,8 @@ public class SiteInterceptor extends ControllerInterceptorAdapter {
 	protected Object before(Invocation inv) throws Exception {
 		inv.getResponse().setHeader("Access-Control-Allow-Origin", "*");
 		inv.getResponse().setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-		inv.getResponse().setHeader("Access-Control-Allow-Headers", "x-requested-with");
-		inv.getResponse().setHeader("Content-Type", "application/json;charset=utf-8");
+		inv.getResponse().setHeader("Access-Control-Allow-Headers", "x-requested-with,content-type");
+		inv.getResponse().setHeader("Content-Type", "application/x-www-form-urlencoded");
 		
 		Class<? extends Object> controller = inv.getController().getClass();
 		boolean isPresent = controller.isAnnotationPresent(NotCareLogin.class)
