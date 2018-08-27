@@ -37,12 +37,12 @@ public interface ContractInfoDAO  extends GenericDAO<ContractInfo,Integer>{
 	    Long countContractInfo(ContractCondition contractInfo);
 	    
 	    @SQL(" update  "+ TABLE
-				+ " set is_del=0 "
+				+ " set is_del=0,update_time = now() "
 				+ " WHERE id= :1 and is_del=1 ")
 		int deleteContractInfoById(Integer contractInfoId);
 	    
 	    @SQL(" update  "+ TABLE
-				+ " set is_del=0 "
+				+ " set is_del=0,update_time = now() "
 				+ " WHERE personal_info_id= :1 and is_del=1 ")
 	    int deleteContractInfoByPersonId(Integer personInfoId);
 	    
