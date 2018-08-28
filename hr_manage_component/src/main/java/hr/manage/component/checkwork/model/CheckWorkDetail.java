@@ -104,6 +104,13 @@ public class CheckWorkDetail implements java.io.Serializable {
     @Column(value = "create_time")
     private Date createTime;
 
+    
+    
+
+    private CheckWorkCurrent checkWorkCurrent;
+
+    
+    
     /**
      * 获取表的主键
      * 
@@ -204,7 +211,7 @@ public class CheckWorkDetail implements java.io.Serializable {
      * 
      * @return 姓名
      */
-    public String getname() {
+    public String getName() {
         return this.name;
     }
 
@@ -214,7 +221,7 @@ public class CheckWorkDetail implements java.io.Serializable {
      * @param value
      *          姓名
      */
-    public void setname(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -522,4 +529,14 @@ public class CheckWorkDetail implements java.io.Serializable {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+	public CheckWorkCurrent getCheckWorkCurrent() {
+		return checkWorkCurrent;
+	}
+
+	public void setCheckWorkCurrent(CheckWorkCurrent checkWorkCurrent) {
+		this.checkWorkCurrent = checkWorkCurrent;
+	}
+    
+    
 }

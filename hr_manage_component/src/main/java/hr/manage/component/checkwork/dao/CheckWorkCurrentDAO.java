@@ -33,9 +33,9 @@ public interface CheckWorkCurrentDAO  extends GenericDAO<CheckWorkCurrent,Intege
 
     
     @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
-            "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
+            "#if(:1 != null  && :1 !='') { and name = :1 } " +
             " and is_del=1 " )
-    CheckWorkCurrent getCheckWorkCurrentByName(CheckWorkDetailCondition condition);
+    CheckWorkCurrent getCheckWorkCurrentByName(String name);
     
     @SQL(" UPDATE " + TABLE +
     		 " SET id_del=0,update_time = now() " +

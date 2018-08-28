@@ -163,8 +163,8 @@ public class HomeController {
 		adminService.updateUser(user);
 		logger.info(" operater  do : user "+user.getUsername()+"  login  hr-manage " );
 		//获取权限列表
-//		List<Integer> functionList= authorityServiceHome.getFunctionIds(user.getUserid());
-		return "@"+JSONResult.success(user);
+		List<Integer> functionList= authorityServiceHome.getFunctionIds(user.getUserid());
+		return "@"+JSONResult.success(functionList);
 	}
 	
 	// 权限测试1
