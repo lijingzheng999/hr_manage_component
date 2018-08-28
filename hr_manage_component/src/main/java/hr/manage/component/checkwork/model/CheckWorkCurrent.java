@@ -5,71 +5,31 @@ import java.util.Date;
 import net.paoding.rose.jade.plugin.sql.annotations.Column;
 import net.paoding.rose.jade.plugin.sql.annotations.Table;
 /**
- * check_work_detail
- * @description: 全通物联网考勤查询条件对象
+ * check_work_current
+ * 
  * @author 
- * @version 1.0.0 2018-08-27
+ * @version 1.0.0 2018-08-28
  */
-@Table(value = "check_work_detail")
-public class CheckWorkDetail implements java.io.Serializable {
+@Table(value = "check_work_current")
+public class CheckWorkCurrent implements java.io.Serializable {
     /** 版本号 */
-    private static final long serialVersionUID = -2939499911405688824L;
+    private static final long serialVersionUID = -1418819107133556198L;
 
     /** 表的主键 */
     @Column(pk=true,value = "id")
     private Integer id;
 
-    /** 考勤月份 */
+    /** 截止考勤月份 */
     @Column(value = "term")
     private String term;
 
-    /** 考勤开始时间 */
-    @Column(value = "start_date")
-    private Date startDate;
-
-    /** 考勤结束时间 */
-    @Column(value = "end_date")
-    private Date endDate;
-
-    /** 合作厂家 */
-    @Column(value = "manufacturer")
-    private String manufacturer;
+    /** 员工信息表ID */
+    @Column(value = "personal_info_id")
+    private Integer personalInfoId;
 
     /** 姓名 */
     @Column(value = "name")
     private String name;
-
-    /** 外派单位 */
-    @Column(value = "expatriate_unit")
-    private String expatriateUnit;
-
-    /** 入职时间 */
-    @Column(value = "entry_time")
-    private Date entryTime;
-
-    /** 出勤天数 */
-    @Column(value = "attendance_days")
-    private BigDecimal attendanceDays;
-
-    /** 考勤天数 */
-    @Column(value = "check_work_days")
-    private BigDecimal checkWorkDays;
-
-    /** 加班天数 */
-    @Column(value = "overtime_days")
-    private BigDecimal overtimeDays;
-
-    /** 请假天数 */
-    @Column(value = "leave_days")
-    private BigDecimal leaveDays;
-
-    /** 负责人 */
-    @Column(value = "manager")
-    private String manager;
-
-    /** 备注 */
-    @Column(value = "memo")
-    private String memo;
 
     /** 剩余加班小时数 */
     @Column(value = "surplus_overtime_hours")
@@ -91,7 +51,6 @@ public class CheckWorkDetail implements java.io.Serializable {
     @Column(value = "compassionate_leave_days")
     private BigDecimal compassionateLeaveDays;
 
-   
     /** 是否删除 1未删除 0已删除 */
     @Column(value = "is_del")
     private Integer isDel;
@@ -124,79 +83,41 @@ public class CheckWorkDetail implements java.io.Serializable {
     }
 
     /**
-     * 获取考勤月份
+     * 获取截止考勤月份
      * 
-     * @return 考勤月份
+     * @return 截止考勤月份
      */
     public String getTerm() {
         return this.term;
     }
 
     /**
-     * 设置考勤月份
+     * 设置截止考勤月份
      * 
      * @param term
-     *          考勤月份
+     *          截止考勤月份
      */
     public void setTerm(String term) {
         this.term = term;
     }
 
     /**
-     * 获取考勤开始时间
+     * 获取员工信息表ID
      * 
-     * @return 考勤开始时间
+     * @return 员工信息表ID
      */
-    public Date getStartDate() {
-        return this.startDate;
+    public Integer getPersonalInfoId() {
+        return this.personalInfoId;
     }
 
     /**
-     * 设置考勤开始时间
+     * 设置员工信息表ID
      * 
-     * @param startDate
-     *          考勤开始时间
+     * @param personalInfoId
+     *          员工信息表ID
      */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     * 获取考勤结束时间
-     * 
-     * @return 考勤结束时间
-     */
-    public Date getEndDate() {
-        return this.endDate;
-    }
-
-    /**
-     * 设置考勤结束时间
-     * 
-     * @param endDate
-     *          考勤结束时间
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    /**
-     * 获取合作厂家
-     * 
-     * @return 合作厂家
-     */
-    public String getManufacturer() {
-        return this.manufacturer;
-    }
-
-    /**
-     * 设置合作厂家
-     * 
-     * @param manufacturer
-     *          合作厂家
-     */
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
+    public void setPersonalInfoId(Integer personalInfoId) {
+        this.personalInfoId = personalInfoId;
     }
 
     /**
@@ -204,170 +125,18 @@ public class CheckWorkDetail implements java.io.Serializable {
      * 
      * @return 姓名
      */
-    public String getname() {
+    public String getName() {
         return this.name;
     }
 
     /**
      * 设置姓名
      * 
-     * @param value
+     * @param name
      *          姓名
      */
-    public void setname(String name) {
+    public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * 获取外派单位
-     * 
-     * @return 外派单位
-     */
-    public String getExpatriateUnit() {
-        return this.expatriateUnit;
-    }
-
-    /**
-     * 设置外派单位
-     * 
-     * @param expatriateUnit
-     *          外派单位
-     */
-    public void setExpatriateUnit(String expatriateUnit) {
-        this.expatriateUnit = expatriateUnit;
-    }
-
-    /**
-     * 获取入职时间
-     * 
-     * @return 入职时间
-     */
-    public Date getEntryTime() {
-        return this.entryTime;
-    }
-
-    /**
-     * 设置入职时间
-     * 
-     * @param entryTime
-     *          入职时间
-     */
-    public void setEntryTime(Date entryTime) {
-        this.entryTime = entryTime;
-    }
-
-    /**
-     * 获取出勤天数
-     * 
-     * @return 出勤天数
-     */
-    public BigDecimal getAttendanceDays() {
-        return this.attendanceDays;
-    }
-
-    /**
-     * 设置出勤天数
-     * 
-     * @param attendanceDays
-     *          出勤天数
-     */
-    public void setAttendanceDays(BigDecimal attendanceDays) {
-        this.attendanceDays = attendanceDays;
-    }
-
-    /**
-     * 获取考勤天数
-     * 
-     * @return 考勤天数
-     */
-    public BigDecimal getCheckWorkDays() {
-        return this.checkWorkDays;
-    }
-
-    /**
-     * 设置考勤天数
-     * 
-     * @param checkWorkDays
-     *          考勤天数
-     */
-    public void setCheckWorkDays(BigDecimal checkWorkDays) {
-        this.checkWorkDays = checkWorkDays;
-    }
-
-    /**
-     * 获取加班天数
-     * 
-     * @return 加班天数
-     */
-    public BigDecimal getOvertimeDays() {
-        return this.overtimeDays;
-    }
-
-    /**
-     * 设置加班天数
-     * 
-     * @param overtimeDays
-     *          加班天数
-     */
-    public void setOvertimeDays(BigDecimal overtimeDays) {
-        this.overtimeDays = overtimeDays;
-    }
-
-    /**
-     * 获取请假天数
-     * 
-     * @return 请假天数
-     */
-    public BigDecimal getLeaveDays() {
-        return this.leaveDays;
-    }
-
-    /**
-     * 设置请假天数
-     * 
-     * @param leaveDays
-     *          请假天数
-     */
-    public void setLeaveDays(BigDecimal leaveDays) {
-        this.leaveDays = leaveDays;
-    }
-
-    /**
-     * 获取负责人
-     * 
-     * @return 负责人
-     */
-    public String getManager() {
-        return this.manager;
-    }
-
-    /**
-     * 设置负责人
-     * 
-     * @param manager
-     *          负责人
-     */
-    public void setManager(String manager) {
-        this.manager = manager;
-    }
-
-    /**
-     * 获取备注
-     * 
-     * @return 备注
-     */
-    public String getMemo() {
-        return this.memo;
-    }
-
-    /**
-     * 设置备注
-     * 
-     * @param memo
-     *          备注
-     */
-    public void setMemo(String memo) {
-        this.memo = memo;
     }
 
     /**
@@ -464,7 +233,6 @@ public class CheckWorkDetail implements java.io.Serializable {
     public void setCompassionateLeaveDays(BigDecimal compassionateLeaveDays) {
         this.compassionateLeaveDays = compassionateLeaveDays;
     }
-
 
     /**
      * 获取是否删除 1未删除 0已删除

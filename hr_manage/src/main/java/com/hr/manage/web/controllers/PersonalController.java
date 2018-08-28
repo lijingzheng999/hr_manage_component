@@ -137,6 +137,7 @@ public class PersonalController {
 		try {
 			newPersonalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改本人基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -202,6 +203,7 @@ public class PersonalController {
 		try {
 			personalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====新增员工基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -216,6 +218,7 @@ public class PersonalController {
 		try {
 			result = personalService.addPersonalAllInfo(personalAll);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("新增数据时数据库异常"+e);
 			return "@"+JSONResult.error(CodeMsg.ERROR,"增数据时数据库异常"+e);
 		}
@@ -697,14 +700,16 @@ public class PersonalController {
 	        try {
 	        	personalService.savePersonalAllListRecord(personAllList);
 			} catch (Exception e) {
+				e.printStackTrace();
 				// TODO: handle exception
 				logger.error("保存数据库异常,已回滚", e);
 				return "@"+JSONResult.error(CodeMsg.ERROR,"保存数据库异常,已回滚"+ e.getMessage());  
 			}
 	        
-		}catch(Exception e){
-			logger.error("upload personalInfo throws Exception", e);
-			return "@"+JSONResult.error(CodeMsg.ERROR,"上传员工基本信息文件失败，请稍后重试"+e);  
+		}catch(Exception e1){
+			e1.printStackTrace();
+			logger.error("upload personalInfo throws Exception", e1);
+			return "@"+JSONResult.error(CodeMsg.ERROR,"上传员工基本信息文件失败，请稍后重试"+e1);  
 		}
 		if(result){
 			logger.info("adminUser : "+user.getUsername()+"upload timeOutFile ; fileNumber : OT"+fileNumber);
@@ -757,15 +762,16 @@ public class PersonalController {
 	@Get("updatePersonalAllInfo")
 	public String updatePersonalAllInfo(
 			@Param("personalAllJsonStr") String personalAllJsonStr) {
+		logger.info(personalAllJsonStr);
 		if(StringUtils.isBlank(personalAllJsonStr)){
-			logger.error("=====参数错误，不应为空=====");
+			logger.error("=====参数错误，不应为空====="+personalAllJsonStr);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
 		}
 		PersonalAll newPersonalAll = null;
 		try {
 			newPersonalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
 		} catch (Exception e) {
-			logger.error("=====修改员工基本信息，解析参数出错=====", e);
+			logger.error("=====修改员工基本信息，解析参数出错====="+personalAllJsonStr, e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
 		//进行修改
@@ -773,6 +779,7 @@ public class PersonalController {
 		try {
 			result = personalService.updatePersonalAllInfo(newPersonalAll);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("更新数据库异常"+e);
 			return "@"+JSONResult.error(CodeMsg.ERROR,"更新数据库异常"+e);
 		}
@@ -814,6 +821,7 @@ public class PersonalController {
 				return "@" + JSONResult.success();
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				logger.error("=====删除员工基本信息异常====="+e);
 				return "@" + JSONResult.error(CodeMsg.ERROR, "删除员工基本信息异常,"+e.getMessage());
 			}	
@@ -875,6 +883,7 @@ public class PersonalController {
 				
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				logger.error("=====分配员工账号异常====="+e);
 				return "@" + JSONResult.error(CodeMsg.ERROR, "分配员工账号异常,"+e);
 			}	
@@ -1004,6 +1013,7 @@ public class PersonalController {
 			personalLists = personalService.listPersonalAllExport(condition);
 			count = personalService.countPersonalAllExport(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件获取员工信息列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -1058,6 +1068,7 @@ public class PersonalController {
 		try {
 			personalLists = personalService.listPersonalAllExport(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件获取员工信息列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -1078,6 +1089,7 @@ public class PersonalController {
 			ExportBeanExcel<PersonalAllExport> exportBeanExcelUtil = new ExportBeanExcel();
 			exportBeanExcelUtil.exportExcel("员工信息列表",listHeads,listColumns,personalLists,out);
 		} catch (IOException e) {
+			e.printStackTrace();
 			logger.error(admin.getRealname() + " 操作导出员工列表文件出错", e);
 			e.printStackTrace();
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
@@ -1157,6 +1169,7 @@ public class PersonalController {
 				
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				logger.error("=====办理离职异常====="+e);
 				return "@" + JSONResult.error(CodeMsg.ERROR, "办理离职异常,"+e);
 			}	
