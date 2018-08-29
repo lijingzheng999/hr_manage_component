@@ -3,6 +3,7 @@ package hr.manage.component.personal.service;
 import hr.manage.component.personal.model.PersonalAll;
 import hr.manage.component.personal.model.PersonalAllExport;
 import hr.manage.component.personal.model.PersonalCondition;
+import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
 
 import java.util.List;
@@ -22,6 +23,18 @@ public interface PersonalService {
     * @throws
      */
 	public int checkPersonalByNameAndCard(String name, String identityCard);
+	
+
+	/**
+     * 
+    * @Title: getPersonalByName
+    * @Description: 根据姓名查找员工基本信息
+    * @Param String name
+    * @param @return    
+    * @return PersonalInfo    
+    * @throws
+     */
+	public PersonalInfo getPersonalByName(String name);
 	
 	
 	/**

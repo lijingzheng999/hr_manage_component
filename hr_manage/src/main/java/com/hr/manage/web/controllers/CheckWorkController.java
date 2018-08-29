@@ -337,18 +337,19 @@ public class CheckWorkController {
 						}
 	                }  
 	                //验证员工信息是否存在
-	                int checkInfoNum = personalService.checkPersonalByNameAndCard(detail.getName(), null);
-	                if(checkInfoNum<=0){
+	                PersonalInfo person = personalService.getPersonalByName(detail.getName());
+	                if(person==null){
 	                	logger.error("====="+String.format("员工信息不存在,姓名:%s", detail.getName())+"=====");
 	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工信息不存在,姓名:%s", detail.getName())); 
 	                }
-	                //验证该员工是否有加班和年假表数据,没有的话需要初始化
-	                CheckWorkCurrent checkWorkCurrent = checkWorkService.getCheckWorkCurrentByName(detail.getName());
-	                if(checkWorkCurrent == null){
-	                	logger.error("====="+String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())+"=====");
-	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())); 
-	                }
-	                detail.setCheckWorkCurrent(checkWorkCurrent);
+//	                //验证该员工是否有加班和年假表数据,没有的话需要初始化
+//	                CheckWorkCurrent checkWorkCurrent = checkWorkService.getCheckWorkCurrentByName(detail.getName());
+//	                if(checkWorkCurrent == null){
+//	                	logger.error("====="+String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())+"=====");
+//	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())); 
+//	                }
+//	                detail.setCheckWorkCurrent(checkWorkCurrent);
+	                detail.setPersonalInfo(person);
 	                detail.setTerm(term.trim());
 	                SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM");
 					java.util.Date startDate=sdt.parse(String.valueOf(term).trim());
@@ -357,6 +358,7 @@ public class CheckWorkController {
 			        endDate.setTime(startDate);  
 			        endDate.add(Calendar.MONTH, 1);  
 			        detail.setEndDate(endDate.getTime());
+			        detail.setSettlementDays(BigDecimal.ZERO);
 	                detail.setIsDel(1);
 	                detail.setCreateTime(new Date());
 	                checkWorkDetailList.add(detail);              

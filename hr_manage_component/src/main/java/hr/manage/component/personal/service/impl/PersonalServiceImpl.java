@@ -48,7 +48,10 @@ public class PersonalServiceImpl implements PersonalService {
 	public int checkPersonalByNameAndCard(String name, String identityCard) {
 		return personalInfoDAO.checkPersonalByNameAndCard(name, identityCard);
 	}
-
+	@Override
+	public PersonalInfo getPersonalByName(String name){
+		return personalInfoDAO.getPersonalByName(name);
+	}
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
 	public synchronized int savePersonalAllListRecord(

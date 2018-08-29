@@ -40,6 +40,11 @@ public interface PersonalInfoDAO extends GenericDAO<PersonalInfo, Integer> {
 			+ "  where name = :1 and identity_card=:2 and is_del=1 ")
 	int checkPersonalByNameAndCard(String name, String identityCard);
 
+	@SQL(" select "+ COLUMNS +  " FROM " + TABLE
+			+ "  where name = :1  and is_del=1 ")
+	PersonalInfo getPersonalByName(String name);
+
+	
 	@SQL(" select count(1)  FROM " + TABLE)
 	int countPersonalInfo();
 

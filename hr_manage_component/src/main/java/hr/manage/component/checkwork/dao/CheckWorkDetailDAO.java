@@ -37,13 +37,13 @@ public interface CheckWorkDetailDAO  extends GenericDAO<CheckWorkDetail,Integer>
 	
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
-	            "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
-	            "#if(:1.term != null  && :1.term !='') { and term = :1.term } " +
+	            "#if(:1 != null  && :1 !='') { and name = :1 } " +
+	            "#if(:2 != null  && :2 !='') { and term = :2 } " +
 	            " and is_del=1 " )
-	    CheckWorkDetail getCheckWorkDetailByName(CheckWorkDetailCondition condition);
+	    CheckWorkDetail getCheckWorkDetailByName(String name,String term);
 	    
 	    @SQL(" UPDATE " + TABLE +
 	    		 " SET id_del=0,update_time = now() " +
-				 " WHERE name= :1.name and term = :1.term and is_del=1 " )
-	    int deleteCheckWorkDetailByName(CheckWorkDetailCondition condition);
+				 " WHERE name= :1 and term = :2 and is_del=1 " )
+	    int deleteCheckWorkDetailByName(String name,String term);
 }

@@ -1,4 +1,6 @@
 package hr.manage.component.checkwork.model;
+import hr.manage.component.personal.model.PersonalInfo;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -91,7 +93,11 @@ public class CheckWorkDetail implements java.io.Serializable {
     @Column(value = "compassionate_leave_days")
     private BigDecimal compassionateLeaveDays;
 
-   
+    /** 当月考勤扣款天数 */
+    @Column(value = "settlement_days")
+    private BigDecimal settlementDays;
+
+    
     /** 是否删除 1未删除 0已删除 */
     @Column(value = "is_del")
     private Integer isDel;
@@ -107,7 +113,7 @@ public class CheckWorkDetail implements java.io.Serializable {
     
     
 
-    private CheckWorkCurrent checkWorkCurrent;
+    private PersonalInfo personalInfo;
 
     
     
@@ -473,7 +479,15 @@ public class CheckWorkDetail implements java.io.Serializable {
     }
 
 
-    /**
+    public BigDecimal getSettlementDays() {
+		return settlementDays;
+	}
+
+	public void setSettlementDays(BigDecimal settlementDays) {
+		this.settlementDays = settlementDays;
+	}
+
+	/**
      * 获取是否删除 1未删除 0已删除
      * 
      * @return 是否删除 1未删除 0已删除
@@ -530,13 +544,15 @@ public class CheckWorkDetail implements java.io.Serializable {
         this.createTime = createTime;
     }
 
-	public CheckWorkCurrent getCheckWorkCurrent() {
-		return checkWorkCurrent;
+	public PersonalInfo getPersonalInfo() {
+		return personalInfo;
 	}
 
-	public void setCheckWorkCurrent(CheckWorkCurrent checkWorkCurrent) {
-		this.checkWorkCurrent = checkWorkCurrent;
+	public void setPersonalInfo(PersonalInfo personalInfo) {
+		this.personalInfo = personalInfo;
 	}
+
+	
     
     
 }

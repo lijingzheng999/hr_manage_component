@@ -32,27 +32,27 @@ public interface CheckWorkService {
     * @throws
      */
 	public  Long countCheckWorkDetail(CheckWorkDetailCondition condition);
-	
-	/**
-     * 
-    * @Title: getCheckWorkDetailByName
-    * @Description: 根据姓名查询全通物联网考勤信息
-    * @param  CheckWorkDetailCondition
-    * @return CheckWorkDetail
-    * @throws
-     */
-	public  CheckWorkDetail getCheckWorkDetailByName(CheckWorkDetailCondition condition);
-	
-	/**
-     * 
-    * @Title: getCheckWorkCurrentByName
-    * @Description: 根据姓名查询全通物联网人员当前剩余年假和加班小时数
-    * @param  CheckWorkDetailCondition
-    * @return CheckWorkCurrent
-    * @throws
-     */
-	public  CheckWorkCurrent getCheckWorkCurrentByName(String name);
-	
+//	
+//	/**
+//     * 
+//    * @Title: getCheckWorkDetailByName
+//    * @Description: 根据姓名查询全通物联网考勤信息
+//    * @param  CheckWorkDetailCondition
+//    * @return CheckWorkDetail
+//    * @throws
+//     */
+//	public  CheckWorkDetail getCheckWorkDetailByName(CheckWorkDetailCondition condition);
+//	
+//	/**
+//     * 
+//    * @Title: getCheckWorkCurrentByName
+//    * @Description: 根据姓名查询全通物联网人员当前剩余年假和加班小时数
+//    * @param  CheckWorkDetailCondition
+//    * @return CheckWorkCurrent
+//    * @throws
+//     */
+//	public  CheckWorkCurrent getCheckWorkCurrentByName(String name);
+//	
 	/**
      * 
     * @Title: saveCheckWorkDetailListRecord

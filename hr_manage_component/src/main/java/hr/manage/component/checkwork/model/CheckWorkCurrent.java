@@ -19,7 +19,7 @@ public class CheckWorkCurrent implements java.io.Serializable {
     @Column(pk=true,value = "id")
     private Integer id;
 
-    /** 截止考勤月份 */
+    /** 年度 */
     @Column(value = "term")
     private String term;
 
@@ -83,19 +83,19 @@ public class CheckWorkCurrent implements java.io.Serializable {
     }
 
     /**
-     * 获取截止考勤月份
+     * 获取年度
      * 
-     * @return 截止考勤月份
+     * @return 年度
      */
     public String getTerm() {
         return this.term;
     }
 
     /**
-     * 设置截止考勤月份
+     * 设置年度
      * 
      * @param term
-     *          截止考勤月份
+     *          年度
      */
     public void setTerm(String term) {
         this.term = term;
