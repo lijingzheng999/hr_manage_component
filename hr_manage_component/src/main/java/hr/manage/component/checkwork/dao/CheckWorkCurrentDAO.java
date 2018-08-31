@@ -19,6 +19,7 @@ public interface CheckWorkCurrentDAO  extends GenericDAO<CheckWorkCurrent,Intege
 	    
 	@SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
             "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
+	        "#if(:1.term != null  && :1.term !='') { and term = :1.term } " +
             " and is_del=1 " +
             " order by id " +
              "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
@@ -27,6 +28,7 @@ public interface CheckWorkCurrentDAO  extends GenericDAO<CheckWorkCurrent,Intege
     
     @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +
     		 "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
+	         "#if(:1.term != null  && :1.term !='') { and term = :1.term } " +
 	         " and is_del=1 ")
     Long countCheckWorkCurrent(CheckWorkDetailCondition condition);
     
@@ -42,4 +44,9 @@ public interface CheckWorkCurrentDAO  extends GenericDAO<CheckWorkCurrent,Intege
     		 " SET id_del=0,update_time = now() " +
 			 " WHERE name= :1.name  and is_del=1 " )
     int deleteCheckWorkCurrentByName(CheckWorkDetailCondition condition);
+    
+    @SQL(" UPDATE " + TABLE +
+   		 " SET id_del=0,update_time = now() " +
+			 " WHERE id= :1  and is_del=1 " )
+   int deleteCheckWorkCurrentById(Integer currentId);
 }

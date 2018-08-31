@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.app.event.ReferenceInsertionEventHandler.referenceInsertExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -41,7 +42,51 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	public Long countCheckWorkDetail(CheckWorkDetailCondition condition){
 		return checkWorkDetailDAO.countCheckWorkDetail(condition);
 	}
+	@Override
+	public  CheckWorkDetail getCheckWorkDetailById(Integer detailId){
+		return checkWorkDetailDAO.get(detailId);
+	}
 	
+	@Override
+	public  int updateCheckWorkDetail(CheckWorkDetail detail){
+		int result =0;
+		if(checkWorkDetailDAO.update(detail)){
+			result =1;
+		}
+		return result;
+	}
+	
+	@Override
+	public  List<CheckWorkCurrent> listCheckWorkCurrent(CheckWorkDetailCondition condition){
+		return checkWorkCurrentDAO.listCheckWorkCurrent(condition);
+	}
+	
+	@Override
+	public  Long countCheckWorkCurrent(CheckWorkDetailCondition condition){
+		return checkWorkCurrentDAO.countCheckWorkCurrent(condition);
+	}
+	
+	@Override
+	public  CheckWorkCurrent getCheckWorkCurrentById(Integer currentId){
+		return checkWorkCurrentDAO.get(currentId);
+	}
+	
+	@Override
+	public  int updateCheckWorkCurrent(CheckWorkCurrent current){
+		int result =0;
+		if(checkWorkCurrentDAO.update(current)){
+			result =1;
+		}
+		return result;
+	}
+	
+	@Override
+	public  int deleteCheckWorkCurrent(Integer currentId){
+		int result =0;
+		result = checkWorkCurrentDAO.deleteCheckWorkCurrentById(currentId);
+			
+		return result;
+	}
 //	@Override
 //	public CheckWorkDetail getCheckWorkDetailByName(CheckWorkDetailCondition condition){
 //		return checkWorkDetailDAO.getCheckWorkDetailByName(condition);

@@ -32,7 +32,77 @@ public interface CheckWorkService {
     * @throws
      */
 	public  Long countCheckWorkDetail(CheckWorkDetailCondition condition);
-//	
+
+	/**
+     * 
+    * @Title: getCheckWorkDetailById
+    * @Description: 根据ID查询全通物联网人员考勤信息
+    * @param  Integer detailId
+    * @return CheckWorkDetail
+    * @throws
+     */
+	public  CheckWorkDetail getCheckWorkDetailById(Integer detailId);
+	
+	/**
+     * 
+    * @Title: updateCheckWorkDetail
+    * @Description: 删除全通物联网人员考勤信息
+    * @param  CheckWorkDetail detail
+    * @return int
+    * @throws
+     */
+	public  int updateCheckWorkDetail(CheckWorkDetail detail);
+	/**
+     * 
+    * @Title: listCheckWorkCurrent
+    * @Description: 条件查询全通物联网人员加班及年假信息列表
+    * @param  CheckWorkDetailCondition
+    * @return List<CheckWorkCurrent>
+    * @throws
+     */
+	public  List<CheckWorkCurrent> listCheckWorkCurrent(CheckWorkDetailCondition condition);
+	
+	
+	/**
+     * 
+    * @Title: countCheckWorkCurrent
+    * @Description: 条件查询全通物联网人员加班及年假信息列表个数
+    * @param  CheckWorkDetailCondition
+    * @return Long
+    * @throws
+     */
+	public  Long countCheckWorkCurrent(CheckWorkDetailCondition condition);
+
+	
+	/**
+     * 
+    * @Title: getCheckWorkCurrentById
+    * @Description: 根据ID查询全通物联网人员加班及年假信息
+    * @param  Integer currentId
+    * @return CheckWorkCurrent
+    * @throws
+     */
+	public  CheckWorkCurrent getCheckWorkCurrentById(Integer currentId);
+	
+	/**
+     * 
+    * @Title: updateCheckWorkCurrent
+    * @Description: 修改全通物联网人员加班及年假信息
+    * @param  CheckWorkCurrent current
+    * @return int
+    * @throws
+     */
+	public  int updateCheckWorkCurrent(CheckWorkCurrent current);
+	
+	/**
+     * 
+    * @Title: deleteCheckWorkCurrent
+    * @Description: 删除全通物联网人员加班及年假信息
+    * @param  Integer currentId
+    * @return int
+    * @throws
+     */
+	public  int deleteCheckWorkCurrent(Integer currentId);
 //	/**
 //     * 
 //    * @Title: getCheckWorkDetailByName

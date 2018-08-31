@@ -14,7 +14,7 @@ public interface CheckWorkDetailDAO  extends GenericDAO<CheckWorkDetail,Integer>
 	
 	public static final String TABLE = " check_work_detail ";
 	
-	public static final String COLUMNS = " id,term,start_date,end_date,manufacturer,name,expatriate_unit,entry_time,attendance_days,check_work_days,overtime_days,leave_days,manager,memo,surplus_overtime_hours,annual_leave_days,surplus_annual_leave,sick_leave_days,compassionate_leave_days,is_del,update_time,create_time  ";
+	public static final String COLUMNS = " id,term,start_date,end_date,manufacturer,name,expatriate_unit,entry_time,attendance_days,check_work_days,overtime_days,leave_days,manager,memo,surplus_overtime_hours,annual_leave_days,surplus_annual_leave,sick_leave_days,compassionate_leave_days,settlement_days,is_del,update_time,create_time  ";
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +

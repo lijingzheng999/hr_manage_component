@@ -329,7 +329,7 @@ public class ContractController {
 	/**
      * 
     * Title: getContractInfoById
-    * Description: 删除合同信息
+    * Description: 通过ID获取合同信息
     * Url: contract/getContractInfoById
     * @param Integer contractInfoId  合同ID
     * @return String    
