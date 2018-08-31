@@ -211,6 +211,7 @@ public class CheckWorkController {
 //		current.setSurplusAnnualLeave(currentInfo.getSurplusAnnualLeave());
 //		current.setSickLeaveDays(currentInfo.getSickLeaveDays());
 //		current.setCompassionateLeaveDays(currentInfo.getCompassionateLeaveDays());
+		detail.setSettlementDays(detailInfo.getSettlementDays());
 		detail.setUpdateTime(new Date());
 		// 进行修改
 		int result  = checkWorkService.updateCheckWorkDetail(detail);

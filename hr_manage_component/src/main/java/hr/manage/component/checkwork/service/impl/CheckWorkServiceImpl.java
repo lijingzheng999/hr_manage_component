@@ -103,6 +103,9 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 			logger.info("saveCheckWorkDetailListRecord : 员工姓名：" + checkWork.getName() +" ---考勤月份："+checkWork.getTerm());
 			//判断是否导入过本月考勤
 			CheckWorkDetail curDetail = checkWorkDetailDAO.getCheckWorkDetailByName(checkWork.getName(),checkWork.getTerm());
+			if(curDetail.getUpdateTime()!=null){
+				continue;
+			}
 			if(curDetail!=null){
 				//之前导入过,进行恢复处理
 				//删除导入的当月考勤数据
