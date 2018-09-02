@@ -291,7 +291,7 @@ public class CheckWorkController {
 	            List<CheckWorkDetail> checkWorkDetailList = new ArrayList<CheckWorkDetail>();
 	            while (rows.hasNext()) {  
 	                Row row = rows.next();  //获得行数据  
-	                if(row.getRowNum()<1||row==null)
+	                if(row.getRowNum()<4||row==null)
 	                	continue;
 	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
 	                CheckWorkDetail detail= new CheckWorkDetail();
