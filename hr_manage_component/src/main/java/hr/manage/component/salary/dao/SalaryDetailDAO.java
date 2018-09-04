@@ -41,11 +41,8 @@ public interface SalaryDetailDAO  extends GenericDAO<SalaryDetail,Integer>{
 	    
 	
 	    
-	    @SQL(" select max(id) from "+ TABLE
-				+ " WHERE personal_info_id= :1  ")
-	    int getMaxContractCountById(Integer personalInfoId);
 	    
-	    @SQL(" select " + COLUMNS + " from "+ TABLE
-				+ " WHERE personal_info_id= :1 ")
-	    int countContractInfoByPersonalId(Integer personalInfoId);
+	    @SQL(" select count(1) from "+ TABLE
+				+ " WHERE term= :1 and is_del=1 ")
+	    int countSalaryDetailByTerm(String term);
 }

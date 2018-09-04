@@ -216,5 +216,42 @@ public class SalaryController {
 	}
 	
 	
+
+	/**
+     * 
+    * Title: createSalaryDetail
+    * Description: 新增工资调整信息
+    * Url: salary/createSalaryDetail
+    * @param String term 工资账期201808
+    * @return String    
+    * @throws
+    * @see SalaryDetail
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_20)
+	@NotCareLogin
+	@Post("createSalaryDetail")
+	@Get("createSalaryDetail")
+	public String createSalaryDetail(
+			@Param("term") String term) {
+		if(StringUtils.isBlank(term)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		int salaryCount = salaryService.countSalaryDetailByTerm(term);
+		if(salaryCount>0){
+			logger.error("=====所选工资账期出工资表失败,工资表已经出过,不能重复出");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"所选工资账期出工资表失败,工资表已经出过,不能重复出");
+		}		
+		//新增需要判断参数；并且要更新基本信息
+		int result = salaryService.createSalaryDetailByTerm(term);
+		if (result >0) {
+			return "@" + JSONResult.success();
+		} else {
+			logger.error("=====数据库操作异常,所选账期出工资表失败=====result="+result);
+			return "@" + JSONResult.error(CodeMsg.ERROR, "数据库操作异常,所选账期出工资表失败;result="+result);
+		}
+
+	}
+	
 	
 }

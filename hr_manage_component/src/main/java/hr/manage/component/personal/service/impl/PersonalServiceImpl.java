@@ -505,11 +505,12 @@ public class PersonalServiceImpl implements PersonalService {
 		// 出生年月
 		person.setBirthday(birthDay);
 		// 工作年限
-		String curWorkingLife = String.valueOf(
-				DateTimeUtil.yearDateDiff(person.getGraduationTime(),
-						new Date()) + "年").trim();
-		person.setWorkingLife(curWorkingLife);
-
+		if(person.getGraduationTime()!=null){
+			String curWorkingLife = String.valueOf(
+					DateTimeUtil.yearDateDiff(person.getGraduationTime(),
+							new Date()) + "年").trim();
+			person.setWorkingLife(curWorkingLife);
+		}
 		// 保存员工个人信息表,返回主键ID
 		Integer personalInfoId = personalInfoDAO.save(person);
 		work.setPersonalInfoId(personalInfoId);
@@ -554,7 +555,7 @@ public class PersonalServiceImpl implements PersonalService {
 		contractInfoDAO.save(contractInfo);
 		logger.info("savePersonalAll : 员工编号：" + employeeNumber
 				+ person.getName());
-
+		result=1;
 		return result;
 	}
 

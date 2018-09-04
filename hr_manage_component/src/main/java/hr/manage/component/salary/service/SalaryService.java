@@ -42,5 +42,25 @@ public interface SalaryService {
      */
 	public int addSalaryChange(SalaryChange salaryChange);
 	
+	
+	/**
+     * 
+    * @Title: countSalaryDetailByTerm
+    * @Description: 通过账期查询工资表记录数
+    * @param  countSalaryDetailByTerm
+    * @return int  
+    * @throws
+     */
+	public int countSalaryDetailByTerm(String term);
+
+	/**
+     * 
+    * @Title: createSalaryDetailByTerm
+    * @Description: 通过账期生成工资表明细
+    * @param  createSalaryDetailByTerm
+    * @return int  
+    * @throws
+     */
+	public int createSalaryDetailByTerm(String term);
 
 }

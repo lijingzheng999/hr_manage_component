@@ -442,8 +442,11 @@ public class PersonalController {
 //								salary.setWorkingYears(BigDecimal.valueOf(f1));
 								break;
 							case 17:// 缴纳社保起始月份
-								transforValue = String.valueOf(cellValue).trim();
-								salary.setInsuranceBeginDate(transforValue);
+//								transforValue = String.valueOf(cellValue).trim();
+//								salary.setInsuranceBeginDate(transforValue);
+								SimpleDateFormat sdtInsuranceBeginDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
+								java.util.Date insuranceBeginDate=sdtInsuranceBeginDate.parse(String.valueOf(cellValue).trim());
+								salary.setInsuranceBeginDate(sdtInsuranceBeginDate.format(insuranceBeginDate));
 								break;
 							case 18:// 社保缴纳地点
 								transforValue = String.valueOf(cellValue).trim();
