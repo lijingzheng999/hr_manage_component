@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -311,7 +312,16 @@ public class PersonalController {
 	                    String cellValue = "";
 	                    switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
 	                    case HSSFCell.CELL_TYPE_NUMERIC:  
-	                    	if (DateUtil.isCellDateFormatted(cell)) {
+	                    	int formatNo = cell.getCellStyle().getDataFormat();
+	                    	int formatNo2 = HSSFDataFormat.getBuiltinFormat("yyyy-MM-dd");
+	                    	if(cell.getCellStyle().getDataFormat()==178){
+	                    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	                    		double value = cell.getNumericCellValue();
+	                    		Date date = org.apache.poi.ss.usermodel.DateUtil
+	                    		.getJavaDate(value);
+	                    		cellValue = sdf.format(date); 
+	                    	}
+	                    	else if (DateUtil.isCellDateFormatted(cell)) {
 								Date d = cell.getDateCellValue(); // 对日期处理
 								DateFormat formater = new SimpleDateFormat(
 										"yyyy-MM-dd HH:mm:ss");
@@ -442,11 +452,11 @@ public class PersonalController {
 //								salary.setWorkingYears(BigDecimal.valueOf(f1));
 								break;
 							case 17:// 缴纳社保起始月份
-//								transforValue = String.valueOf(cellValue).trim();
-//								salary.setInsuranceBeginDate(transforValue);
-								SimpleDateFormat sdtInsuranceBeginDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
-								java.util.Date insuranceBeginDate=sdtInsuranceBeginDate.parse(String.valueOf(cellValue).trim());
-								salary.setInsuranceBeginDate(sdtInsuranceBeginDate.format(insuranceBeginDate));
+								transforValue = String.valueOf(cellValue).trim();
+								salary.setInsuranceBeginDate(transforValue);
+//								SimpleDateFormat sdtInsuranceBeginDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
+//								java.util.Date insuranceBeginDate=sdtInsuranceBeginDate.parse(String.valueOf(cellValue).trim());
+//								salary.setInsuranceBeginDate(sdtInsuranceBeginDate.format(insuranceBeginDate));
 								break;
 							case 18:// 社保缴纳地点
 								transforValue = String.valueOf(cellValue).trim();
