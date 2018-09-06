@@ -1,6 +1,7 @@
 package hr.manage.component.salary.dao;
 
 
+import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.salary.model.InsuranceDetail;
 
 import java.util.List;
@@ -44,4 +45,11 @@ public interface InsuranceDetailDAO  extends GenericDAO<InsuranceDetail,Integer>
 	    @SQL(" select count(1) from "+ TABLE
 				+ " WHERE term= :1 and is_del=1 ")
 	    int countInsuranceDetailByTerm(String term);
+	    
+	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
+	            "#if(:1 != null  && :1 !='') { and name = :1 } " +
+	            "#if(:2 != null  && :2 !='') { and term = :2 } " +
+	            " and is_del=1 " )
+	    InsuranceDetail getInsuranceDetailByName(String name,String term);
+	    
 }

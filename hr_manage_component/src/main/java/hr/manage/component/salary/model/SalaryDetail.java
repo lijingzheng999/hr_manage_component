@@ -113,9 +113,6 @@ public class SalaryDetail implements java.io.Serializable {
     @Column(value = "insurance_deduction")
     private BigDecimal insuranceDeduction;
 
-    /** 个人需冲票 */
-    @Column(value = "invoice")
-    private BigDecimal invoice;
 
     /** 报税工资 */
     @Column(value = "tax_pay")
@@ -617,25 +614,7 @@ public class SalaryDetail implements java.io.Serializable {
         this.insuranceDeduction = insuranceDeduction;
     }
 
-    /**
-     * 获取个人需冲票
-     * 
-     * @return 个人需冲票
-     */
-    public BigDecimal getInvoice() {
-        return this.invoice;
-    }
-
-    /**
-     * 设置个人需冲票
-     * 
-     * @param invoice
-     *          个人需冲票
-     */
-    public void setInvoice(BigDecimal invoice) {
-        this.invoice = invoice;
-    }
-
+   
     /**
      * 获取报税工资
      * 

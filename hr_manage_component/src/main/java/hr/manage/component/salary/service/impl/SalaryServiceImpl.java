@@ -7,8 +7,10 @@ import hr.manage.component.personal.dao.PersonalSalaryInfoDAO;
 import hr.manage.component.personal.model.PersonalAllExport;
 import hr.manage.component.personal.model.PersonalCondition;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
+import hr.manage.component.salary.dao.InsuranceDetailDAO;
 import hr.manage.component.salary.dao.SalaryChangeDAO;
 import hr.manage.component.salary.dao.SalaryDetailDAO;
+import hr.manage.component.salary.model.InsuranceDetail;
 import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
 import hr.manage.component.salary.model.SalaryDetail;
@@ -45,6 +47,8 @@ public class SalaryServiceImpl implements SalaryService {
 	PersonalInfoDAO personalInfoDAO;
 	@Autowired
 	CheckWorkDetailDAO checkWorkDetailDAO;
+	@Autowired
+	InsuranceDetailDAO insuranceDetailDAO;
 	
 	@Override
 	public List<SalaryChange> listSalaryChange(SalaryChangeCondition condition){
@@ -305,6 +309,70 @@ public class SalaryServiceImpl implements SalaryService {
 			totalShouldPay = totalShouldPay.subtract(detail.getAttendanceDeduction());
 			totalShouldPay = totalShouldPay.subtract(detail.getOtherDeduction());
 			detail.setShouldPay(totalShouldPay);
+			InsuranceDetail insurance = insuranceDetailDAO.getInsuranceDetailByName(personalAll.getName(), term);
+			if(insurance!=null){
+				detail.setEndowment(insurance.getEndowmentPayPersonal());
+				detail.setMedical(insurance.getMedicalPayPersonal());
+				detail.setUnemployment(insurance.getUnemploymentPayPersonal());
+				detail.setAccumulationFund(insurance.getHousingPayPersonal());
+				detail.setInsuranceDeduction(insurance.getInsurancePayPersonal());
+			}
+			//报税工资=本月应发工资-个人社保及公积金扣款合计
+			if(detail.getInsuranceDeduction()==null){
+				detail.setTaxPay(detail.getShouldPay());
+			}
+			else{
+				detail.setTaxPay(detail.getShouldPay().multiply(detail.getInsuranceDeduction()));
+			}
+			//应纳税所得额==IF(U-3500>0,U-3500,0) U为报税工资
+			if(detail.getTaxPay().compareTo(new BigDecimal(3500))>0){
+				detail.setShouldTaxAmount(detail.getTaxPay().multiply(new BigDecimal(3500)));
+			}
+			else{
+				detail.setShouldTaxAmount(BigDecimal.ZERO);
+			}
+			//税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
+			//V为应纳税所得额
+			if(detail.getShouldTaxAmount().compareTo(new BigDecimal(9000))>0){
+				detail.setTax(new BigDecimal(0.25));
+			}
+			else if(detail.getShouldTaxAmount().compareTo(new BigDecimal(4500))>0){
+				detail.setTax(new BigDecimal(0.20));
+			}
+			else if(detail.getShouldTaxAmount().compareTo(new BigDecimal(1500))>0){
+				detail.setTax(new BigDecimal(0.10));
+			}
+			else if(detail.getShouldTaxAmount().compareTo(new BigDecimal(0))>0){
+				detail.setTax(new BigDecimal(0.03));
+			}
+			else{
+				detail.setTax(new BigDecimal(0.00));
+			}
+			//速算扣除数
+			//=IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
+			//W为税率
+			if(detail.getTax().compareTo(new BigDecimal(0.25))==0){
+				detail.setDeductNumber(new BigDecimal(1005));
+			}
+			else if(detail.getTax().compareTo(new BigDecimal(0.20))==0){
+				detail.setDeductNumber(new BigDecimal(555));
+			}
+			else if(detail.getTax().compareTo(new BigDecimal(0.10))==0){
+				detail.setDeductNumber(new BigDecimal(105));
+			}
+			else if(detail.getTax().compareTo(new BigDecimal(0.03))==0){
+				detail.setDeductNumber(new BigDecimal(0));
+			}
+			else{
+				detail.setDeductNumber(new BigDecimal(0));
+			}
+			//代扣代缴所得税=ROUND((V*W-X),2)
+			// V应纳税所得额  W税率  X速算扣除数
+			BigDecimal incomeTax =detail.getShouldTaxAmount().multiply(detail.getTax()).subtract(detail.getDeductNumber()).setScale(2);
+			detail.setIncomeTax(incomeTax);
+			//实发工资=U-Y  U报税工资   Y代扣代缴所得税
+			detail.setRealPay(detail.getTaxPay().subtract(incomeTax));
+			detail.setBankPay(detail.getRealPay());
 			detail.setIsDel(1);
 			detail.setCreateTime(new Date());
     		salaryDetails.add(detail);
@@ -317,4 +385,10 @@ public class SalaryServiceImpl implements SalaryService {
     	}
 		return result;
 	}
+	
+	@Override
+	public int countInsuranceDetailByTerm(String term){
+		return insuranceDetailDAO.countInsuranceDetailByTerm(term);
+	}
+	
 }

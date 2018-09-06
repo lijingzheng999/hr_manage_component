@@ -364,6 +364,7 @@ public class CheckWorkController {
 									java.util.Date entryrdate=sdt.parse(String.valueOf(cellValue).trim());
 									detail.setEntryTime(entryrdate);
 								}
+								break;
 							case 5:// 出勤天数
 								transforValue = String.valueOf(cellValue).trim();
 								detail.setAttendanceDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));

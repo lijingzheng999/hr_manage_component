@@ -63,4 +63,14 @@ public interface SalaryService {
      */
 	public int createSalaryDetailByTerm(String term);
 
+	/**
+     * 
+    * @Title: countInsuranceDetailByTerm
+    * @Description: 通过账期查询保险记录数
+    * @param  String term
+    * @return int  
+    * @throws
+     */
+	public int countInsuranceDetailByTerm(String term);
+
 }

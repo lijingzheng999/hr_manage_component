@@ -2,6 +2,9 @@ package com.hr.manage.web.controllers;
 
 import hr.manage.component.admin.model.Admin;
 import hr.manage.component.admin.service.AdminService;
+import hr.manage.component.checkwork.model.CheckWorkDetail;
+import hr.manage.component.checkwork.model.CheckWorkDetailCondition;
+import hr.manage.component.checkwork.service.CheckWorkService;
 import hr.manage.component.contract.model.ContractCondition;
 import hr.manage.component.contract.model.ContractInfo;
 import hr.manage.component.contract.service.ContractService;
@@ -12,6 +15,7 @@ import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
 import hr.manage.component.personal.service.PersonalService;
+import hr.manage.component.salary.model.InsuranceDetail;
 import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
 import hr.manage.component.salary.service.SalaryService;
@@ -27,6 +31,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -92,6 +97,10 @@ public class SalaryController {
 	SalaryService salaryService;
 	@Autowired
 	PersonalService personalService;
+	@Autowired
+	CheckWorkService checkWorkService;
+	
+	private static final String FILE_UPLOAD_PATH=ServiceConfigFactory.getValue("file.upload.path");
 	private final Log logger = LogFactory.getLog(SalaryController.class);
 	
 	
@@ -241,7 +250,19 @@ public class SalaryController {
 		if(salaryCount>0){
 			logger.error("=====所选工资账期出工资表失败,工资表已经出过,不能重复出");
 			return "@" + JSONResult.error(CodeMsg.ERROR,"所选工资账期出工资表失败,工资表已经出过,不能重复出");
-		}		
+		}	
+		CheckWorkDetailCondition condition = new CheckWorkDetailCondition();
+		condition.setTerm(term);
+		Long checkworkCount = checkWorkService.countCheckWorkDetail(condition);
+		if(checkworkCount<=0){
+			logger.error("=====所选工资账期出工资表失败,本月没有考勤记录,请上传考勤信息");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"所选工资账期出工资表失败,本月没有考勤记录,请上传考勤信息");
+		}	
+		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
+		if(insuranceDetailCount<=0){
+			logger.error("=====所选工资账期出工资表失败,本月没有社保记录,请上传社保信息");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"所选工资账期出工资表失败,本月没有社保记录,请上传社保信息");
+		}	
 		//新增需要判断参数；并且要更新基本信息
 		int result = salaryService.createSalaryDetailByTerm(term);
 		if (result >0) {
@@ -252,6 +273,285 @@ public class SalaryController {
 		}
 
 	}
+	
+	
+	
+	/**
+     * 
+    * Title:importInsuranceExcel
+    * Description:导入社保信息excel
+    * Url: salary/importInsuranceExcel
+    * @param   String term,社保月份
+    * @param  MultipartFile filedata,  excel文件
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@NotCareLogin
+	@Post("importInsuranceExcel")
+	public String importInsuranceExcel(@Param("term")  String term,@Param("filedata")MultipartFile filedata){
+		boolean result = true;
+		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
+		if(insuranceDetailCount>0){
+			logger.error("=====所选工资账期出工资表失败,本月已经上传过社保信息");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"所选工资账期出工资表失败,本月已经上传过社保信息");
+		}
+		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
+		long fileNumber = 0;
+		try {
+			/**
+			 * 1.上传文件
+			 */
+			String filePathInServer = "";
+			String separator = File.separator;
+			String filepath = FILE_UPLOAD_PATH;
+			java.util.Date dt = new java.util.Date();
+			SimpleDateFormat fmt = new SimpleDateFormat("yyMMddHHmmssSSSS");
+			String type = filedata
+					.getOriginalFilename()
+					.substring(
+							filedata.getOriginalFilename().lastIndexOf(".") + 1)
+					.toLowerCase();// 获得文件扩展名
+	
+			String originalname = filedata.getOriginalFilename().substring(0,
+					filedata.getOriginalFilename().lastIndexOf("."));// 获得原文件名称
+			String filename = originalname+"_"+ fmt.format(dt) + "." + type;// 文件原名+时间+.+文件扩展名
+			File filepaths = new File(filepath);
+			if (!filepaths.exists()) {
+				filepaths.mkdirs();
+			}
+			File orgFile = new File(filepath + separator
+					+ filename);
+			filedata.transferTo(orgFile);// 上传文件
+			filePathInServer = orgFile.getPath();
+			logger.info("adminUser : "+user.getUsername()+" upload 导入社保信息excel  file wait for whether to save ");
+		
+			/**
+			 * 2. 解析文件xls
+			 */
+			boolean isE2007 = false;    //判断是否是excel2007格式  
+			 if(filename.endsWith("xlsx"))  
+		            isE2007 = true;  
+			File myfile = new File(filePathInServer);
+			InputStream is = new FileInputStream(myfile);
+			 Workbook wb  = null;  
+	            //根据文件格式(2003或者2007)来初始化  
+	            if(isE2007)  
+	                wb = new XSSFWorkbook(is);  
+	            else  
+	                wb = new HSSFWorkbook(is); 
+	            Sheet sheet= wb.getSheetAt(0);     //获得第一个表单   
+	            if(sheet.getLastRowNum()>5000){
+					return "@"+JSONResult.error(CodeMsg.ERROR,"数量不能超过500"); 
+				}
+	            Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器  
+	            List<InsuranceDetail> insuranceDetailList = new ArrayList<InsuranceDetail>();
+	            while (rows.hasNext()) {  
+	                Row row = rows.next();  //获得行数据  
+	                if(row.getRowNum()<1||row==null)
+	                	continue;
+	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
+	                InsuranceDetail detail= new InsuranceDetail();
+	                while (cells.hasNext()) {  
+	                    Cell cell = cells.next();  
+	                    String cellValue = "";
+	                    switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
+	                    case HSSFCell.CELL_TYPE_NUMERIC:  
+	                    	if (DateUtil.isCellDateFormatted(cell)) {
+								Date d = cell.getDateCellValue(); // 对日期处理
+								DateFormat formater = new SimpleDateFormat(
+										"yyyy-MM-dd HH:mm:ss");
+								cellValue = formater.format(d);
+							} else {// 其余按照数字处理
+									// 防止科学计数法
+								DecimalFormat df = new DecimalFormat("0.000");
+								double acno = cell.getNumericCellValue();
+								String acnoStr = df.format(acno);
+								if (acnoStr.indexOf(".") > 0) {
+									acnoStr = acnoStr.replaceAll("0+?$", "");// 去掉多余的0
+									cellValue = acnoStr.replaceAll("[.]$", "");// 如最后一位是.则去掉
+								}
+							}  
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_STRING:  
+	                    	cellValue = cell.getRichStringCellValue().getString(); 
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_BOOLEAN:  
+	                    	cellValue = String.valueOf(cell.getBooleanCellValue());  
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_BLANK:  
+	                    	cellValue = "";
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_ERROR:  
+	                    	cellValue = "";
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_FORMULA:  
+	                    	cellValue = cell.getCellFormula() + "";
+	                        break;  
+	                    default:  
+	                    	cellValue = "";
+	                        break;  
+	                    } 
+	                    if(cell.getColumnIndex()==0&&cellValue.equals("")){
+	                    	break;
+	                    }
+	                    /**
+						 * 处理文件中定义的属性
+						 */
+						String transforValue="";
+						switch (cell.getColumnIndex()) {
+							case 0:// 序号
+								break;
+							case 1:// 姓名
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setName(transforValue);
+								break;
+							case 2:// 起缴时间
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setInsuranceBeginDate(transforValue);
+								break;
+							case 3:// 实缴月份
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setInsuranceRealDate(transforValue);
+								break;
+							case 4:// 外派单位
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setExpatriateUnit(transforValue);
+								break;
+							case 5:// 缴费地点
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setInsurancePlace(transforValue);
+								break;
+							case 6:// 代理公司
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setAgencyCompany(transforValue);
+								break;
+							case 7:// 代理费
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setAgencyPay(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 8:// 养老基数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setEndowmentBase(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 9:// 养老单位比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setEndowmentRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 10:// 养老个人比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setEndowmentRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 11:// 失业基数 
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setUnemploymentBase(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 12://失业单位比例 
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setUnemploymentRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 13:// 失业个人比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setUnemploymentRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 14:// 工伤基数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setWorkInjuryBase(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 15:// 工伤单位比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setWorkInjuryRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 16:// 医疗基数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setMedicalBase(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 17:// 医疗单位比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setMedicalRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 18:// 医疗个人比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setMedicalRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 19:// 生育基数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setBirthBase(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 20:// 生育单位比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setBirthRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 21:// 大病/残保基数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setSickBase(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 22:// 大病/残保单位比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setSickRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 23:// 大病/残保个人比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setSickRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 24:// 住房公积金基数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setHousingBase(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 25:// 住房公积金单位比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setHousingRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 26:// 住房公积金个人比例
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setHousingRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+						}
+	                }  
+	                //验证员工信息是否存在
+	                PersonalInfo person = personalService.getPersonalByName(detail.getName());
+	                if(person==null){
+	                	logger.error("====="+String.format("员工信息不存在,姓名:%s", detail.getName())+"=====");
+	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工信息不存在,姓名:%s", detail.getName())); 
+	                }
+	                detail.setPersonalInfoId(person.getId());
+	                detail.setTerm(term.trim());
+	                SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM");
+					java.util.Date startDate=sdt.parse(String.valueOf(term).trim());
+					detail.setStartDate(startDate);
+			        Calendar endDate = Calendar.getInstance();  
+			        endDate.setTime(startDate);  
+			        endDate.add(Calendar.MONTH, 1);  
+			        detail.setEndDate(endDate.getTime());
+	                detail.setIsDel(1);
+	                detail.setCreateTime(new Date());
+	                insuranceDetailList.add(detail);              
+			}
+	        //批量入库
+	        try {
+//	        	checkWorkService.saveCheckWorkDetailListRecord(checkWorkDetailList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				// TODO: handle exception
+				logger.error("保存数据库异常,已回滚", e);
+				return "@"+JSONResult.error(CodeMsg.ERROR,"保存数据库异常,已回滚"+ e.getMessage());  
+			}
+	        
+		}catch(Exception e1){
+			e1.printStackTrace();
+			logger.error("upload 导入社保信息 throws Exception", e1);
+			return "@"+JSONResult.error(CodeMsg.ERROR,"导入社保信息失败，请稍后重试"+e1);  
+		}
+		if(result){
+			logger.info("adminUser : "+user.getUsername()+"upload 导入社保信息 ; fileNumber : OT"+fileNumber);
+			return "@"+JSONResult.success("导入成功！文件编号为OT"+fileNumber);
+		}else{
+			logger.error("=====导入失败！请重新导入=====");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！请重新导入");  
+		}
+		
+	}
+	
 	
 	
 }

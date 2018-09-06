@@ -204,15 +204,15 @@ public class InsuranceDetail implements java.io.Serializable {
     @Column(value = "housing_pay_total")
     private BigDecimal housingPayTotal;
 
-    /** 公积金小计缴费 */
+    /** 单位缴费合计 */
     @Column(value = "insurance_pay")
     private BigDecimal insurancePay;
 
-    /** 公积金小计缴费 */
+    /** 个人缴费合计 */
     @Column(value = "insurance_pay_personal")
     private BigDecimal insurancePayPersonal;
 
-    /** 公积金小计缴费 */
+    /** 总合计 */
     @Column(value = "insurance_pay_total")
     private BigDecimal insurancePayTotal;
 
@@ -1122,57 +1122,57 @@ public class InsuranceDetail implements java.io.Serializable {
     }
 
     /**
-     * 获取公积金小计缴费
+     * 获取设置单位缴费合计
      * 
-     * @return 公积金小计缴费
+     * @return 设置单位缴费合计
      */
     public BigDecimal getInsurancePay() {
         return this.insurancePay;
     }
 
     /**
-     * 设置公积金小计缴费
+     * 设置单位缴费合计
      * 
      * @param insurancePay
-     *          公积金小计缴费
+     *          设置单位缴费合计
      */
     public void setInsurancePay(BigDecimal insurancePay) {
         this.insurancePay = insurancePay;
     }
 
     /**
-     * 获取公积金小计缴费
+     * 获取个人缴费合计
      * 
-     * @return 公积金小计缴费
+     * @return 个人缴费合计
      */
     public BigDecimal getInsurancePayPersonal() {
         return this.insurancePayPersonal;
     }
 
     /**
-     * 设置公积金小计缴费
+     * 设置个人缴费合计
      * 
      * @param insurancePayPersonal
-     *          公积金小计缴费
+     *          个人缴费合计
      */
     public void setInsurancePayPersonal(BigDecimal insurancePayPersonal) {
         this.insurancePayPersonal = insurancePayPersonal;
     }
 
     /**
-     * 获取公积金小计缴费
+     * 获取总合计
      * 
-     * @return 公积金小计缴费
+     * @return 总合计
      */
     public BigDecimal getInsurancePayTotal() {
         return this.insurancePayTotal;
     }
 
     /**
-     * 设置公积金小计缴费
+     * 设置总合计
      * 
      * @param insurancePayTotal
-     *          公积金小计缴费
+     *          总合计
      */
     public void setInsurancePayTotal(BigDecimal insurancePayTotal) {
         this.insurancePayTotal = insurancePayTotal;
