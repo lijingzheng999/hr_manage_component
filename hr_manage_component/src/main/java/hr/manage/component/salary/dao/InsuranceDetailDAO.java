@@ -52,4 +52,8 @@ public interface InsuranceDetailDAO  extends GenericDAO<InsuranceDetail,Integer>
 	            " and is_del=1 " )
 	    InsuranceDetail getInsuranceDetailByName(String name,String term);
 	    
+	    @SQL(" UPDATE " + TABLE +
+	    		 " SET id_del=0,update_time = now() " +
+				 " WHERE name= :1 and term = :2 and is_del=1 " )
+	    int deleteInsuranceDetailByName(String name,String term);
 }

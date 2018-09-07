@@ -1,5 +1,7 @@
 package hr.manage.component.salary.service;
 
+import hr.manage.component.checkwork.model.CheckWorkDetail;
+import hr.manage.component.salary.model.InsuranceDetail;
 import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
 
@@ -72,5 +74,15 @@ public interface SalaryService {
     * @throws
      */
 	public int countInsuranceDetailByTerm(String term);
+
+	/**
+     * 
+    * @Title: saveInsuranceDetailListRecord
+    * @Description: 保存社保信息列表
+    * @param  List<InsuranceDetail>
+    * @return int
+    * @throws
+     */
+	public  int saveInsuranceDetailListRecord( List<InsuranceDetail> insuranceDetailList);
 
 }
