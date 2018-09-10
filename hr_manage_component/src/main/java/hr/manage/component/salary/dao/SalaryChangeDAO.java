@@ -23,7 +23,6 @@ public interface SalaryChangeDAO  extends GenericDAO<SalaryChange,Integer>{
 	            "#if(:1.type != null  && :1.type >0) { and type = :1.type } " +
 	            "#if(:1.startDate != null) { and create_time >= :1.startDate } " +
 	            "#if(:1.endDate != null) { and create_time <= :1.endDate } " +
-	            " and is_del=1 " +
 	            " order by id " +
 	             "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
 	    List<SalaryChange> listSalaryChange(SalaryChangeCondition condition);
@@ -34,8 +33,7 @@ public interface SalaryChangeDAO  extends GenericDAO<SalaryChange,Integer>{
 	            "#if(:1.employeeNumber != null  && :1.employeeNumber !='') { and employee_number = :1.employeeNumber } " +
 	            "#if(:1.type != null  && :1.type >0) { and type = :1.type } " +
 	            "#if(:1.startDate != null) { and create_time >= :1.startDate } " +
-	            "#if(:1.endDate != null) { and create_time <= :1.endDate } " +
-	            " and is_del=1 ")
+	            "#if(:1.endDate != null) { and create_time <= :1.endDate } ")
 	    Long countSalaryChange(SalaryChangeCondition condition);
 	    
 	

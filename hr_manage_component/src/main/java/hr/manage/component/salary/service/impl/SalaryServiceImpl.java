@@ -126,7 +126,7 @@ public class SalaryServiceImpl implements SalaryService {
 			return -2;
 		}
 		// 构造工资出账周期
-		SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM");
+		SimpleDateFormat sdt = new SimpleDateFormat("yyyyMM");
 		Date startDate = null;
 		try {
 			startDate = sdt.parse(String.valueOf(term).trim());
