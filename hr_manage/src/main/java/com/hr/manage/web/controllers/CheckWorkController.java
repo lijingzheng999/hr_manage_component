@@ -97,6 +97,8 @@ public class CheckWorkController {
 	CheckWorkService checkWorkService;
 	@Autowired
 	PersonalService personalService;
+	@Autowired
+	SalaryService salaryService;
 	private final Log logger = LogFactory.getLog(CheckWorkController.class);
 	private static final String FILE_UPLOAD_PATH=ServiceConfigFactory.getValue("file.upload.path");
 	
@@ -115,7 +117,7 @@ public class CheckWorkController {
     * @return String    
     * @throws
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_20)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
 	@Post("getQtWlwList")
 	public String getQtWlwList(@Param("name") String name,
@@ -158,7 +160,7 @@ public class CheckWorkController {
     * @return String    
     * @throws
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_13)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
 	@Post("getCheckWorkDetailById")
 	@Get("getCheckWorkDetailById")
@@ -184,7 +186,7 @@ public class CheckWorkController {
     * @throws
     * @see CheckWorkDetail
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_13)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
 	@Post("updateCheckWorkDetail")
 	@Get("updateCheckWorkDetail")
@@ -234,11 +236,16 @@ public class CheckWorkController {
     * @return String    
     * @throws
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
 	@Post("importQtWlwExcel")
 	public String importQtWlwExcel(@Param("term")  String term,@Param("filedata")MultipartFile filedata){
 		boolean result = true;
+		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
+		if(insuranceDetailCount>0){
+			logger.error("=====导入全通物联网考勤信息excel失败,本月已经上传过社保信息");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"导入全通物联网考勤信息excel,本月已经上传过社保信息");
+		}
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
 		long fileNumber = 0;
 		try {
@@ -502,7 +509,7 @@ public class CheckWorkController {
     * @return String    
     * @throws
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_20)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
 	@Post("getCurrentList")
 	public String getCurrentList(@Param("name") String name,
@@ -542,7 +549,7 @@ public class CheckWorkController {
     * @return String    
     * @throws
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_13)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
 	@Post("getCheckWorkCurrentById")
 	@Get("getCheckWorkCurrentById")
@@ -570,7 +577,7 @@ public class CheckWorkController {
     * @throws
     * @see CheckWorkCurrent
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_13)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
 	@Post("updateCheckWorkCurrent")
 	@Get("updateCheckWorkCurrent")

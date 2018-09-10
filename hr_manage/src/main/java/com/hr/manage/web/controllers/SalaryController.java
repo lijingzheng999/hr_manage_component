@@ -119,7 +119,7 @@ public class SalaryController {
     * @return String    
     * @throws
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_20)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
 	@NotCareLogin
 	@Get("getList")
 	@Post("getList")
@@ -229,14 +229,14 @@ public class SalaryController {
 	/**
      * 
     * Title: createSalaryDetail
-    * Description: 新增工资调整信息
+    * Description: 按月新增工资明细信息
     * Url: salary/createSalaryDetail
     * @param String term 工资账期201808
     * @return String    
     * @throws
     * @see SalaryDetail
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_20)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
 	@NotCareLogin
 	@Post("createSalaryDetail")
 	@Get("createSalaryDetail")
@@ -286,15 +286,22 @@ public class SalaryController {
     * @return String    
     * @throws
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
 	@NotCareLogin
 	@Post("importInsuranceExcel")
 	public String importInsuranceExcel(@Param("term")  String term,@Param("filedata")MultipartFile filedata){
 		boolean result = true;
 		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
 		if(insuranceDetailCount>0){
-			logger.error("=====所选工资账期出工资表失败,本月已经上传过社保信息");
-			return "@" + JSONResult.error(CodeMsg.ERROR,"所选工资账期出工资表失败,本月已经上传过社保信息");
+			logger.error("=====上传过社保信息失败,本月已经上传过社保信息");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"上传过社保信息失败,本月已经上传过社保信息");
+		}
+		CheckWorkDetailCondition condition = new CheckWorkDetailCondition();
+		condition.setTerm(term);
+		Long checkworkCount= checkWorkService.countCheckWorkDetail(condition);
+		if(checkworkCount<=0){
+			logger.error("=====上传过社保信息失败,本月没上传考勤信息");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"上传过社保信息失败,本月没上传考勤信息");
 		}
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
 		long fileNumber = 0;

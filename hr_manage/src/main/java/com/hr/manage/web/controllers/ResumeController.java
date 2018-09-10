@@ -557,7 +557,7 @@ public class ResumeController {
     * @throws
     * @see ResumeInterview
      */
-	@AuthorityCheck(function = FunctionIds.FUNCTION_9)
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
 	@NotCareLogin
 	@Post("getResumeInterview")
 	@Get("getResumeInterview")
