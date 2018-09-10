@@ -428,7 +428,12 @@ public class SalaryController {
 								break;
 							case 7:// 代理费
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setAgencyPay(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								if(!transforValue.equals("")&&!transforValue.equals("年结")){
+									detail.setAgencyPay(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setAgencyPay(BigDecimal.ZERO);
+								}
 								break;
 							case 8:// 养老基数
 								transforValue = String.valueOf(cellValue).trim();
@@ -516,7 +521,7 @@ public class SalaryController {
 	                }
 	                detail.setPersonalInfoId(person.getId());
 	                detail.setTerm(term.trim());
-	                SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM");
+	                SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
 					java.util.Date startDate=sdt.parse(String.valueOf(term).trim());
 					detail.setStartDate(startDate);
 			        Calendar endDate = Calendar.getInstance();  
@@ -529,7 +534,7 @@ public class SalaryController {
 			}
 	        //批量入库
 	        try {
-//	        	checkWorkService.saveCheckWorkDetailListRecord(checkWorkDetailList);
+	        	salaryService.saveInsuranceDetailListRecord(insuranceDetailList);
 			} catch (Exception e) {
 				e.printStackTrace();
 				// TODO: handle exception

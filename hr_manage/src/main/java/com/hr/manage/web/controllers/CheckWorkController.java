@@ -391,23 +391,48 @@ public class CheckWorkController {
 								break;
 							case 11:// 剩余加班小时数 
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setSurplusOvertimeHours(Integer.parseInt(transforValue));
+								if(!transforValue.equals("")){
+								  detail.setSurplusOvertimeHours(Integer.parseInt(transforValue));
+								}
+								else{
+								  detail.setSurplusOvertimeHours(0);
+								}
 								break;
 							case 12://可休年假天数 
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setAnnualLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								if(!transforValue.equals("")){
+								  detail.setAnnualLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setAnnualLeaveDays(BigDecimal.ZERO);
+								}
 								break;
 							case 13:// 剩余年休天数
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setSurplusAnnualLeave(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								if(!transforValue.equals("")){
+								  detail.setSurplusAnnualLeave(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setSurplusAnnualLeave(BigDecimal.ZERO);
+								}
 								break;
 							case 14:// 累计长期病假天数
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setSickLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								if(!transforValue.equals("")){
+									  detail.setSickLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setSickLeaveDays(BigDecimal.ZERO);
+								}
 								break;
 							case 15:// 累计长期事假天数
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setCompassionateLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								if(!transforValue.equals("")){
+									  detail.setCompassionateLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setCompassionateLeaveDays(BigDecimal.ZERO);
+								}
 								break;
 						}
 	                }  
@@ -426,7 +451,7 @@ public class CheckWorkController {
 //	                detail.setCheckWorkCurrent(checkWorkCurrent);
 	                detail.setPersonalInfo(person);
 	                detail.setTerm(term.trim());
-	                SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM");
+	                SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
 					java.util.Date startDate=sdt.parse(String.valueOf(term).trim());
 					detail.setStartDate(startDate);
 			        Calendar endDate = Calendar.getInstance();  

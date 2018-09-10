@@ -1,6 +1,7 @@
 package com.hr.manage.web.controllers;
 
 import hr.manage.component.admin.model.Admin;
+import hr.manage.component.admin.model.AdminRole;
 import hr.manage.component.admin.service.AdminService;
 import hr.manage.component.personal.model.PersonalAll;
 import hr.manage.component.personal.model.PersonalAllExport;
@@ -581,8 +582,8 @@ public class PersonalController {
 							case 37:// 毕业时间
 								transforValue = String.valueOf(cellValue).trim();
 								if(!transforValue.equals("")){
-									SimpleDateFormat sdtGraduationTime=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
-									Date graduationTime=sdtGraduationTime.parse(String.valueOf(cellValue).trim());
+									SimpleDateFormat sdtGraduationTime=new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟  
+									Date graduationTime=sdtGraduationTime.parse(cellValue.toString());
 									person.setGraduationTime(graduationTime);
 									// 工作年限=DATEDIF(毕业时间,TODAY(),"Y")&"年"
 									String curWorkingLife = String.valueOf(DateTimeUtil.yearDateDiff(graduationTime,new Date())+"年").trim();
@@ -858,8 +859,16 @@ public class PersonalController {
 	@Post("addAdminByPInfoId")
 	@Get("addAdminByPInfoId")
 	public String addAdminByPInfoId(
-			@Param("personalInfoId")Integer personalInfoId) {
-		// 进行修改
+			@Param("personalInfoId")Integer personalInfoId,
+			@Param("roleId")Integer roleId,
+			@Param("roleName")String roleName) {
+		//校验权限ID是否存在
+
+		AdminRole role = adminService.getRole(roleId);
+		if(role==null){
+			logger.error("=====没有此权限=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "没有此权限");
+		}
 		PersonalAll personalAll = personalService
 				.getPersonalAllInfoById(personalInfoId);
 		if (personalAll.getPersonalInfo() != null) {
@@ -877,8 +886,13 @@ public class PersonalController {
 					curAdmin.setPassword(MD5Util.GetMD5Code(personalAll.getPersonalInfo().getPhone()+personalAll.getPersonalInfo().getIdentityCard().substring(10, 14)));
 					curAdmin.setPersonalInfoId(personalInfoId);
 					//默认权限
-					curAdmin.setRoleids(",1,");
-					curAdmin.setRolenames("普通员工");
+					curAdmin.setRoleids(","+roleId+",");
+					if(StringUtils.isBlank(roleName)){
+						curAdmin.setRolenames(role.getRolename());
+					}
+					else{
+						curAdmin.setRolenames(roleName);
+					}
 					curAdmin.setEmail(personalAll.getPersonalInfo().getEmail());
 					curAdmin.setRealname(personalAll.getPersonalInfo().getName());
 					curAdmin.setStatus(1);

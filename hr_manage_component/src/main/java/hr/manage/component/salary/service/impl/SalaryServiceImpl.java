@@ -277,7 +277,7 @@ public class SalaryServiceImpl implements SalaryService {
 						probationaryPay = probationaryPay
 								.multiply(new BigDecimal(dutyDays));
 
-						probationaryPay = probationaryPay.setScale(2);
+						probationaryPay = probationaryPay.setScale(2,BigDecimal.ROUND_HALF_UP);
 						detail.setProbationaryPay(probationaryPay);
 
 						// 转正工资
@@ -286,7 +286,7 @@ public class SalaryServiceImpl implements SalaryService {
 						workPay = workPay.divide(checkWork.getCheckWorkDays());
 						// 乘以本月试用期天数
 						workPay = workPay.multiply(workDays);
-						workPay = workPay.setScale(2);
+						workPay = workPay.setScale(2,BigDecimal.ROUND_HALF_UP);
 						detail.setBasePay(workPay);
 						detail.setMeritPay(BigDecimal.ZERO);
 						detail.setOtherPay(BigDecimal.ZERO);
@@ -395,7 +395,7 @@ public class SalaryServiceImpl implements SalaryService {
 			// V应纳税所得额 W税率 X速算扣除数
 			BigDecimal incomeTax = detail.getShouldTaxAmount()
 					.multiply(detail.getTax())
-					.subtract(detail.getDeductNumber()).setScale(2);
+					.subtract(detail.getDeductNumber()).setScale(2,BigDecimal.ROUND_HALF_UP);
 			detail.setIncomeTax(incomeTax);
 			// 实发工资=U-Y U报税工资 Y代扣代缴所得税
 			detail.setRealPay(detail.getTaxPay().subtract(incomeTax));
@@ -439,45 +439,48 @@ public class SalaryServiceImpl implements SalaryService {
 			}
 			// 养老单位
 			insurance.setEndowmentPay(insurance.getEndowmentBase()
-					.multiply(insurance.getEndowmentRate()).setScale(2));
+					.multiply(insurance.getEndowmentRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
 			// 养老个人
 			insurance
 					.setEndowmentPayPersonal(insurance.getEndowmentBase()
 							.multiply(insurance.getEndowmentRatePersonal())
-							.setScale(2));
+							.setScale(2,BigDecimal.ROUND_HALF_UP));
 			// 失业单位
 			insurance.setUnemploymentPay(insurance.getUnemploymentBase()
-					.multiply(insurance.getUnemploymentRate()).setScale(2));
+					.multiply(insurance.getUnemploymentRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
 			// 失业个人
 			insurance.setUnemploymentPayPersonal(insurance
 					.getUnemploymentBase()
 					.multiply(insurance.getUnemploymentRatePersonal())
-					.setScale(2));
+					.setScale(2,BigDecimal.ROUND_HALF_UP));
 			// 工伤单位
 			insurance.setWorkInjuryPay(insurance.getWorkInjuryBase()
-					.multiply(insurance.getWorkInjuryRate()).setScale(2));
-			// 医疗单位 北京的+3
+					.multiply(insurance.getWorkInjuryRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
+			// 医疗单位
+			insurance.setMedicalPay(insurance.getMedicalBase()
+					.multiply(insurance.getMedicalRate()).setScale(2,BigDecimal.ROUND_HALF_UP));	
+			
+						
+			// 医疗个人 北京的+3
 			if(insurance.getInsurancePlace().contains("北京")){
-				insurance.setMedicalPay(insurance.getMedicalBase()
-						.multiply(insurance.getMedicalRate()).add(new BigDecimal(3)).setScale(2));
+				insurance.setMedicalPayPersonal(insurance.getMedicalBase()
+						.multiply(insurance.getMedicalRatePersonal()).add(new BigDecimal(3)).setScale(2,BigDecimal.ROUND_HALF_UP));
 			}
 			else{
-				insurance.setMedicalPay(insurance.getMedicalBase()
-						.multiply(insurance.getMedicalRate()).setScale(2));	
+				insurance.setMedicalPayPersonal(insurance.getMedicalBase()
+						.multiply(insurance.getMedicalRatePersonal()).setScale(2,BigDecimal.ROUND_HALF_UP));
+				
 			}
 			
-			// 医疗个人
-			insurance.setMedicalPayPersonal(insurance.getMedicalBase()
-					.multiply(insurance.getMedicalRatePersonal()).setScale(2));
 			// 生育单位
 			insurance.setBirthPay(insurance.getBirthBase()
-					.multiply(insurance.getBirthRate()).setScale(2));
+					.multiply(insurance.getBirthRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
 			// 大病/残保单位
 			insurance.setSickPay(insurance.getSickBase()
-					.multiply(insurance.getSickRate()).setScale(2));
+					.multiply(insurance.getSickRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
 			// 大病个人
 			insurance.setSickPayPersonal(insurance.getSickBase()
-					.multiply(insurance.getSickRatePersonal()).setScale(2));
+					.multiply(insurance.getSickRatePersonal()).setScale(2,BigDecimal.ROUND_HALF_UP));
 			// 社保单位合计
 			BigDecimal socialSecurity = new BigDecimal(0);
 			socialSecurity = socialSecurity.add(insurance.getEndowmentPay());
@@ -503,10 +506,10 @@ public class SalaryServiceImpl implements SalaryService {
 					.add(socialSecurityPersonal));
 			// 公积金单位
 			insurance.setHousingPay(insurance.getHousingBase()
-					.multiply(insurance.getHousingRate()).setScale(0));
+					.multiply(insurance.getHousingRate()).setScale(0,BigDecimal.ROUND_HALF_UP));
 			// 公积金个人
 			insurance.setHousingPayPersonal(insurance.getHousingBase()
-					.multiply(insurance.getHousingRatePersonal()).setScale(0));
+					.multiply(insurance.getHousingRatePersonal()).setScale(0,BigDecimal.ROUND_HALF_UP));
 			// 公积金小计
 			insurance.setHousingPayTotal(insurance.getHousingPay().add(
 					insurance.getHousingPayPersonal()));

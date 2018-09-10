@@ -24,6 +24,8 @@ public interface AdminService {
 	
 	public long addUser(Admin admin);
 	
+
+	public AdminRole getRole(int roleid);
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -49,8 +51,6 @@ public interface AdminService {
 	public int addRole(String rolename, String roledesc, int isEnable);
 	
 	public int checkRoleName(String rolename);
-	
-	public AdminRole getRole(int roleid);
 	
 	public int updateRole(AdminRole role);
 	

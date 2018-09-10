@@ -19,10 +19,11 @@ public interface AdminRoleDAO  extends GenericDAO<AdminRole, Long>{
 	@SQL("select "+ADMIN_ROLE+" from admin_role where roleid in (:1) ")
 	public List<AdminRole> getAdminRoleByIds(List<Integer> roleids);
 	
+	@SQL("select " + ADMIN_ROLE + " from admin_role where roleid = :1")
+	public AdminRole getRole(int roleid);
 	
 //////////////////////////////////////////////////////////////////////////////////////////////
-	@SQL("select " + adminRole + " from admin_role where roleid = :1")
-	public AdminRole getRole(int roleid);
+	
 	
 	@SQL("select " + adminRole + " from admin_role #if(:1 == 0){where roleid <> 1}")
 	public List<AdminRole> getRoleList(int superAdminAvaiable);

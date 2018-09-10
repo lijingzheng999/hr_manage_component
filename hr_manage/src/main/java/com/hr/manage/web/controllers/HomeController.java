@@ -140,7 +140,16 @@ public class HomeController {
 		    public String testimport() {
 		    	return "batch-add";
 		    }
-	
+			@NotCareLogin
+			@Get("testimportkaoqin")
+		    public String testimportkaoqin() {
+		    	return "batch-add-kaoqin";
+		    }
+			@NotCareLogin
+			@Get("testimportshebao")
+		    public String testimportshebao() {
+		    	return "batch-add-shebao";
+		    }
 			@NotCareLogin
 			@Get("testupload")
 		    public String testupload() {

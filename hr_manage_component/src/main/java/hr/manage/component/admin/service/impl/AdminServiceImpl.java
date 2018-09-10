@@ -72,7 +72,11 @@ public class AdminServiceImpl implements AdminService {
 		return adminDao.save(admin);
 	}
 
-	
+
+	@Override
+	public AdminRole getRole(int roleid) {
+		return adminRoleDao.getRole(roleid);
+	}
 	////////////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public Admin getUser(String username, String password) {
@@ -149,10 +153,6 @@ public class AdminServiceImpl implements AdminService {
 		return adminRoleDao.checkRoleName(rolename);
 	}
 
-	@Override
-	public AdminRole getRole(int roleid) {
-		return adminRoleDao.getRole(roleid);
-	}
 
 	@Override
 	public int updateRole(AdminRole role) {
