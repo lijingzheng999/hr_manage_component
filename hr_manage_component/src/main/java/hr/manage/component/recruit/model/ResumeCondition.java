@@ -26,7 +26,8 @@ public class ResumeCondition implements Serializable {
     private Integer experience;
     /** 面试状态 1:进行中;0:未通过;2:面试通过 */
     private Integer status;
-  
+    /** 外派单位 -需求表用*/
+    private String expatriateUnit;
    
     /**分页开始位置*/
     private Integer offset;
@@ -55,6 +56,12 @@ public class ResumeCondition implements Serializable {
 		this.experience = experience;
 	}
 	
+	public String getExpatriateUnit() {
+		return expatriateUnit;
+	}
+	public void setExpatriateUnit(String expatriateUnit) {
+		this.expatriateUnit = expatriateUnit;
+	}
 	public Integer getStatus() {
 		return status;
 	}

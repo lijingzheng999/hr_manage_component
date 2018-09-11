@@ -44,10 +44,13 @@ public class ResumeServiceImpl implements ResumeService {
 	}
 	
 	@Override
-	public List<RecruitInfo> listRecruitInfo(){
-		return recruitInfoDAO.listRecruitInfo(null);
+	public List<RecruitInfo> listRecruitInfo(ResumeCondition condition){
+		return recruitInfoDAO.listRecruitInfo(condition);
 	}
-	
+	@Override
+	public Long countRecruitInfo(ResumeCondition condition){
+		return recruitInfoDAO.countRecruitInfo(condition);
+	}
 	@Override
 	public int deleteRecruitInfo(Integer recruitInfoId){
 		return recruitInfoDAO.deleteRecruitInfo(recruitInfoId);

@@ -371,7 +371,7 @@ public class SalaryController {
 								cellValue = formater.format(d);
 							} else {// 其余按照数字处理
 									// 防止科学计数法
-								DecimalFormat df = new DecimalFormat("0.000");
+								DecimalFormat df = new DecimalFormat("0.0000");
 								double acno = cell.getNumericCellValue();
 								String acnoStr = df.format(acno);
 								if (acnoStr.indexOf(".") > 0) {
@@ -448,11 +448,11 @@ public class SalaryController {
 								break;
 							case 9:// 养老单位比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setEndowmentRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setEndowmentRate(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 10:// 养老个人比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setEndowmentRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setEndowmentRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 11:// 失业基数 
 								transforValue = String.valueOf(cellValue).trim();
@@ -460,11 +460,11 @@ public class SalaryController {
 								break;
 							case 12://失业单位比例 
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setUnemploymentRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setUnemploymentRate(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 13:// 失业个人比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setUnemploymentRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setUnemploymentRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 14:// 工伤基数
 								transforValue = String.valueOf(cellValue).trim();
@@ -472,7 +472,7 @@ public class SalaryController {
 								break;
 							case 15:// 工伤单位比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setWorkInjuryRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setWorkInjuryRate(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 16:// 医疗基数
 								transforValue = String.valueOf(cellValue).trim();
@@ -480,11 +480,11 @@ public class SalaryController {
 								break;
 							case 17:// 医疗单位比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setMedicalRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setMedicalRate(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 18:// 医疗个人比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setMedicalRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setMedicalRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 19:// 生育基数
 								transforValue = String.valueOf(cellValue).trim();
@@ -492,7 +492,7 @@ public class SalaryController {
 								break;
 							case 20:// 生育单位比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setBirthRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setBirthRate(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 21:// 大病/残保基数
 								transforValue = String.valueOf(cellValue).trim();
@@ -500,11 +500,11 @@ public class SalaryController {
 								break;
 							case 22:// 大病/残保单位比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setSickRate(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setSickRate(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 23:// 大病/残保个人比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setSickRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setSickRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 							case 24:// 住房公积金基数
 								transforValue = String.valueOf(cellValue).trim();
@@ -516,7 +516,7 @@ public class SalaryController {
 								break;
 							case 26:// 住房公积金个人比例
 								transforValue = String.valueOf(cellValue).trim();
-								detail.setHousingRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								detail.setHousingRatePersonal(BigDecimal.valueOf(Double.parseDouble(transforValue)).setScale(4,BigDecimal.ROUND_HALF_UP));
 								break;
 						}
 	                }  

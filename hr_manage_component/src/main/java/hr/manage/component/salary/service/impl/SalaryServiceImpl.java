@@ -120,11 +120,11 @@ public class SalaryServiceImpl implements SalaryService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
 	public int createSalaryDetailByTerm(String term) {
 		int result = 0;
-		int salaryCount = salaryDetailDAO.countSalaryDetailByTerm(term);
-		if (salaryCount > 0) {
-			// 工资表已经出过，不能重复出
-			return -2;
-		}
+//		int salaryCount = salaryDetailDAO.countSalaryDetailByTerm(term);
+//		if (salaryCount > 0) {
+//			// 工资表已经出过，不能重复出
+//			return -2;
+//		}
 		// 构造工资出账周期
 		SimpleDateFormat sdt = new SimpleDateFormat("yyyyMM");
 		Date startDate = null;
@@ -149,7 +149,7 @@ public class SalaryServiceImpl implements SalaryService {
 			int leaveStatus = personalAll.getLeaveStatus();
 			if (leaveStatus == 0) {
 				// 如果离职时间在本月之前,过滤掉,不生成工资表
-				if (personalAll.getLeaveWorkingTime().before(startDate)) {
+				if (personalAll.getLeaveWorkingTime()!=null && personalAll.getLeaveWorkingTime().before(startDate)) {
 					continue;
 				}
 			}
@@ -163,14 +163,29 @@ public class SalaryServiceImpl implements SalaryService {
 			detail.setExpatriateUnit(personalAll.getExpatriateUnit());
 			Date workTime = personalAll.getWorkerTime();
 			// 判断是否已转正;workTime<startDate 本月已转正
-			if (workTime.before(startDate)) {
+			if (workTime!=null && workTime.before(startDate)) {
 				detail.setProbationaryPay(BigDecimal.ZERO);
 				detail.setBasePay(personalAll.getBasePay());
 				detail.setMeritPay(personalAll.getMeritPay());
 				detail.setOtherPay(BigDecimal.ZERO);
-				detail.setTrafficSubsidy(new BigDecimal(100));
-				detail.setComputerSubsidy(new BigDecimal(100));
-				detail.setMealSubsidy(new BigDecimal(300));
+				BigDecimal subsidy=personalAll.getSubsidy();
+				//补贴为500
+				if(subsidy.compareTo(new BigDecimal(500))==0){
+					detail.setTrafficSubsidy(new BigDecimal(100));
+					detail.setComputerSubsidy(new BigDecimal(100));
+					detail.setMealSubsidy(new BigDecimal(300));
+				}
+				else if(subsidy.compareTo(new BigDecimal(400))==0){
+					detail.setTrafficSubsidy(new BigDecimal(100));
+					detail.setComputerSubsidy(new BigDecimal(0));
+					detail.setMealSubsidy(new BigDecimal(300));
+				}
+				else {
+					detail.setTrafficSubsidy(new BigDecimal(100));
+					detail.setComputerSubsidy(new BigDecimal(0));
+					detail.setMealSubsidy(new BigDecimal(0));
+				}					
+				
 				detail.setPhoneSubsidy(BigDecimal.ZERO);
 				// 计算考勤扣款//////////////////////////////////
 				BigDecimal attendanceDeduction = new BigDecimal(0);
@@ -194,7 +209,7 @@ public class SalaryServiceImpl implements SalaryService {
 							.getMealSubsidy());
 					// 所有费用/考勤天数
 					attendanceDeduction = attendanceDeduction.divide(checkWork
-							.getCheckWorkDays());
+							.getCheckWorkDays(),2,BigDecimal.ROUND_HALF_UP);
 					// 乘以缺勤天数
 					attendanceDeduction = attendanceDeduction
 							.multiply(checkWork.getSettlementDays());
@@ -207,7 +222,7 @@ public class SalaryServiceImpl implements SalaryService {
 			} else {
 				// 判断是否在本月转正;仍有部分试用期或全是试用期
 				// 本月未转正 workTime>endDate
-				if (endDate.before(workTime)) {
+				if (endDate!=null && endDate.getTime().before(workTime)) {
 					// 全是试用期
 					detail.setProbationaryPay(personalAll.getProbationaryPay());
 					detail.setBasePay(BigDecimal.ZERO);
@@ -240,7 +255,7 @@ public class SalaryServiceImpl implements SalaryService {
 								.getMealSubsidy());
 						// 所有费用/考勤天数
 						attendanceDeduction = attendanceDeduction
-								.divide(checkWork.getCheckWorkDays());
+								.divide(checkWork.getCheckWorkDays(),2,BigDecimal.ROUND_HALF_UP);
 						// 乘以缺勤天数
 						attendanceDeduction = attendanceDeduction
 								.multiply(checkWork.getSettlementDays());
@@ -272,7 +287,7 @@ public class SalaryServiceImpl implements SalaryService {
 
 						// 除去本月考勤天数
 						probationaryPay = probationaryPay.divide(checkWork
-								.getCheckWorkDays());
+								.getCheckWorkDays(),2,BigDecimal.ROUND_HALF_UP);
 						// 乘以本月试用期天数
 						probationaryPay = probationaryPay
 								.multiply(new BigDecimal(dutyDays));
@@ -283,7 +298,7 @@ public class SalaryServiceImpl implements SalaryService {
 						// 转正工资
 						BigDecimal workPay = personalAll.getWorkerPay();
 						// 除去本月考勤天数
-						workPay = workPay.divide(checkWork.getCheckWorkDays());
+						workPay = workPay.divide(checkWork.getCheckWorkDays(),2,BigDecimal.ROUND_HALF_UP);
 						// 乘以本月试用期天数
 						workPay = workPay.multiply(workDays);
 						workPay = workPay.setScale(2,BigDecimal.ROUND_HALF_UP);
@@ -309,7 +324,7 @@ public class SalaryServiceImpl implements SalaryService {
 								.getMealSubsidy());
 						// 所有费用/考勤天数
 						attendanceDeduction = attendanceDeduction
-								.divide(checkWork.getCheckWorkDays());
+								.divide(checkWork.getCheckWorkDays(),2,BigDecimal.ROUND_HALF_UP);
 						// 乘以缺勤天数
 						attendanceDeduction = attendanceDeduction
 								.multiply(checkWork.getSettlementDays());
@@ -352,12 +367,12 @@ public class SalaryServiceImpl implements SalaryService {
 			if (detail.getInsuranceDeduction() == null) {
 				detail.setTaxPay(detail.getShouldPay());
 			} else {
-				detail.setTaxPay(detail.getShouldPay().multiply(
+				detail.setTaxPay(detail.getShouldPay().subtract(
 						detail.getInsuranceDeduction()));
 			}
 			// 应纳税所得额==IF(U-3500>0,U-3500,0) U为报税工资
 			if (detail.getTaxPay().compareTo(new BigDecimal(3500)) > 0) {
-				detail.setShouldTaxAmount(detail.getTaxPay().multiply(
+				detail.setShouldTaxAmount(detail.getTaxPay().subtract(
 						new BigDecimal(3500)));
 			} else {
 				detail.setShouldTaxAmount(BigDecimal.ZERO);

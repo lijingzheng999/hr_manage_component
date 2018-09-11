@@ -1,6 +1,7 @@
 package hr.manage.component.recruit.dao;
 
 import hr.manage.component.recruit.model.RecruitInfo;
+import hr.manage.component.recruit.model.ResumeCondition;
 
 import java.util.List;
 
@@ -17,10 +18,20 @@ public interface RecruitInfoDAO  extends GenericDAO<RecruitInfo,Integer>{
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
-	    		" and is_del=1 " +
+	    		"#if(:1.position != null  && :1.position !='') { and position = :1.position } " +
+		        "#if(:1.expatriateUnit != null  && :1.expatriateUnit !='') { and expatriate_unit = :1.expatriateUnit } " +
+		        "#if(:1.status != null ) { and status = :1.status } " +
+		        " and is_del = 1 " +
 	            " order by id desc")
-	    List<RecruitInfo> listRecruitInfo(RecruitInfo recruitInfo);
+	    List<RecruitInfo> listRecruitInfo(ResumeCondition condition);
 	   
+	    @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +
+	    		"#if(:1.position != null  && :1.position !='') { and position = :1.position } " +
+		        "#if(:1.expatriateUnit != null  && :1.expatriateUnit !='') { and expatriate_unit = :1.expatriateUnit } " +
+		        "#if(:1.status != null ) { and status = :1.status } " +
+		        " and is_del = 1 ")
+	    Long countRecruitInfo(ResumeCondition condition);
+	    
 	    @SQL(" UPDATE "+TABLE+
 	    		" set is_del=0 ,update_time = now() " +
 	            " WHERE id= :1 and is_del=1 ")

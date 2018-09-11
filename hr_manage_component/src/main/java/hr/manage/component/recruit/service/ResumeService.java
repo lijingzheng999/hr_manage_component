@@ -30,8 +30,17 @@ public interface ResumeService {
     * @return List<listRecruitInfo>    
     * @throws
      */
-	public List<RecruitInfo> listRecruitInfo();
+	public List<RecruitInfo> listRecruitInfo(ResumeCondition condition);
 	
+	/**
+     * 
+    * @Title: countRecruitInfo
+    * @Description: 获取招聘需求信息列表个数
+    * @param @return    
+    * @return Long 
+    * @throws
+     */
+	public Long countRecruitInfo(ResumeCondition condition);
 	/**
      * 
     * @Title: deleteRecruitInfo

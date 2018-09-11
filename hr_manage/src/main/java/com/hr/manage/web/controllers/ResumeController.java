@@ -112,6 +112,7 @@ public class ResumeController {
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
 		
 		// 进行新
+		recruitInfo.setStatus(1); //默认进行中；
 		recruitInfo.setIsDel(1);
 		recruitInfo.setCreateUser(user.getRealname());
 		recruitInfo.setCreateTime(new Date());
@@ -130,6 +131,11 @@ public class ResumeController {
     * Title: getRecruitList
     * Description: 获取招聘需求列表
     * Url: resume/getRecruitList
+    * @param String position, 岗位
+    * @param String expatriateUnit,外派单位
+    * @param Integer status,状态
+    * @param int pageIndex, 分页页数
+    * @param int pageSize 	行数
     * @return String    
     * @throws
      */
@@ -137,29 +143,34 @@ public class ResumeController {
 	@NotCareLogin
 	@Get("getRecruitList")
 	@Post("getRecruitList")
-	public String getRecruitList() {
-//		ResumeCondition condition = new ResumeCondition();
-//
-//			condition.setPosition(position);
-//			condition.setAge(age);
-//			condition.setExperience(experience);
-//		
-//		pageIndex = pageIndex < 0 ? 0 : pageIndex;
-//		pageSize = pageSize < 1 ? 1 : pageSize;
-////		condition.setOrderby("createtime");
-//		condition.setOffset(pageIndex * pageSize);
-//		condition.setLimit(pageSize);
-//		Long count = 0L;
+	public String getRecruitList(@Param("position") String position,
+			@Param("expatriateUnit") String expatriateUnit,
+			@Param("status") Integer status,
+			@Param("pageIndex") int pageIndex, 
+			@Param("pageSize") int pageSize) {
+		ResumeCondition condition = new ResumeCondition();
+
+			condition.setPosition(position);
+			condition.setStatus(status);
+			condition.setExpatriateUnit(expatriateUnit);
+		
+		pageIndex = pageIndex < 0 ? 0 : pageIndex;
+		pageSize = pageSize < 1 ? 1 : pageSize;
+//		condition.setOrderby("createtime");
+		condition.setOffset(pageIndex * pageSize);
+		condition.setLimit(pageSize);
+		Long count = 0L;
 		List<RecruitInfo> recruitLists = new ArrayList<>();
 		try {
-			recruitLists = resumeService.listRecruitInfo();
+			recruitLists = resumeService.listRecruitInfo(condition);
+			count = resumeService.countRecruitInfo(condition);
 		} catch (Exception e) {
 			logger.error("=====获取招聘需求列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
-//		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
-//		Map<String, Object> dataMap = DataMapUtil.getDataMap("resumeViewList", resumeLists, count, pageCount);
-		return "@" + JSONResult.success(recruitLists);
+		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+		Map<String, Object> dataMap = DataMapUtil.getDataMap("recruitLists", recruitLists, count, pageCount);
+		return "@" + JSONResult.success(dataMap);
 	}
 	
 	
