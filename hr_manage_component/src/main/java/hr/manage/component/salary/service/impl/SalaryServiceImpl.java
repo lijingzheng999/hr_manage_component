@@ -37,6 +37,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Component
 public class SalaryServiceImpl implements SalaryService {
 
@@ -443,7 +444,23 @@ public class SalaryServiceImpl implements SalaryService {
 	public Long countSalaryDetail(SalaryDetailCondition condition){
 		return salaryDetailDAO.countSalaryDetail(condition);
 	}
-    
+	@Override
+	public SalaryDetail getSalaryDetailById(Integer salaryDetailId){
+		return salaryDetailDAO.get(salaryDetailId);
+	}
+	
+	@Override
+	public int updateSalaryDetail(SalaryDetail salaryDetail){
+		int result = 0;
+		SalaryDetail detail = salaryDetailDAO.get(salaryDetail.getId());
+		if(detail==null){
+			return -2;
+		}
+		//更新数据;
+		
+		return result;
+	}
+	
 	@Override
 	public List<InsuranceDetail>  listInsuranceDetail(InsuranceDetailCondition condition) {
 		return insuranceDetailDAO.listInsuranceDetail(condition);
@@ -454,6 +471,22 @@ public class SalaryServiceImpl implements SalaryService {
 		return insuranceDetailDAO.countInsuranceDetail(condition);
 	}
 	
+	@Override
+	public InsuranceDetail getInsuranceDetailById(Integer insuranceDetailId){
+		return insuranceDetailDAO.get(insuranceDetailId);
+	}
+	
+	@Override
+	public int  updateInsuranceDetail(InsuranceDetail insuranceDetail){
+		int result = 0;
+		InsuranceDetail detail = insuranceDetailDAO.get(insuranceDetail.getId());
+		if(detail==null){
+			return -2;
+		}
+		//更新数据;
+		
+		return result;
+	}
 	@Override
 	public int countInsuranceDetailByTerm(String term) {
 		return insuranceDetailDAO.countInsuranceDetailByTerm(term);
@@ -697,17 +730,31 @@ public class SalaryServiceImpl implements SalaryService {
 			//试用期利润 =R3-G3-N3-U3-V3-W3
 			//全通结算价-试用期薪资-试用期社保-试用期工会经费-试用期残疾人就业保障金-试用期增值税及附加税
 			BigDecimal pProfit = new BigDecimal(0);
-			
+			pProfit=pProfit.add(detail.getSettlementPrice());
+			pProfit=pProfit.subtract(detail.getProbationaryPay());
+			pProfit=pProfit.subtract(detail.getProbationaryInsurance());
+			pProfit=pProfit.subtract(detail.getProbationaryUnionPay());
+			pProfit=pProfit.subtract(detail.getProbationaryDisabledPay());
+			pProfit=pProfit.subtract(detail.getProbationaryTaxPay());
 			detail.setProbationaryProfit(pProfit);
 			//试用期利润率 =试用期利润/全通结算价
 			BigDecimal pProfitRate = new BigDecimal(0);
+			pProfitRate=pProfit.divide(detail.getSettlementPrice(),4,BigDecimal.ROUND_HALF_UP);
 			detail.setProbationaryProfitRate(pProfitRate);
 			//转正后利润 =R3-O3-P3-Q3-X3-Y3-Z3
 			//全通结算价-转正后薪资-转正后社保-公积金-工会经费-残疾人就业保障金-增值税及附加税
 			BigDecimal profit = new BigDecimal(0);
+			profit=profit.add(detail.getSettlementPrice());
+			profit=profit.subtract(detail.getWorkerPay());
+			profit=profit.subtract(detail.getSocialSecurity());
+			profit=profit.subtract(detail.getHousingPay());
+			profit=profit.subtract(detail.getUnionPay());
+			profit=profit.subtract(detail.getDisabledPay());
+			profit=profit.subtract(detail.getTaxPay());
 			detail.setProfit(profit);
 			//转正后利润率 =转正后利润/全通结算价
 			BigDecimal profitRate = new BigDecimal(0);
+			profitRate=profit.divide(detail.getSettlementPrice(),4,BigDecimal.ROUND_HALF_UP);
 			detail.setProfit(profitRate);
 			detail.setIsDel(1);
 			detail.setCreateTime(new Date());

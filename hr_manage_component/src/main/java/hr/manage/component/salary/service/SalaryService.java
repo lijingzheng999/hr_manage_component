@@ -92,6 +92,26 @@ public interface SalaryService {
     
 	/**
      * 
+    * @Title: getSalaryDetailById
+    * @Description: 通过ID获取工资表明细
+    * @param  Long
+    * @return SalaryDetail
+    * @throws
+     */
+	public SalaryDetail getSalaryDetailById(Integer salaryDetailId);
+	
+	/**
+     * 
+    * @Title: updateSalaryDetail
+    * @Description: 修改工资表明细
+    * @param  SalaryDetail salaryDetail
+    * @return int
+    * @throws
+     */
+	public int updateSalaryDetail(SalaryDetail salaryDetail);
+	
+	/**
+     * 
     * @Title: listInsuranceDetail
     * @Description: 通过条件查询社保表明细
     * @param  listInsuranceDetail
@@ -110,6 +130,26 @@ public interface SalaryService {
      */
 	public Long countInsuranceDetail(InsuranceDetailCondition condition);
  
+	/**
+     * 
+    * @Title: getInsuranceDetailById
+    * @Description: 通过ID查询社保表明细
+    * @param  Integer insuranceDetailId
+    * @return InsuranceDetail
+    * @throws
+     */
+	public InsuranceDetail getInsuranceDetailById(Integer insuranceDetailId);
+	
+	/**
+     * 
+    * @Title: updateInsuranceDetail
+    * @Description: 修改社保表明细
+    * @param  InsuranceDetail insuranceDetail
+    * @return int
+    * @throws
+     */
+	public int  updateInsuranceDetail(InsuranceDetail insuranceDetail);
+	
 	/**
      * 
     * @Title: countInsuranceDetailByTerm

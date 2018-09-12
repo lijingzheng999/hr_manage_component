@@ -15,6 +15,7 @@ import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
 import hr.manage.component.personal.service.PersonalService;
+import hr.manage.component.recruit.model.ResumeInfo;
 import hr.manage.component.salary.model.InsuranceDetail;
 import hr.manage.component.salary.model.InsuranceDetailCondition;
 import hr.manage.component.salary.model.ProfitDetail;
@@ -278,6 +279,74 @@ public class SalaryController {
 
 	/**
      * 
+    * Title: getSalaryDetailById
+    * Description: 通过ID获取工资表明细
+    * Url: salary/getSalaryDetailById
+    * @param Integer salaryDetailId  工资表ID
+    * @return String   
+    * @see SalaryDetail 
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@NotCareLogin
+	@Post("getSalaryDetailById")
+	@Get("getSalaryDetailById")
+	public String getSalaryDetailById(
+			@Param("salaryDetailId")Integer salaryDetailId) {
+
+		SalaryDetail salaryDetail = salaryService.getSalaryDetailById(salaryDetailId);
+		if (salaryDetail != null) {
+			return "@" + JSONResult.success(salaryDetail);			
+		} else {
+			logger.error("=====根据ID未查到工资表信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID未查到工资表信息");
+		}
+	}
+	
+	/**
+     * 
+    * Title: updateSalaryDetail
+    * Description: 修改工资表信息
+    * Url: salary/updateSalaryDetail
+    * @param String salaryDetailJsonStr 工资表json串
+    * @return String    
+    * @throws
+    * @see SalaryDetail
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateSalaryDetail")
+	@Get("updateSalaryDetail")
+	public String updateSalaryDetail(
+			@Param("salaryDetailJsonStr") String salaryDetailJsonStr) {
+		if(StringUtils.isBlank(salaryDetailJsonStr)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		SalaryDetail salaryDetail = null;
+		try {
+			salaryDetail = JSONObject.parseObject(salaryDetailJsonStr, SalaryDetail.class);
+		} catch (Exception e) {
+			logger.error("=====修改工资表信息，解析参数出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+		}
+		
+		
+		int result = salaryService.updateSalaryDetail(salaryDetail);
+		if (result>0) {
+			return "@" + JSONResult.success();
+		} else if(result==-2){
+			logger.error("=====没有此工资表信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改失败,没有此工资表信息");
+		} else{
+			logger.error("=====修改工资表信息失败,数据库保存失败=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改工资表信息失败,数据库保存失败");
+		}
+
+	}
+	
+	/**
+     * 
     * Title: createSalaryDetail
     * Description: 按月新增工资明细信息
     * Url: salary/createSalaryDetail
@@ -369,6 +438,73 @@ public class SalaryController {
 		return "@" + JSONResult.success(dataMap);
 	}
 	
+	/**
+     * 
+    * Title: getInsuranceDetailById
+    * Description: 通过ID查询社保表明细
+    * Url: salary/getInsuranceDetailById
+    * @param Integer insuranceDetailId  社保表ID
+    * @return String   
+    * @see InsuranceDetail 
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@NotCareLogin
+	@Post("getInsuranceDetailById")
+	@Get("getInsuranceDetailById")
+	public String getInsuranceDetailById(
+			@Param("insuranceDetailId")Integer insuranceDetailId) {
+
+		InsuranceDetail insuranceDetail = salaryService.getInsuranceDetailById(insuranceDetailId);
+		if (insuranceDetail != null) {
+			return "@" + JSONResult.success(insuranceDetail);			
+		} else {
+			logger.error("=====根据ID未查到社保表信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID未查到社保表信息");
+		}
+	}
+	
+	/**
+     * 
+    * Title: updateInsuranceDetail
+    * Description: 修改社保表信息
+    * Url: salary/updateInsuranceDetail
+    * @param String insuranceDetailJsonStr 社保表json串
+    * @return String    
+    * @throws
+    * @see InsuranceDetail
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("updateInsuranceDetail")
+	@Get("updateInsuranceDetail")
+	public String updateInsuranceDetail(
+			@Param("insuranceDetailJsonStr") String insuranceDetailJsonStr) {
+		if(StringUtils.isBlank(insuranceDetailJsonStr)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		InsuranceDetail insuranceDetail = null;
+		try {
+			insuranceDetail = JSONObject.parseObject(insuranceDetailJsonStr, InsuranceDetail.class);
+		} catch (Exception e) {
+			logger.error("=====修改社保表信息，解析参数出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+		}
+		
+		
+		int result = salaryService.updateInsuranceDetail(insuranceDetail);
+		if (result>0) {
+			return "@" + JSONResult.success();
+		} else if(result==-2){
+			logger.error("=====没有此社保表信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改失败,没有此社保表信息");
+		} else{
+			logger.error("=====修改社保表信息失败,数据库保存失败=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改社保表信息失败,数据库保存失败");
+		}
+
+	}
 	
 	/**
      * 
