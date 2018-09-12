@@ -3,6 +3,7 @@ package hr.manage.component.salary.dao;
 
 import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.salary.model.InsuranceDetail;
+import hr.manage.component.salary.model.InsuranceDetailCondition;
 
 import java.util.List;
 
@@ -19,25 +20,21 @@ public interface InsuranceDetailDAO  extends GenericDAO<InsuranceDetail,Integer>
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
-	            "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
-	            "#if(:1.employeeNumber != null  && :1.employeeNumber !='') { and employee_number = :1.employeeNumber } " +
-	            "#if(:1.type != null  && :1.type >0) { and type = :1.type } " +
-	            "#if(:1.startDate != null) { and create_time >= :1.startDate } " +
-	            "#if(:1.endDate != null) { and create_time <= :1.endDate } " +
+	    		"#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
+	            "#if(:1.term != null  && :1.term !='') { and term = :1.term } " +
+	            "#if(:1.expatriateUnit != null  && :1.expatriateUnit !='') { and expatriate_unit = :1.expatriateUnit } " +
 	            " and is_del=1 " +
 	            " order by id " +
 	             "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
-	    List<InsuranceDetail> listInsuranceDetail(InsuranceDetail condition);
+	    List<InsuranceDetail> listInsuranceDetail(InsuranceDetailCondition condition);
 
 	    
 	    @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +
 	    		"#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
-	            "#if(:1.employeeNumber != null  && :1.employeeNumber !='') { and employee_number = :1.employeeNumber } " +
-	            "#if(:1.type != null  && :1.type >0) { and type = :1.type } " +
-	            "#if(:1.startDate != null) { and create_time >= :1.startDate } " +
-	            "#if(:1.endDate != null) { and create_time <= :1.endDate } " +
+	            "#if(:1.term != null  && :1.term !='') { and term = :1.term } " +
+	            "#if(:1.expatriateUnit != null  && :1.expatriateUnit !='') { and expatriate_unit = :1.expatriateUnit } " +
 	            " and is_del=1 ")
-	    Long countInsuranceDetail(InsuranceDetail condition);
+	    Long countInsuranceDetail(InsuranceDetailCondition condition);
 	    
 	
 	    

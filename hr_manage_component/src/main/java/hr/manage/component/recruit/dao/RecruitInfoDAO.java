@@ -22,7 +22,8 @@ public interface RecruitInfoDAO  extends GenericDAO<RecruitInfo,Integer>{
 		        "#if(:1.expatriateUnit != null  && :1.expatriateUnit !='') { and expatriate_unit = :1.expatriateUnit } " +
 		        "#if(:1.status != null ) { and status = :1.status } " +
 		        " and is_del = 1 " +
-	            " order by id desc")
+	            " order by id " +
+	             "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
 	    List<RecruitInfo> listRecruitInfo(ResumeCondition condition);
 	   
 	    @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +

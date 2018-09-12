@@ -118,6 +118,7 @@ public class ResumeServiceImpl implements ResumeService {
 			interview.setPhone(resumeInfo.getPhone());
 			interview.setEmail(resumeInfo.getEmail());
 			interview.setStatus(1);//待入职
+			interview.setIsDel(1);
 			interview.setCreateTime(new Date());
 			result = resumeInterviewDAO.save(interview);
 		}

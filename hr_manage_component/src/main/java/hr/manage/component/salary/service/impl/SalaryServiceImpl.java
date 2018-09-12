@@ -8,12 +8,17 @@ import hr.manage.component.personal.model.PersonalAllExport;
 import hr.manage.component.personal.model.PersonalCondition;
 import hr.manage.component.personal.model.PersonalSalaryInfo;
 import hr.manage.component.salary.dao.InsuranceDetailDAO;
+import hr.manage.component.salary.dao.ProfitDetailDAO;
 import hr.manage.component.salary.dao.SalaryChangeDAO;
 import hr.manage.component.salary.dao.SalaryDetailDAO;
 import hr.manage.component.salary.model.InsuranceDetail;
+import hr.manage.component.salary.model.InsuranceDetailCondition;
+import hr.manage.component.salary.model.ProfitDetail;
+import hr.manage.component.salary.model.ProfitDetailCondition;
 import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
 import hr.manage.component.salary.model.SalaryDetail;
+import hr.manage.component.salary.model.SalaryDetailCondition;
 import hr.manage.component.salary.service.SalaryService;
 import hr.manage.component.util.DateTimeUtil;
 
@@ -48,6 +53,8 @@ public class SalaryServiceImpl implements SalaryService {
 	CheckWorkDetailDAO checkWorkDetailDAO;
 	@Autowired
 	InsuranceDetailDAO insuranceDetailDAO;
+	@Autowired
+	ProfitDetailDAO profitDetailDAO;
 
 	@Override
 	public List<SalaryChange> listSalaryChange(SalaryChangeCondition condition) {
@@ -428,6 +435,26 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
+	public List<SalaryDetail> listSalaryDetail(SalaryDetailCondition condition){
+		return salaryDetailDAO.listSalaryDetail(condition);
+	}
+	
+	@Override
+	public Long countSalaryDetail(SalaryDetailCondition condition){
+		return salaryDetailDAO.countSalaryDetail(condition);
+	}
+    
+	@Override
+	public List<InsuranceDetail>  listInsuranceDetail(InsuranceDetailCondition condition) {
+		return insuranceDetailDAO.listInsuranceDetail(condition);
+	}
+	
+	@Override
+	public Long countInsuranceDetail(InsuranceDetailCondition condition) {
+		return insuranceDetailDAO.countInsuranceDetail(condition);
+	}
+	
+	@Override
 	public int countInsuranceDetailByTerm(String term) {
 		return insuranceDetailDAO.countInsuranceDetailByTerm(term);
 	}
@@ -546,5 +573,153 @@ public class SalaryServiceImpl implements SalaryService {
 
 		}
 		return 1;
+	}
+
+	@Override
+	public List<ProfitDetail> listProfitDetail(ProfitDetailCondition condition){
+		return profitDetailDAO.listProfitDetail(condition);
+	}
+	
+	@Override
+	public Long countProfitDetail(ProfitDetailCondition condition){
+		return profitDetailDAO.countProfitDetail(condition);
+	}
+	
+	
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
+	public int createProfitDetailByTerm(String term){
+		int result = 0;
+		int profitCount = profitDetailDAO.countProfitDetailByTerm(term);
+		if (profitCount > 0) {
+			// 利润表已经出过，手动删除
+			profitDetailDAO.deleteProfitDetailByTerm(term);
+		}
+		// 构造利润表
+		SimpleDateFormat sdt = new SimpleDateFormat("yyyyMM");
+		Date startDate = null;
+		try {
+			startDate = sdt.parse(String.valueOf(term).trim());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTime(startDate);
+		endDate.add(Calendar.MONTH, 1);
+		// 利润表最终明细
+		List<ProfitDetail> profitDetails = new ArrayList<ProfitDetail>();
+		PersonalCondition condition = new PersonalCondition();
+		condition.setLeaveStatus(1);
+		//在职人员
+		List<PersonalAllExport> personalAllExports = personalInfoDAO
+				.listPersonalAllExport(condition);
+		// 遍历所有在职人员,构造利润表
+		for (PersonalAllExport personalAll : personalAllExports) {
+			//社保表数据
+			InsuranceDetail insurance= insuranceDetailDAO.getInsuranceDetailByName(personalAll.getName(),term);
+		    //全通物联网考勤表数据
+			CheckWorkDetail checkWork= checkWorkDetailDAO.getCheckWorkDetailByName(personalAll.getName(),term);
+			if(checkWork==null){
+				//全通没考勤取百度考勤
+			}
+			ProfitDetail detail = new ProfitDetail();
+			//构造信息
+			detail.setTerm(term);
+			detail.setStartDate(startDate);
+			detail.setEndDate(endDate.getTime());
+			detail.setPersonalInfoId(personalAll.getId());
+			detail.setName(personalAll.getName());
+			detail.setExpatriateUnit(personalAll.getExpatriateUnit());
+			detail.setWorkingPlace(personalAll.getWorkingPlace());
+			detail.setDepartment(personalAll.getDepartment());
+			detail.setPosition(personalAll.getPosition());
+			detail.setLevel(personalAll.getLevel());
+			detail.setProbationaryPay(personalAll.getProbationaryPay());
+			detail.setBasePay(personalAll.getBasePay());
+			detail.setMeritPay(personalAll.getMeritPay());
+			detail.setOtherPay(BigDecimal.ZERO);
+			BigDecimal subsidy=personalAll.getSubsidy();
+			//补贴为500
+			if(subsidy.compareTo(new BigDecimal(500))==0){
+				detail.setTrafficSubsidy(new BigDecimal(100));
+				detail.setComputerSubsidy(new BigDecimal(100));
+				detail.setMealSubsidy(new BigDecimal(300));
+			}
+			else if(subsidy.compareTo(new BigDecimal(400))==0){
+				detail.setTrafficSubsidy(new BigDecimal(100));
+				detail.setComputerSubsidy(new BigDecimal(0));
+				detail.setMealSubsidy(new BigDecimal(300));
+			}
+			else {
+				detail.setTrafficSubsidy(new BigDecimal(100));
+				detail.setComputerSubsidy(new BigDecimal(0));
+				detail.setMealSubsidy(new BigDecimal(0));
+			}	
+			//试用期福利probationPeriodWelfare
+			String probationWelfare = personalAll.getProbationPeriodWelfare();
+			if(!probationWelfare.equals("无")&&!probationWelfare.equals("")){
+				//试用期有福利取社保表
+				if(insurance!=null){
+			    	detail.setProbationaryInsurance(insurance.getInsurancePay());
+			    }
+			    else{
+			    	detail.setProbationaryInsurance(BigDecimal.ZERO);
+			    }				
+			}
+			else{
+				//试用期没有福利
+				detail.setProbationaryInsurance(BigDecimal.ZERO);
+			}
+			detail.setWorkerPay(personalAll.getWorkerPay());
+			detail.setSocialSecurity(insurance.getSocialSecurity());
+			detail.setHousingPay(insurance.getHousingPay());
+			detail.setSettlementPrice(personalAll.getSettlementPrice());
+			//结算天数从考勤表取
+			detail.setSettlementDays(checkWork.getCheckWorkDays());
+			//日单价=结算价/结算天数
+			detail.setSettlementDayPrice(detail.getSettlementPrice().divide(detail.getSettlementDays(),2,BigDecimal.ROUND_HALF_UP));
+			detail.setProbationaryUnionPay(BigDecimal.ZERO);
+			//试用期残疾人就业保障金=试用期薪资*1.7%
+			detail.setProbationaryDisabledPay(detail.getProbationaryPay().multiply(new BigDecimal(0.017)).setScale(2,BigDecimal.ROUND_HALF_UP));
+			//试用期增值税及附加税=ROUND(全通结算价/1.06*0.06*(1+12%),2)
+			BigDecimal taxPay = new BigDecimal(0);
+			taxPay = taxPay.add(personalAll.getSettlementPrice());
+			double curTax = 1.06*0.06*1.12;
+			taxPay = taxPay.divide(new BigDecimal(curTax),2,BigDecimal.ROUND_HALF_UP);
+			detail.setProbationaryTaxPay(taxPay);
+			detail.setUnionPay(BigDecimal.ZERO);
+			//残疾人就业保障金=转正薪资*1.7%
+			detail.setDisabledPay(detail.getWorkerPay().multiply(new BigDecimal(0.017)).setScale(2,BigDecimal.ROUND_HALF_UP));
+			//增值税及附加税=ROUND(全通结算价/1.06*0.06*(1+12%),2)
+			detail.setTaxPay(taxPay);
+			//试用期利润 =R3-G3-N3-U3-V3-W3
+			//全通结算价-试用期薪资-试用期社保-试用期工会经费-试用期残疾人就业保障金-试用期增值税及附加税
+			BigDecimal pProfit = new BigDecimal(0);
+			
+			detail.setProbationaryProfit(pProfit);
+			//试用期利润率 =试用期利润/全通结算价
+			BigDecimal pProfitRate = new BigDecimal(0);
+			detail.setProbationaryProfitRate(pProfitRate);
+			//转正后利润 =R3-O3-P3-Q3-X3-Y3-Z3
+			//全通结算价-转正后薪资-转正后社保-公积金-工会经费-残疾人就业保障金-增值税及附加税
+			BigDecimal profit = new BigDecimal(0);
+			detail.setProfit(profit);
+			//转正后利润率 =转正后利润/全通结算价
+			BigDecimal profitRate = new BigDecimal(0);
+			detail.setProfit(profitRate);
+			detail.setIsDel(1);
+			detail.setCreateTime(new Date());
+			profitDetails.add(detail);
+		}
+		
+		if (profitDetailDAO.save(profitDetails)) {
+			result = 1;
+		} else {
+			result = -1;
+		}
+		return result;
+		
 	}
 }

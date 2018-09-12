@@ -16,8 +16,13 @@ import hr.manage.component.personal.model.PersonalSalaryInfo;
 import hr.manage.component.personal.model.PersonalWorkInfo;
 import hr.manage.component.personal.service.PersonalService;
 import hr.manage.component.salary.model.InsuranceDetail;
+import hr.manage.component.salary.model.InsuranceDetailCondition;
+import hr.manage.component.salary.model.ProfitDetail;
+import hr.manage.component.salary.model.ProfitDetailCondition;
 import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
+import hr.manage.component.salary.model.SalaryDetail;
+import hr.manage.component.salary.model.SalaryDetailCondition;
 import hr.manage.component.salary.service.SalaryService;
 
 import java.io.File;
@@ -225,6 +230,51 @@ public class SalaryController {
 	}
 	
 	
+	/**
+     * 
+    * Title: getSalaryDetailList
+    * Description: 通过条件查询工资表明细
+    * Url: salary/getSalaryDetailList
+    * @param String name, 姓名
+    * @param String term,账期
+    * @param String expatriateUnit,外派单位
+    * @param int pageIndex, 分页页数
+    * @param int pageSize 	行数
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@NotCareLogin
+	@Get("getSalaryDetailList")
+	@Post("getSalaryDetailList")
+	public String getSalaryDetailList(@Param("name") String name,
+			@Param("term") String term,
+			@Param("expatriateUnit") String expatriateUnit,
+			@Param("pageIndex") int pageIndex, 
+			@Param("pageSize") int pageSize) {
+		SalaryDetailCondition condition = new SalaryDetailCondition();
+			condition.setName(name);
+			condition.setTerm(term);
+			condition.setExpatriateUnit(expatriateUnit);
+			
+		pageIndex = pageIndex < 0 ? 0 : pageIndex;
+		pageSize = pageSize < 1 ? 1 : pageSize;
+		condition.setOffset(pageIndex * pageSize);
+		condition.setLimit(pageSize);
+		Long count = 0L;
+		List<SalaryDetail> salaryLists = new ArrayList<>();
+		try {
+			salaryLists = salaryService.listSalaryDetail(condition);
+			count = salaryService.countSalaryDetail(condition);
+		} catch (Exception e) {
+			logger.error("=====根据条件获取工资表明细查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+		Map<String, Object> dataMap = DataMapUtil.getDataMap("salaryViewList", salaryLists, count, pageCount);
+		return "@" + JSONResult.success(dataMap);
+	}
+	
 
 	/**
      * 
@@ -274,6 +324,50 @@ public class SalaryController {
 
 	}
 	
+	/**
+     * 
+    * Title: getInsuranceDetailList
+    * Description: 通过条件查询社保表明细
+    * Url: salary/getInsuranceDetailList
+    * @param String name, 姓名
+    * @param String term,账期
+    * @param String expatriateUnit,外派单位
+    * @param int pageIndex, 分页页数
+    * @param int pageSize 	行数
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@NotCareLogin
+	@Get("getInsuranceDetailList")
+	@Post("getInsuranceDetailList")
+	public String getInsuranceDetailList(@Param("name") String name,
+			@Param("term") String term,
+			@Param("expatriateUnit") String expatriateUnit,
+			@Param("pageIndex") int pageIndex, 
+			@Param("pageSize") int pageSize) {
+		InsuranceDetailCondition condition = new InsuranceDetailCondition();
+			condition.setName(name);
+			condition.setTerm(term);
+			condition.setExpatriateUnit(expatriateUnit);
+			
+		pageIndex = pageIndex < 0 ? 0 : pageIndex;
+		pageSize = pageSize < 1 ? 1 : pageSize;
+		condition.setOffset(pageIndex * pageSize);
+		condition.setLimit(pageSize);
+		Long count = 0L;
+		List<InsuranceDetail> salaryLists = new ArrayList<>();
+		try {
+			salaryLists = salaryService.listInsuranceDetail(condition);
+			count = salaryService.countInsuranceDetail(condition);
+		} catch (Exception e) {
+			logger.error("=====通过条件查询社保表明细查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+		Map<String, Object> dataMap = DataMapUtil.getDataMap("salaryViewList", salaryLists, count, pageCount);
+		return "@" + JSONResult.success(dataMap);
+	}
 	
 	
 	/**
@@ -564,6 +658,85 @@ public class SalaryController {
 		
 	}
 	
+	
+	/**
+     * 
+    * Title: getProfitDetailList
+    * Description: 通过条件查询利润测算表明细
+    * Url: salary/getProfitDetailList
+    * @param String name, 姓名
+    * @param String term,账期
+    * @param String expatriateUnit,外派单位
+    * @param int pageIndex, 分页页数
+    * @param int pageSize 	行数
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@NotCareLogin
+	@Get("getProfitDetailList")
+	@Post("getProfitDetailList")
+	public String getProfitDetailList(@Param("name") String name,
+			@Param("term") String term,
+			@Param("pageIndex") int pageIndex, 
+			@Param("pageSize") int pageSize) {
+		ProfitDetailCondition condition = new ProfitDetailCondition();
+			condition.setName(name);
+			condition.setTerm(term);
+			
+		pageIndex = pageIndex < 0 ? 0 : pageIndex;
+		pageSize = pageSize < 1 ? 1 : pageSize;
+		condition.setOffset(pageIndex * pageSize);
+		condition.setLimit(pageSize);
+		Long count = 0L;
+		List<ProfitDetail> profitLists = new ArrayList<>();
+		try {
+			profitLists = salaryService.listProfitDetail(condition);
+			count = salaryService.countProfitDetail(condition);
+		} catch (Exception e) {
+			logger.error("=====通过条件查询利润测算表明细查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+		Map<String, Object> dataMap = DataMapUtil.getDataMap("profitViewList", profitLists, count, pageCount);
+		return "@" + JSONResult.success(dataMap);
+	}
+	
+	/**
+     * 
+    * Title: createProfitDetail
+    * Description: 按月新增利润测算表明细信息
+    * Url: salary/createProfitDetail
+    * @param String term 工资账期201808
+    * @return String    
+    * @throws
+    * @see SalaryDetail
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@NotCareLogin
+	@Post("createProfitDetail")
+	@Get("createProfitDetail")
+	public String createProfitDetail(
+			@Param("term") String term) {
+		if(StringUtils.isBlank(term)){
+			logger.error("=====参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+		}
+		int salaryCount = salaryService.countSalaryDetailByTerm(term);
+		if(salaryCount<=0){
+			logger.error("=====所选月份出利润测算表失败,此月份工资表还未出过,不能出利润测算");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"所选月份出利润测算表失败,此月份工资表还未出过,不能出利润测算");
+		}	
+		//新增需要判断参数；
+		int result = salaryService.createProfitDetailByTerm(term);
+		if (result >0) {
+			return "@" + JSONResult.success();
+		} else {
+			logger.error("=====数据库操作异常,所选账期出利润测算表失败=====result="+result);
+			return "@" + JSONResult.error(CodeMsg.ERROR, "数据库操作异常,所选账期出利润测算表失败;result="+result);
+		}
+
+	}
 	
 	
 }

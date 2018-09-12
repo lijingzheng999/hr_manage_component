@@ -36,6 +36,7 @@ public class FunctionIds {
 	public static final int FUNCTION_23 = 23;			//合同管理  1-13
 	public static final int FUNCTION_24 = 24;			//转正员工查询   1-3
 	public static final int FUNCTION_25 = 25;			//离职员工查询   1-3
+	public static final int FUNCTION_26 = 26;			//简历沟通表  1-2
 	
 	///////////////////后续添加
 	

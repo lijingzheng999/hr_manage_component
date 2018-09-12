@@ -469,7 +469,16 @@ public class ResumeController {
 			logger.error("=====修改简历信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
-		
+		ResumeInfo resume = resumeService.getResumeInfo(resumeInfo.getId());
+		if(resume==null){
+			logger.error("=====没有此简历信息=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改失败,没有此简历信息");
+		}
+		if(resume.getStatus()!=1){
+			logger.error("=====简历状态不是进行中=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR, "修改失败,简历状态不是进行中");
+		}
+		resumeInfo.setStatus(resume.getStatus());
 		resumeInfo.setUpdateTime(new Date());
 		boolean result = resumeService.updateResumeInfo(resumeInfo);
 		if (result) {

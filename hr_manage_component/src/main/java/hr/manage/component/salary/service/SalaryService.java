@@ -2,8 +2,13 @@ package hr.manage.component.salary.service;
 
 import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.salary.model.InsuranceDetail;
+import hr.manage.component.salary.model.InsuranceDetailCondition;
+import hr.manage.component.salary.model.ProfitDetail;
+import hr.manage.component.salary.model.ProfitDetailCondition;
 import hr.manage.component.salary.model.SalaryChange;
 import hr.manage.component.salary.model.SalaryChangeCondition;
+import hr.manage.component.salary.model.SalaryDetail;
+import hr.manage.component.salary.model.SalaryDetailCondition;
 
 import java.util.List;
 
@@ -67,6 +72,46 @@ public interface SalaryService {
 
 	/**
      * 
+    * @Title: listSalaryDetail
+    * @Description: 通过条件查询工资表明细
+    * @param  listSalaryDetail
+    * @return List<SalaryDetail>  
+    * @throws
+     */
+	public List<SalaryDetail> listSalaryDetail(SalaryDetailCondition condition);
+
+	/**
+     * 
+    * @Title: countSalaryDetail
+    * @Description: 通过条件查询工资表明细记录数
+    * @param  Long
+    * @return List<SalaryDetail>  
+    * @throws
+     */
+	public Long countSalaryDetail(SalaryDetailCondition condition);
+    
+	/**
+     * 
+    * @Title: listInsuranceDetail
+    * @Description: 通过条件查询社保表明细
+    * @param  listInsuranceDetail
+    * @return List<InsuranceDetail> 
+    * @throws
+     */
+	public List<InsuranceDetail>  listInsuranceDetail(InsuranceDetailCondition condition);
+
+	/**
+     * 
+    * @Title: countInsuranceDetail
+    * @Description: 通过条件查询社保表明细记录数
+    * @param  InsuranceDetailCondition condition
+    * @return Long
+    * @throws
+     */
+	public Long countInsuranceDetail(InsuranceDetailCondition condition);
+ 
+	/**
+     * 
     * @Title: countInsuranceDetailByTerm
     * @Description: 通过账期查询保险记录数
     * @param  String term
@@ -85,4 +130,35 @@ public interface SalaryService {
      */
 	public  int saveInsuranceDetailListRecord( List<InsuranceDetail> insuranceDetailList);
 
+	/**
+     * 
+    * @Title: listProfitDetail
+    * @Description: 通过条件查询利润测算表明细
+    * @param  ProfitDetailCondition condition
+    * @return List<ProfitDetail>  
+    * @throws
+     */
+	public List<ProfitDetail> listProfitDetail(ProfitDetailCondition condition);
+	
+	/**
+     * 
+    * @Title: countProfitDetail
+    * @Description: 通过条件查询利润测算表记录数
+    * @param  ProfitDetailCondition condition
+    * @return Long  
+    * @throws
+     */
+	public Long countProfitDetail(ProfitDetailCondition condition);
+
+	
+	
+	/**
+    * 
+   * @Title: createProfitDetailByTerm
+   * @Description: 通过账期生成利润表明细
+   * @param  createProfitDetailByTerm
+   * @return int  
+   * @throws
+    */
+	public int createProfitDetailByTerm(String term);
 }
