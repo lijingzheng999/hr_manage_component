@@ -706,11 +706,22 @@ public class SalaryServiceImpl implements SalaryService {
 				detail.setProbationaryInsurance(BigDecimal.ZERO);
 			}
 			detail.setWorkerPay(personalAll.getWorkerPay());
-			detail.setSocialSecurity(insurance.getSocialSecurity());
-			detail.setHousingPay(insurance.getHousingPay());
+			if(insurance!=null){
+				detail.setSocialSecurity(insurance.getSocialSecurity());
+				detail.setHousingPay(insurance.getHousingPay());
+			}
+			else{
+				detail.setSocialSecurity(BigDecimal.ZERO);
+				detail.setHousingPay(BigDecimal.ZERO);
+			}
 			detail.setSettlementPrice(personalAll.getSettlementPrice());
 			//结算天数从考勤表取
-			detail.setSettlementDays(checkWork.getCheckWorkDays());
+			if(checkWork!=null){
+				detail.setSettlementDays(checkWork.getCheckWorkDays());	
+			}
+			else{
+				detail.setSettlementDays(new BigDecimal(22));	
+			}
 			//日单价=结算价/结算天数
 			detail.setSettlementDayPrice(detail.getSettlementPrice().divide(detail.getSettlementDays(),2,BigDecimal.ROUND_HALF_UP));
 			detail.setProbationaryUnionPay(BigDecimal.ZERO);
@@ -719,8 +730,9 @@ public class SalaryServiceImpl implements SalaryService {
 			//试用期增值税及附加税=ROUND(全通结算价/1.06*0.06*(1+12%),2)
 			BigDecimal taxPay = new BigDecimal(0);
 			taxPay = taxPay.add(personalAll.getSettlementPrice());
-			double curTax = 1.06*0.06*1.12;
-			taxPay = taxPay.divide(new BigDecimal(curTax),2,BigDecimal.ROUND_HALF_UP);
+			taxPay = taxPay.divide(new BigDecimal(1.06),4,BigDecimal.ROUND_HALF_UP);
+			taxPay = taxPay.multiply(new BigDecimal(0.06));
+			taxPay = taxPay.multiply(new BigDecimal(1.12)).setScale(2,BigDecimal.ROUND_HALF_UP);
 			detail.setProbationaryTaxPay(taxPay);
 			detail.setUnionPay(BigDecimal.ZERO);
 			//残疾人就业保障金=转正薪资*1.7%
@@ -755,7 +767,7 @@ public class SalaryServiceImpl implements SalaryService {
 			//转正后利润率 =转正后利润/全通结算价
 			BigDecimal profitRate = new BigDecimal(0);
 			profitRate=profit.divide(detail.getSettlementPrice(),4,BigDecimal.ROUND_HALF_UP);
-			detail.setProfit(profitRate);
+			detail.setProfitRate(profitRate);
 			detail.setIsDel(1);
 			detail.setCreateTime(new Date());
 			profitDetails.add(detail);

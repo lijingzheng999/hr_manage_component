@@ -41,7 +41,7 @@ public interface ProfitDetailDAO  extends GenericDAO<ProfitDetail,Integer>{
 	    int countProfitDetailByTerm(String term);
 	    
 	    @SQL(" UPDATE " + TABLE +
-	    		 " SET id_del=0,update_time = now() " +
+	    		 " SET is_del=0,update_time = now() " +
 				 " WHERE  term = :1 and is_del=1 " )
 	    int deleteProfitDetailByTerm(String term);
 }
