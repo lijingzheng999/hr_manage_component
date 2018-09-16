@@ -477,14 +477,124 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 	
 	@Override
-	public int  updateInsuranceDetail(InsuranceDetail insuranceDetail){
+	public int  updateInsuranceDetail(InsuranceDetail detail){
 		int result = 0;
-		InsuranceDetail detail = insuranceDetailDAO.get(insuranceDetail.getId());
-		if(detail==null){
+		InsuranceDetail insurance = insuranceDetailDAO.get(detail.getId());
+		if(insurance==null){
 			return -2;
 		}
 		//更新数据;
-		
+		insurance.setAgencyPay(detail.getAgencyPay());
+		insurance.setEndowmentBase(detail.getEndowmentBase());
+		insurance.setEndowmentRate(detail.getEndowmentRate());
+		insurance.setEndowmentRatePersonal(detail.getEndowmentRatePersonal());
+		insurance.setUnemploymentBase(detail.getUnemploymentBase());
+		insurance.setUnemploymentRate(detail.getUnemploymentRate());
+		insurance.setUnemploymentRatePersonal(detail.getUnemploymentRatePersonal());
+		insurance.setWorkInjuryBase(detail.getWorkInjuryBase());
+		insurance.setWorkInjuryRate(detail.getWorkInjuryRate());
+		insurance.setMedicalBase(detail.getMedicalBase());
+		insurance.setMedicalRate(detail.getMedicalRate());
+		insurance.setMedicalRatePersonal(detail.getMedicalRatePersonal());
+		insurance.setBirthBase(detail.getBirthBase());
+		insurance.setBirthRate(detail.getBirthRate());
+		insurance.setSickBase(detail.getSickBase());
+		insurance.setSickRate(detail.getSickRate());
+		insurance.setSickRatePersonal(detail.getSickRatePersonal());
+		insurance.setHousingBase(detail.getHousingBase());
+		insurance.setHousingRate(detail.getHousingRate());
+		insurance.setHousingRatePersonal(detail.getHousingRatePersonal());
+		// 养老单位
+		insurance.setEndowmentPay(insurance.getEndowmentBase()
+							.multiply(insurance.getEndowmentRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
+					// 养老个人
+					insurance
+							.setEndowmentPayPersonal(insurance.getEndowmentBase()
+									.multiply(insurance.getEndowmentRatePersonal())
+									.setScale(2,BigDecimal.ROUND_HALF_UP));
+					// 失业单位
+					insurance.setUnemploymentPay(insurance.getUnemploymentBase()
+							.multiply(insurance.getUnemploymentRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
+					// 失业个人
+					insurance.setUnemploymentPayPersonal(insurance
+							.getUnemploymentBase()
+							.multiply(insurance.getUnemploymentRatePersonal())
+							.setScale(2,BigDecimal.ROUND_HALF_UP));
+					// 工伤单位
+					insurance.setWorkInjuryPay(insurance.getWorkInjuryBase()
+							.multiply(insurance.getWorkInjuryRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
+					// 医疗单位
+					insurance.setMedicalPay(insurance.getMedicalBase()
+							.multiply(insurance.getMedicalRate()).setScale(2,BigDecimal.ROUND_HALF_UP));	
+					
+								
+					// 医疗个人 北京的+3
+					if(insurance.getInsurancePlace().contains("北京")){
+						insurance.setMedicalPayPersonal(insurance.getMedicalBase()
+								.multiply(insurance.getMedicalRatePersonal()).add(new BigDecimal(3)).setScale(2,BigDecimal.ROUND_HALF_UP));
+					}
+					else{
+						insurance.setMedicalPayPersonal(insurance.getMedicalBase()
+								.multiply(insurance.getMedicalRatePersonal()).setScale(2,BigDecimal.ROUND_HALF_UP));
+						
+					}
+					
+					// 生育单位
+					insurance.setBirthPay(insurance.getBirthBase()
+							.multiply(insurance.getBirthRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
+					// 大病/残保单位
+					insurance.setSickPay(insurance.getSickBase()
+							.multiply(insurance.getSickRate()).setScale(2,BigDecimal.ROUND_HALF_UP));
+					// 大病个人
+					insurance.setSickPayPersonal(insurance.getSickBase()
+							.multiply(insurance.getSickRatePersonal()).setScale(2,BigDecimal.ROUND_HALF_UP));
+					// 社保单位合计
+					BigDecimal socialSecurity = new BigDecimal(0);
+					socialSecurity = socialSecurity.add(insurance.getEndowmentPay());
+					socialSecurity = socialSecurity.add(insurance.getUnemploymentPay());
+					socialSecurity = socialSecurity.add(insurance.getWorkInjuryPay());
+					socialSecurity = socialSecurity.add(insurance.getMedicalPay());
+					socialSecurity = socialSecurity.add(insurance.getBirthPay());
+					socialSecurity = socialSecurity.add(insurance.getSickPay());
+					insurance.setSocialSecurity(socialSecurity);
+					// 社保个人合计
+					BigDecimal socialSecurityPersonal = new BigDecimal(0);
+					socialSecurityPersonal = socialSecurityPersonal.add(insurance
+							.getEndowmentPayPersonal());
+					socialSecurityPersonal = socialSecurityPersonal.add(insurance
+							.getUnemploymentPayPersonal());
+					socialSecurityPersonal = socialSecurityPersonal.add(insurance
+							.getMedicalPayPersonal());
+					socialSecurityPersonal = socialSecurityPersonal.add(insurance
+							.getSickPayPersonal());
+					insurance.setSocialSecurityPersonal(socialSecurityPersonal);
+					// 社保小计 =社保单位合计+社保个人合计
+					insurance.setSocialSecurityTotal(socialSecurity
+							.add(socialSecurityPersonal));
+					// 公积金单位
+					insurance.setHousingPay(insurance.getHousingBase()
+							.multiply(insurance.getHousingRate()).setScale(0,BigDecimal.ROUND_HALF_UP));
+					// 公积金个人
+					insurance.setHousingPayPersonal(insurance.getHousingBase()
+							.multiply(insurance.getHousingRatePersonal()).setScale(0,BigDecimal.ROUND_HALF_UP));
+					// 公积金小计
+					insurance.setHousingPayTotal(insurance.getHousingPay().add(
+							insurance.getHousingPayPersonal()));
+					// 单位缴费合计=社保单位合计+公积金单位
+					insurance.setInsurancePay(socialSecurity.add(insurance
+							.getHousingPay()));
+					// 个人缴费合计=社保个人合计+公积金个人
+					insurance.setInsurancePayPersonal(socialSecurityPersonal
+							.add(insurance.getHousingPayPersonal()));
+					// 总合计=单位缴费合计+个人缴费合计+代理费
+					BigDecimal insurancePayTotal = new BigDecimal(0);
+					insurancePayTotal = insurancePayTotal.add(insurance
+							.getInsurancePay());
+					insurancePayTotal = insurancePayTotal.add(insurance
+							.getInsurancePayPersonal());
+					insurancePayTotal = insurancePayTotal.add(insurance.getAgencyPay());
+					insurance.setInsurancePayTotal(insurancePayTotal);
+					insuranceDetailDAO.update(insurance);
 		return result;
 	}
 	@Override
