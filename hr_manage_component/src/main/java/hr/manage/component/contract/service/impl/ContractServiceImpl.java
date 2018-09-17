@@ -48,14 +48,12 @@ public class ContractServiceImpl implements ContractService {
 	@Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor={Exception.class})
 	public int addContractInfo(ContractInfo contractInfo){
 		int result =0;
-		//保存合同信息
-		result = contractInfoDAO.save(contractInfo);
-		if(result<1){
-			result = -1;
-		}
 		//同步员工基本信息
 		PersonalWorkInfo work = personalWorkInfoDAO.getPersonalWorkInfoById(contractInfo.getPersonalInfoId());
-		if(work!=null){
+		if(work==null){
+			return -2;
+		}
+		else{
 			work.setContractCount(contractInfo.getContractCount());
 			work.setContractRenewDate(contractInfo.getStartDate());
 			work.setContractRenewEnddate(contractInfo.getEndDate());
@@ -68,8 +66,13 @@ public class ContractServiceImpl implements ContractService {
 				result = -3;
 			}
 		}
-		else{
-			result =-2;
+		//保存合同信息
+		contractInfo.setPosition(work.getPosition());
+		contractInfo.setIsDel(1);
+		contractInfo.setCreateTime(new Date());
+		result = contractInfoDAO.save(contractInfo);
+		if(result<1){
+			result = -1;
 		}
 		return result;	
 	}
