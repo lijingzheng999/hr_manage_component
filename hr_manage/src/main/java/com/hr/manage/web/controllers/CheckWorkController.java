@@ -495,6 +495,274 @@ public class CheckWorkController {
 		
 	}
 	
+	/**
+     * 
+    * Title:importBaiduExcel
+    * Description:导入百度考勤信息excel
+    * Url: checkwork/importBaiduExcel
+    * @param   String term,考勤月份
+    * @param  MultipartFile filedata,  excel文件
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
+	@NotCareLogin
+	@Post("importBaiduExcel")
+	public String importBaiduExcel(@Param("term")  String term,@Param("filedata")MultipartFile filedata){
+		boolean result = true;
+		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
+		if(insuranceDetailCount>0){
+			logger.error("=====导入百度考勤信息excel失败,本月已经上传过社保信息");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"导入百度考勤信息excel,本月已经上传过社保信息");
+		}
+		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
+		long fileNumber = 0;
+		try {
+			/**
+			 * 1.上传文件
+			 */
+			String filePathInServer = "";
+			String separator = File.separator;
+			String filepath = FILE_UPLOAD_PATH;
+			java.util.Date dt = new java.util.Date();
+			SimpleDateFormat fmt = new SimpleDateFormat("yyMMddHHmmssSSSS");
+			String type = filedata
+					.getOriginalFilename()
+					.substring(
+							filedata.getOriginalFilename().lastIndexOf(".") + 1)
+					.toLowerCase();// 获得文件扩展名
+	
+			String originalname = filedata.getOriginalFilename().substring(0,
+					filedata.getOriginalFilename().lastIndexOf("."));// 获得原文件名称
+			String filename = originalname+"_"+ fmt.format(dt) + "." + type;// 文件原名+时间+.+文件扩展名
+			File filepaths = new File(filepath);
+			if (!filepaths.exists()) {
+				filepaths.mkdirs();
+			}
+			File orgFile = new File(filepath + separator
+					+ filename);
+			filedata.transferTo(orgFile);// 上传文件
+			filePathInServer = orgFile.getPath();
+			logger.info("adminUser : "+user.getUsername()+" upload 导入百度考勤信息excel  file wait for whether to save ");
+		
+			/**
+			 * 2. 解析文件xls
+			 */
+			boolean isE2007 = false;    //判断是否是excel2007格式  
+			 if(filename.endsWith("xlsx"))  
+		            isE2007 = true;  
+			File myfile = new File(filePathInServer);
+			InputStream is = new FileInputStream(myfile);
+			 Workbook wb  = null;  
+	            //根据文件格式(2003或者2007)来初始化  
+	            if(isE2007)  
+	                wb = new XSSFWorkbook(is);  
+	            else  
+	                wb = new HSSFWorkbook(is); 
+	            Sheet sheet= wb.getSheetAt(0);     //获得第一个表单   
+	            if(sheet.getLastRowNum()>5000){
+					return "@"+JSONResult.error(CodeMsg.ERROR,"数量不能超过500"); 
+				}
+	            Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器  
+	            List<CheckWorkDetail> checkWorkDetailList = new ArrayList<CheckWorkDetail>();
+	            while (rows.hasNext()) {  
+	                Row row = rows.next();  //获得行数据  
+	                if(row.getRowNum()<4||row==null)
+	                	continue;
+	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
+	                CheckWorkDetail detail= new CheckWorkDetail();
+	                while (cells.hasNext()) {  
+	                    Cell cell = cells.next();  
+	                    String cellValue = "";
+	                    switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
+	                    case HSSFCell.CELL_TYPE_NUMERIC:  
+	                    	if (DateUtil.isCellDateFormatted(cell)) {
+								Date d = cell.getDateCellValue(); // 对日期处理
+								DateFormat formater = new SimpleDateFormat(
+										"yyyy-MM-dd HH:mm:ss");
+								cellValue = formater.format(d);
+							} else {// 其余按照数字处理
+									// 防止科学计数法
+								DecimalFormat df = new DecimalFormat("0.000");
+								double acno = cell.getNumericCellValue();
+								String acnoStr = df.format(acno);
+								if (acnoStr.indexOf(".") > 0) {
+									acnoStr = acnoStr.replaceAll("0+?$", "");// 去掉多余的0
+									cellValue = acnoStr.replaceAll("[.]$", "");// 如最后一位是.则去掉
+								}
+							}  
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_STRING:  
+	                    	cellValue = cell.getRichStringCellValue().getString(); 
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_BOOLEAN:  
+	                    	cellValue = String.valueOf(cell.getBooleanCellValue());  
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_BLANK:  
+	                    	cellValue = "";
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_ERROR:  
+	                    	cellValue = "";
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_FORMULA:  
+	                    	cellValue = cell.getCellFormula() + "";
+	                        break;  
+	                    default:  
+	                    	cellValue = "";
+	                        break;  
+	                    } 
+	                    if(cell.getColumnIndex()==0&&cellValue.equals("")){
+	                    	break;
+	                    }
+	                    /**
+						 * 处理文件中定义的属性
+						 */
+						String transforValue="";
+						switch (cell.getColumnIndex()) {
+							case 0:// 序号
+								break;
+							case 1:// 合作厂家
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setManufacturer(transforValue);
+								break;
+							case 2:// 姓名
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setName(transforValue);
+								break;
+							case 3:// 外派单位
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setExpatriateUnit(transforValue);
+								break;
+							case 4:// 入职时间 
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+									SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
+									java.util.Date entryrdate=sdt.parse(String.valueOf(cellValue).trim());
+									detail.setEntryTime(entryrdate);
+								}
+								break;
+							case 5:// 出勤天数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setAttendanceDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 6:// 考勤天数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setCheckWorkDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 7:// 加班天数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setOvertimeDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 8:// 请假天数
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 9:// 负责人
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setManager(transforValue);
+								break;
+							case 10:// 备注
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setMemo(transforValue);
+								break;
+							case 11:// 剩余加班小时数 
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+								  detail.setSurplusOvertimeHours(Integer.parseInt(transforValue));
+								}
+								else{
+								  detail.setSurplusOvertimeHours(0);
+								}
+								break;
+							case 12://可休年假天数 
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+								  detail.setAnnualLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setAnnualLeaveDays(BigDecimal.ZERO);
+								}
+								break;
+							case 13:// 剩余年休天数
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+								  detail.setSurplusAnnualLeave(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setSurplusAnnualLeave(BigDecimal.ZERO);
+								}
+								break;
+							case 14:// 累计长期病假天数
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+									  detail.setSickLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setSickLeaveDays(BigDecimal.ZERO);
+								}
+								break;
+							case 15:// 累计长期事假天数
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+									  detail.setCompassionateLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								}
+								else{
+								  detail.setCompassionateLeaveDays(BigDecimal.ZERO);
+								}
+								break;
+						}
+	                }  
+	                //验证员工信息是否存在
+	                PersonalInfo person = personalService.getPersonalByName(detail.getName());
+	                if(person==null){
+	                	logger.error("====="+String.format("员工信息不存在,姓名:%s", detail.getName())+"=====");
+	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工信息不存在,姓名:%s", detail.getName())); 
+	                }
+//	                //验证该员工是否有加班和年假表数据,没有的话需要初始化
+//	                CheckWorkCurrent checkWorkCurrent = checkWorkService.getCheckWorkCurrentByName(detail.getName());
+//	                if(checkWorkCurrent == null){
+//	                	logger.error("====="+String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())+"=====");
+//	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())); 
+//	                }
+//	                detail.setCheckWorkCurrent(checkWorkCurrent);
+	                detail.setPersonalInfo(person);
+	                detail.setTerm(term.trim());
+	                SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
+					java.util.Date startDate=sdt.parse(String.valueOf(term).trim());
+					detail.setStartDate(startDate);
+			        Calendar endDate = Calendar.getInstance();  
+			        endDate.setTime(startDate);  
+			        endDate.add(Calendar.MONTH, 1);  
+			        detail.setEndDate(endDate.getTime());
+			        detail.setSettlementDays(BigDecimal.ZERO);
+	                detail.setIsDel(1);
+	                detail.setCreateTime(new Date());
+	                checkWorkDetailList.add(detail);              
+			}
+	        //批量入库
+	        try {
+	        	checkWorkService.saveCheckWorkDetailListRecord(checkWorkDetailList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				// TODO: handle exception
+				logger.error("保存数据库异常,已回滚", e);
+				return "@"+JSONResult.error(CodeMsg.ERROR,"保存数据库异常,已回滚"+ e.getMessage());  
+			}
+	        
+		}catch(Exception e1){
+			e1.printStackTrace();
+			logger.error("upload 导入全通物联网考勤信息 throws Exception", e1);
+			return "@"+JSONResult.error(CodeMsg.ERROR,"导入全通物联网考勤信息失败，请稍后重试"+e1);  
+		}
+		if(result){
+			logger.info("adminUser : "+user.getUsername()+"upload 导入全通物联网考勤信息 ; fileNumber : OT"+fileNumber);
+			return "@"+JSONResult.success("导入成功！文件编号为OT"+fileNumber);
+		}else{
+			logger.error("=====导入失败！请重新导入=====");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！请重新导入");  
+		}
+		
+	}
 	
 
 	/**

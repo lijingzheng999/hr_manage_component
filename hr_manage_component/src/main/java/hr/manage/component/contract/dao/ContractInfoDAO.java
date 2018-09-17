@@ -50,7 +50,7 @@ public interface ContractInfoDAO  extends GenericDAO<ContractInfo,Integer>{
 				+ " WHERE personal_info_id= :1 and is_del=1 ")
 	    int getMaxContractCountById(Integer personalInfoId);
 	    
-	    @SQL(" select " + COLUMNS + " from "+ TABLE
+	    @SQL(" select count(1) from "+ TABLE
 				+ " WHERE personal_info_id= :1 and is_del=1 ")
 	    int countContractInfoByPersonalId(Integer personalInfoId);
 }
