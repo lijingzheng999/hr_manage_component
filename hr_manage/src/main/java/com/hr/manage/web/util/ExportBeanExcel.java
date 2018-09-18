@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -65,7 +66,7 @@ public class ExportBeanExcel<T> {
         // 生成一个样式
         XSSFCellStyle style = wb.createCellStyle();
         XSSFRow row = sheet.createRow(0);
-        style.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+        style.setAlignment(HorizontalAlignment.CENTER);
         XSSFCell cell;
         Collection c = headersNameMap.values();//拿到表格所有标题的value的集合
         Iterator<String> it = c.iterator();//表格标题的迭代器
