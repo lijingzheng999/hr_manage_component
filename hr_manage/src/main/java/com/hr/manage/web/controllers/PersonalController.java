@@ -1068,6 +1068,7 @@ public class PersonalController {
 	@AuthorityCheck(function = FunctionIds.FUNCTION_12)
 	@NotCareLogin
 	@Get("export")
+	@Post("export")
 	public String exportPersonalAll(@Param("heads") String heads,
 			@Param("columns") String columns,
 			@Param("name") String name,

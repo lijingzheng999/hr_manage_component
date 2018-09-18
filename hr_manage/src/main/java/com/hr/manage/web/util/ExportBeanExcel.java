@@ -40,7 +40,7 @@ public class ExportBeanExcel<T> {
     public  void exportExcel(String title, List<String> headersName,List<String> headersId,
                             List<T> dtoList,OutputStream out) {
         //表头--标题栏
-        Map<Integer, String> headersNameMap = new HashMap<>();
+        Map<Integer, String> headersNameMap = new LinkedHashMap<>();
         int key=0;
         for (int i = 0; i < headersName.size(); i++) {
             if (!headersName.get(i).equals(null)) {
@@ -49,7 +49,7 @@ public class ExportBeanExcel<T> {
             }
         }
         //字段
-        Map<Integer, String> titleFieldMap = new HashMap<>();
+        Map<Integer, String> titleFieldMap = new LinkedHashMap<>();
         int value = 0;
         for (int i = 0; i < headersId.size(); i++) {
             if (!headersId.get(i).equals(null)) {
