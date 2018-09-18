@@ -16,27 +16,23 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Color;
-import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 
 /**
  * 
@@ -47,7 +43,7 @@ import org.junit.Test;
 public class excelTest {
 
 	  public static void main(String [] args){
-		  readExcelToObj("D:\\java_other\\人资\\测试表格\\百度考勤.xlsx");
+		  readExcelToObj("E:\\project_personal\\hr\\文档\\表格\\测试百度.xlsx");
     }
 	  
 	@Test
@@ -62,10 +58,46 @@ public class excelTest {
 	 */
 	private static void readExcelToObj(String path) {
 
-		XSSFWorkbook  wb = null;
+		Workbook  wb = null;
 		try {
 			InputStream is = new FileInputStream(path);
-			wb = new XSSFWorkbook(is);
+			try {
+				wb = WorkbookFactory.create(is);
+			} catch (EncryptedDocumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+//			Sheet  xssfSheet = wb.getSheetAt(0);
+//			Row  xssfRow = xssfSheet.getRow(0);
+//			for (int i = 0; i < 8; i++) {
+//				Cell cell = xssfRow.getCell(i);
+//				CellStyle cellStyle = cell.getCellStyle();
+//				
+//					XSSFColor color = (XSSFColor) cellStyle.getFillForegroundColorColor();
+//					byte[] a =color.getARGB();
+//					byte[] c =color.getRGBWithTint();
+//					String sa = bytesToHexFun(a);
+//					String sc = bytesToHexFun(c);
+////					short scolor = color.hashCode();  // 前两位是透明度
+//					XSSFFont eFont = (XSSFFont) wb.getFontAt(cellStyle.getFontIndex());
+//					CTFont fc=eFont.getCTFont();
+//					 CTColor[] d=    fc.getColorArray();
+//					 byte[] b=null;
+//					 if(d.length>0){
+//						  b= d[0].getRgb();
+//					 }
+//					 String sb="#";
+//					 if(b!=null){
+//						 sb =bytesToHexFun(b);
+//					 }
+//	               
+//					System.out.print(" "+sa+" "+sc+ " "+sb);
+//			
+//				
+//			}
 			
 			readExcel(wb, 0, 0, 0);
 		} catch (IOException e) {
@@ -73,6 +105,17 @@ public class excelTest {
 		}
 	}
 
+	
+	 public static String bytesToHexFun(byte[] bytes) {
+	        StringBuilder buf = new StringBuilder(bytes.length * 2);
+//	        buf.append("0xFF");
+	        for(byte b : bytes) { // 使用String的format方法进行转换
+	            buf.append(String.format("%02x", new Integer(b & 0xff)).toUpperCase());
+	        }
+
+	        return buf.toString();
+	    }
+	 
 	/**
 	 * 读取excel文件
 	 * 
@@ -84,9 +127,9 @@ public class excelTest {
 	 * @param tailLine
 	 *            去除最后读取的行
 	 */
-	private static void readExcel(XSSFWorkbook wb, int sheetIndex, int startReadLine,
+	private static void readExcel(Workbook wb, int sheetIndex, int startReadLine,
 			int tailLine) {
-		XSSFSheet sheet = wb.getSheetAt(sheetIndex);
+		Sheet sheet = wb.getSheetAt(sheetIndex);
 		 Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器   
 		while (rows.hasNext()) {  
              Row row = rows.next();  //获得行数据  
@@ -96,23 +139,38 @@ public class excelTest {
 //             CheckWorkDetail detail= new CheckWorkDetail();
              while (cells.hasNext()) {  
             	 Cell cell = cells.next();  
-            	 CellStyle eStyle = cell.getCellStyle();
-            	 Font eFont = wb.getFontAt(eStyle.getFontIndex());
-
-                 short bColor= eStyle.getFillPattern();
+            	 CellStyle cellStyle = cell.getCellStyle();
+            	 XSSFColor color = (XSSFColor) cellStyle.getFillForegroundColorColor();
+					byte[] bColor =color.getRGBWithTint();
+					String bgColor = bytesToHexFun(bColor);
+					XSSFFont eFont = (XSSFFont) wb.getFontAt(cellStyle.getFontIndex());
+//					CTFont fc=eFont.getCTFont();
+					 CTColor[] d= eFont.getCTFont().getColorArray();
+					 byte[] b=null;
+					 if(d.length>0){
+						  b= d[0].getRgb();
+					 }
+					 String fColor="#";
+					 if(b!=null){
+						 fColor =bytesToHexFun(b);
+					 }
+	               
+//					System.out.print(" "+bgColor+" "+fColor+ " ");
+			
+//            	 Font eFont = wb.getFontAt(cellStyle.getFontIndex());
 
             	 boolean isMerge = isMergedRegion(sheet, row.getRowNum(), cell.getColumnIndex());
             	// 判断是否具有合并单元格
  				if (isMerge) {
  					String rs = getMergedRegionValue(sheet, row.getRowNum(),
  							cell.getColumnIndex());
- 					System.out.print(rs + " "+eFont.getColor()+ " "+bColor+" ");
+ 					System.out.print(rs + " "+fColor+ " "+bgColor+" ");
  				} else {
  					if(StringUtils.isBlank(getCellValue(cell))){
- 						System.out.print("#" + " "+eFont.getColor()+ " "+bColor+" ");
+ 						System.out.print("|" + " "+fColor+ " "+bgColor+" ");
  					}
  					else{
- 						System.out.print(getCellValue(cell) + " "+eFont.getColor()+ " "+bColor+" ");
+ 						System.out.print(getCellValue(cell) + " "+fColor+ " "+bgColor+" ");
  					}
  					
  				}
@@ -348,34 +406,7 @@ public class excelTest {
 		}
 		return "";
 	}
-	
-	/** 
-	 * excel(包含97和2007)中颜色转化为uof颜色 
-	 *  
-	 * @param color 
-	 *            颜色序号 
-	 * @return 颜色或者null 
-	 */  
-	private static ColorInfo excelColor2UOF(Color color) {  
-	    if (color == null) {  
-	        return null;  
-	    }  
-	    ColorInfo ci = null;  
-	    if (color instanceof XSSFColor) {// .xlsx  
-	        XSSFColor xc = (XSSFColor) color;  
-	        byte[] b = xc.getRgb();  
-	        if (b != null) {// 一定是argb  
-	            ci = ColorInfo.fromARGB(b[0], b[1], b[2]);  
-	        }  
-	    } else if (color instanceof HSSFColor) {// .xls  
-	        HSSFColor hc = (HSSFColor) color;  
-	        short[] s = hc.getTriplet();// 一定是rgb  
-	        if (s != null) {  
-	            ci = ColorInfo.fromARGB(s[0], s[1], s[2]);  
-	        }  
-	    }  
-	    return ci;  
-	}  
+
 	
     public static class ColorInfo{  
         /** 
