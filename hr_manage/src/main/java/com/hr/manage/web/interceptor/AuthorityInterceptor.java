@@ -42,7 +42,9 @@ public class AuthorityInterceptor extends ControllerInterceptorAdapter implement
 //			String passport = CookieUtils.getInstance().getCookieValue(inv.getRequest(), Constants.anminCookie);
 			HttpSession userSession = inv.getRequest().getSession();
 			String loginUserIdString = (String) userSession.getAttribute(Constants.LOGIN_USER_ID_TAG_FOR_AUTH);
+			logger.info(loginUserIdString);
 			int adminId = StringUtil.conver2Int(loginUserIdString,0);
+			logger.info(adminId);
 			if(adminId==0){
 				return notLoginRedirect(inv);
 			}
