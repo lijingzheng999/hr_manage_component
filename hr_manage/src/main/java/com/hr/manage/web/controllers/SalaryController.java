@@ -212,11 +212,12 @@ public class SalaryController {
 		BigDecimal newPay= BigDecimal.ZERO;
 		newPay=newPay.add(salaryChange.getChangeRange());
 		newPay=newPay.add(personalAll.getPersonalSalaryInfo().getWorkerPay());
-		if(!salaryChange.getFinalSalary().equals(newPay)){
+		if(salaryChange.getFinalSalary().compareTo(newPay)!=0){
 			logger.error("=====新增工资调整信息失败，调薪幅度加上原来的转正工资不等于填写的调薪后工资;原有转正工资为:"+personalAll.getPersonalSalaryInfo().getWorkerPay());
 			return "@" + JSONResult.error(CodeMsg.ERROR,"新增工资调整信息失败，调薪幅度加上原来的转正工资不等于填写的调薪后工资;原有转正工资为:"+personalAll.getPersonalSalaryInfo().getWorkerPay());
 	    }
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
+		salaryChange.setEmployeeNumber(personalAll.getPersonalInfo().getEmployeeNumber());
 		salaryChange.setCreateUser(user.getRealname());
 		salaryChange.setCreateTime(new Date());
 		//新增需要判断参数；并且要更新基本信息
