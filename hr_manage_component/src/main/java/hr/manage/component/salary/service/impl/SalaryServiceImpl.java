@@ -392,28 +392,28 @@ public class SalaryServiceImpl implements SalaryService {
 			// 税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
 			// V为应纳税所得额
 			if (detail.getShouldTaxAmount().compareTo(new BigDecimal(9000)) > 0) {
-				detail.setTax(new BigDecimal(0.25));
+				detail.setTax(new BigDecimal("0.25"));
 			} else if (detail.getShouldTaxAmount().compareTo(
 					new BigDecimal(4500)) > 0) {
-				detail.setTax(new BigDecimal(0.20));
+				detail.setTax(new BigDecimal("0.20"));
 			} else if (detail.getShouldTaxAmount().compareTo(
 					new BigDecimal(1500)) > 0) {
-				detail.setTax(new BigDecimal(0.10));
+				detail.setTax(new BigDecimal("0.10"));
 			} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(0)) > 0) {
-				detail.setTax(new BigDecimal(0.03));
+				detail.setTax(new BigDecimal("0.03"));
 			} else {
-				detail.setTax(new BigDecimal(0.00));
+				detail.setTax(new BigDecimal("0.00"));
 			}
 			// 速算扣除数
 			// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
 			// W为税率
-			if (detail.getTax().compareTo(new BigDecimal(0.25)) == 0) {
+			if (detail.getTax().compareTo(new BigDecimal("0.25")) == 0) {
 				detail.setDeductNumber(new BigDecimal(1005));
-			} else if (detail.getTax().compareTo(new BigDecimal(0.20)) == 0) {
+			} else if (detail.getTax().compareTo(new BigDecimal("0.20")) == 0) {
 				detail.setDeductNumber(new BigDecimal(555));
-			} else if (detail.getTax().compareTo(new BigDecimal(0.10)) == 0) {
+			} else if (detail.getTax().compareTo(new BigDecimal("0.10")) == 0) {
 				detail.setDeductNumber(new BigDecimal(105));
-			} else if (detail.getTax().compareTo(new BigDecimal(0.03)) == 0) {
+			} else if (detail.getTax().compareTo(new BigDecimal("0.03")) == 0) {
 				detail.setDeductNumber(new BigDecimal(0));
 			} else {
 				detail.setDeductNumber(new BigDecimal(0));
@@ -514,15 +514,15 @@ public class SalaryServiceImpl implements SalaryService {
 		// 税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
 		// V为应纳税所得额
 		if (detail.getShouldTaxAmount().compareTo(new BigDecimal(9000)) > 0) {
-			detail.setTax(new BigDecimal(0.25));
+			detail.setTax(new BigDecimal("0.25"));
 		} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(4500)) > 0) {
-			detail.setTax(new BigDecimal(0.20));
+			detail.setTax(new BigDecimal("0.20"));
 		} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(1500)) > 0) {
-			detail.setTax(new BigDecimal(0.10));
+			detail.setTax(new BigDecimal("0.10"));
 		} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(0)) > 0) {
-			detail.setTax(new BigDecimal(0.03));
+			detail.setTax(new BigDecimal("0.03"));
 		} else {
-			detail.setTax(new BigDecimal(0.00));
+			detail.setTax(new BigDecimal("0.00"));
 		}
 		// 速算扣除数
 		// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
@@ -548,7 +548,9 @@ public class SalaryServiceImpl implements SalaryService {
 		detail.setRealPay(detail.getTaxPay().subtract(incomeTax));
 		detail.setBankPay(detail.getRealPay());
 		detail.setUpdateTime(new Date());
-		salaryDetailDAO.update(detail);
+		if(salaryDetailDAO.update(detail)){
+			result=1;
+		}
 		return result;
 	}
 
@@ -694,7 +696,9 @@ public class SalaryServiceImpl implements SalaryService {
 				.getInsurancePayPersonal());
 		insurancePayTotal = insurancePayTotal.add(insurance.getAgencyPay());
 		insurance.setInsurancePayTotal(insurancePayTotal);
-		insuranceDetailDAO.update(insurance);
+		if(insuranceDetailDAO.update(insurance)){
+			result=1;
+		}
 		return result;
 	}
 
@@ -942,21 +946,21 @@ public class SalaryServiceImpl implements SalaryService {
 			detail.setProbationaryUnionPay(BigDecimal.ZERO);
 			// 试用期残疾人就业保障金=试用期薪资*1.7%
 			detail.setProbationaryDisabledPay(detail.getProbationaryPay()
-					.multiply(new BigDecimal(0.017))
+					.multiply(new BigDecimal("0.017"))
 					.setScale(2, BigDecimal.ROUND_HALF_UP));
 			// 试用期增值税及附加税=ROUND(全通结算价/1.06*0.06*(1+12%),2)
 			BigDecimal taxPay = new BigDecimal(0);
 			taxPay = taxPay.add(personalAll.getSettlementPrice());
-			taxPay = taxPay.divide(new BigDecimal(1.06), 4,
+			taxPay = taxPay.divide(new BigDecimal("1.06"), 4,
 					BigDecimal.ROUND_HALF_UP);
-			taxPay = taxPay.multiply(new BigDecimal(0.06));
-			taxPay = taxPay.multiply(new BigDecimal(1.12)).setScale(2,
+			taxPay = taxPay.multiply(new BigDecimal("0.06"));
+			taxPay = taxPay.multiply(new BigDecimal("1.12")).setScale(2,
 					BigDecimal.ROUND_HALF_UP);
 			detail.setProbationaryTaxPay(taxPay);
 			detail.setUnionPay(BigDecimal.ZERO);
 			// 残疾人就业保障金=转正薪资*1.7%
 			detail.setDisabledPay(detail.getWorkerPay()
-					.multiply(new BigDecimal(0.017))
+					.multiply(new BigDecimal("0.017"))
 					.setScale(2, BigDecimal.ROUND_HALF_UP));
 			// 增值税及附加税=ROUND(全通结算价/1.06*0.06*(1+12%),2)
 			detail.setTaxPay(taxPay);
