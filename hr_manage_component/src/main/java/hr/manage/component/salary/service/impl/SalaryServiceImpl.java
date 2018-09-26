@@ -527,13 +527,13 @@ public class SalaryServiceImpl implements SalaryService {
 		// 速算扣除数
 		// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
 		// W为税率
-		if (detail.getTax().compareTo(new BigDecimal(0.25)) == 0) {
+		if (detail.getTax().compareTo(new BigDecimal("0.25")) == 0) {
 			detail.setDeductNumber(new BigDecimal(1005));
-		} else if (detail.getTax().compareTo(new BigDecimal(0.20)) == 0) {
+		} else if (detail.getTax().compareTo(new BigDecimal("0.20")) == 0) {
 			detail.setDeductNumber(new BigDecimal(555));
-		} else if (detail.getTax().compareTo(new BigDecimal(0.10)) == 0) {
+		} else if (detail.getTax().compareTo(new BigDecimal("0.10")) == 0) {
 			detail.setDeductNumber(new BigDecimal(105));
-		} else if (detail.getTax().compareTo(new BigDecimal(0.03)) == 0) {
+		} else if (detail.getTax().compareTo(new BigDecimal("0.03")) == 0) {
 			detail.setDeductNumber(new BigDecimal(0));
 		} else {
 			detail.setDeductNumber(new BigDecimal(0));
