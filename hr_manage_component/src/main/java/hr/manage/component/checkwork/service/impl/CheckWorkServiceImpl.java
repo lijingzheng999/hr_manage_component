@@ -232,7 +232,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 					}
 				}
 				//保存变更后的当前加班小时数和剩余年假数
-		    	checkWorkCurrentDAO.save(checkWorkCurrent);
+		    	checkWorkCurrentDAO.update(checkWorkCurrent);
 		    } 
 		    
 		    //保存月考勤数据
