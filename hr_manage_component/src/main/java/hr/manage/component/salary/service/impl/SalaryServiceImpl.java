@@ -152,6 +152,10 @@ public class SalaryServiceImpl implements SalaryService {
 				.listPersonalAllExport(condition);
 		// 遍历所有人员,构造工资表
 		for (PersonalAllExport personalAll : personalAllExports) {
+			//过滤百度
+			if(personalAll.getExpatriateUnit().equals("百度")){
+				continue;
+			}
 			// 过滤已离职人员
 			int leaveStatus = personalAll.getLeaveStatus();
 			if (leaveStatus == 0) {
@@ -160,6 +164,15 @@ public class SalaryServiceImpl implements SalaryService {
 						&& personalAll.getLeaveWorkingTime().before(startDate)) {
 					continue;
 				}
+			}
+			// 获取考勤信息
+			CheckWorkDetail checkWork = checkWorkDetailDAO
+					.getCheckWorkDetailByName(personalAll.getName(),
+							term);
+			if(checkWork==null){
+				// 没有考勤记录，不生成工资表
+				logger.info("没有考勤记录，不生成工资表 name:"+personalAll.getName());
+				continue;
 			}
 			SalaryDetail detail = new SalaryDetail();
 			detail.setTerm(term);
@@ -195,11 +208,11 @@ public class SalaryServiceImpl implements SalaryService {
 				detail.setPhoneSubsidy(BigDecimal.ZERO);
 				// 计算考勤扣款//////////////////////////////////
 				BigDecimal attendanceDeduction = new BigDecimal(0);
-				// 获取考勤信息
-				CheckWorkDetail checkWork = checkWorkDetailDAO
-						.getCheckWorkDetailByName(personalAll.getName(), term);
+//				// 获取考勤信息
+//				CheckWorkDetail checkWork = checkWorkDetailDAO
+//						.getCheckWorkDetailByName(personalAll.getName(), term);
 				// 全通或物联网考勤有数据
-				if (checkWork != null) {
+//				if (checkWork != null) {
 					// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
 					attendanceDeduction = attendanceDeduction.add(detail
 							.getProbationaryPay());
@@ -220,9 +233,11 @@ public class SalaryServiceImpl implements SalaryService {
 					// 乘以缺勤天数
 					attendanceDeduction = attendanceDeduction
 							.multiply(checkWork.getSettlementDays());
-				} else {
-					// 百度
-				}
+//				} else {
+//					// 没有考勤记录，不生成工资表
+//					logger.info("没有考勤记录，不生成工资表 name:"+personalAll.getName());
+//					continue;
+//				}
 				detail.setAttendanceDeduction(attendanceDeduction);
 				detail.setOtherDeduction(BigDecimal.ZERO);
 
@@ -242,11 +257,11 @@ public class SalaryServiceImpl implements SalaryService {
 					// 计算考勤扣款//////////////////////////////////
 					BigDecimal attendanceDeduction = new BigDecimal(0);
 					// 获取考勤信息
-					CheckWorkDetail checkWork = checkWorkDetailDAO
-							.getCheckWorkDetailByName(personalAll.getName(),
-									term);
-					// 全通或物联网考勤有数据
-					if (checkWork != null) {
+//					CheckWorkDetail checkWork = checkWorkDetailDAO
+//							.getCheckWorkDetailByName(personalAll.getName(),
+//									term);
+//					// 全通或物联网考勤有数据
+//					if (checkWork != null) {
 						// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
 						attendanceDeduction = attendanceDeduction.add(detail
 								.getProbationaryPay());
@@ -267,9 +282,11 @@ public class SalaryServiceImpl implements SalaryService {
 						// 乘以缺勤天数
 						attendanceDeduction = attendanceDeduction
 								.multiply(checkWork.getSettlementDays());
-					} else {
-						// 百度
-					}
+//					} else {
+//						// 没有考勤记录，不生成工资表
+//						logger.info("没有考勤记录，不生成工资表 name:"+personalAll.getName());
+//						continue;
+//					}
 					detail.setAttendanceDeduction(attendanceDeduction);
 					detail.setOtherDeduction(BigDecimal.ZERO);
 
@@ -277,12 +294,9 @@ public class SalaryServiceImpl implements SalaryService {
 					// 本月转正startDate<workTime<endDate 仍有部分试用期
 					// 计算考勤扣款//////////////////////////////////
 					BigDecimal attendanceDeduction = new BigDecimal(0);
-					// 获取考勤信息
-					CheckWorkDetail checkWork = checkWorkDetailDAO
-							.getCheckWorkDetailByName(personalAll.getName(),
-									term);
-					// 全通或物联网考勤有数据
-					if (checkWork != null) {
+					
+//					// 全通或物联网考勤有数据
+//					if (checkWork != null) {
 						// 计算试用期天数
 						int dutyDays = DateTimeUtil.getDutyDays(startDate,
 								workTime);
@@ -340,9 +354,11 @@ public class SalaryServiceImpl implements SalaryService {
 						// 乘以缺勤天数
 						attendanceDeduction = attendanceDeduction
 								.multiply(checkWork.getSettlementDays());
-					} else {
-						// 百度
-					}
+//					} else {
+//						// 没有考勤记录，不生成工资表
+//						logger.info("没有考勤记录，不生成工资表 name:"+personalAll.getName());
+//						continue;
+//					}
 					detail.setAttendanceDeduction(attendanceDeduction);
 					detail.setOtherDeduction(BigDecimal.ZERO);
 

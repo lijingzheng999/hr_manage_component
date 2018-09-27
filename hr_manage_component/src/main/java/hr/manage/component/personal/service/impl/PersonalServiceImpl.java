@@ -514,6 +514,7 @@ public class PersonalServiceImpl implements PersonalService {
 		// 保存员工个人信息表,返回主键ID
 		Integer personalInfoId = personalInfoDAO.save(person);
 		work.setPersonalInfoId(personalInfoId);
+		work.setLeaveStatus(1);
 		work.setIsDel(1);
 		work.setCreateTime(new Date());
 		Integer workId = personalWorkInfoDAO.save(work);
