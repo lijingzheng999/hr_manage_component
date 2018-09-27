@@ -19,7 +19,7 @@ public interface ProfitDetailDAO  extends GenericDAO<ProfitDetail,Integer>{
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
 	            "#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
-	            "#if(:1.term != null  && :1.term !=') { and !=' = :1.!=' } " +
+	            "#if(:1.term != null  && :1.term !='') { and term = :1.term } " +
 	            "#if(:1.startDate != null) { and create_time >= :1.startDate } " +
 	            "#if(:1.endDate != null) { and create_time <= :1.endDate } " +
 	            " and is_del=1 " +
@@ -30,7 +30,7 @@ public interface ProfitDetailDAO  extends GenericDAO<ProfitDetail,Integer>{
 	    
 	    @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +
 	    		"#if(:1.name != null  && :1.name !='') { and name = :1.name } " +
-	            "#if(:1.term != null  && :1.term !=') { and !=' = :1.!=' } " +
+	            "#if(:1.term != null  && :1.term !='') { and term = :1.term } " +
 	            "#if(:1.startDate != null) { and create_time >= :1.startDate } " +
 	            "#if(:1.endDate != null) { and create_time <= :1.endDate } " +
 	            " and is_del=1 ")
