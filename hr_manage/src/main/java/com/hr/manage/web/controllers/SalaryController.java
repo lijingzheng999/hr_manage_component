@@ -807,6 +807,7 @@ public class SalaryController {
     * @param int pageIndex, 分页页数
     * @param int pageSize 	行数
     * @return String    
+    * @see ProfitDetail
     * @throws
      */
 	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
@@ -847,7 +848,7 @@ public class SalaryController {
     * @param String term 工资账期201808
     * @return String    
     * @throws
-    * @see SalaryDetail
+    * @see ProfitDetail
      */
 	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
 	@NotCareLogin
