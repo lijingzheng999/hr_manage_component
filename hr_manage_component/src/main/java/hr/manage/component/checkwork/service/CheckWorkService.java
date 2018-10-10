@@ -1,6 +1,7 @@
 package hr.manage.component.checkwork.service;
 
 
+import hr.manage.component.checkwork.model.CheckWorkBaidu;
 import hr.manage.component.checkwork.model.CheckWorkCurrent;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.checkwork.model.CheckWorkDetailCondition;
@@ -132,4 +133,48 @@ public interface CheckWorkService {
     * @throws
      */
 	public  int saveCheckWorkDetailListRecord( List<CheckWorkDetail> checkWorkList);
+	
+	
+
+	/**
+     * 
+    * @Title: listCheckWorkBaidu
+    * @Description: 条件查询百度考勤信息列表
+    * @param  CheckWorkDetailCondition
+    * @return List<CheckWorkBaidu>
+    * @throws
+     */
+	public  List<CheckWorkBaidu> listCheckWorkBaidu(CheckWorkDetailCondition condition);
+	
+	
+	/**
+     * 
+    * @Title: countCheckWorkBaidu
+    * @Description: 条件查询百度考勤信息列表个数
+    * @param  CheckWorkDetailCondition
+    * @return Long
+    * @throws
+     */
+	public  Long countCheckWorkBaidu(CheckWorkDetailCondition condition);
+
+	/**
+     * 
+    * @Title: getCheckWorkBaiduById
+    * @Description: 根据ID查询百度人员考勤信息
+    * @param  Integer baiduId
+    * @return CheckWorkBaidu
+    * @throws
+     */
+	public  CheckWorkBaidu getCheckWorkBaiduById(Integer baiduId);
+	
+	/**
+     * 
+    * @Title: updateCheckWorkBaidu
+    * @Description: 删除全通物联网人员考勤信息
+    * @param  CheckWorkBaidu baidu
+    * @return int
+    * @throws
+     */
+	public  int updateCheckWorkBaidu(CheckWorkBaidu baidu);
+	
 }

@@ -1,8 +1,11 @@
 package hr.manage.component.checkwork.service.impl;
 
+import hr.manage.component.checkwork.dao.CheckWorkBaiduDAO;
+import hr.manage.component.checkwork.dao.CheckWorkBaiduDetailDAO;
 import hr.manage.component.checkwork.dao.CheckWorkCurrentDAO;
 import hr.manage.component.checkwork.dao.CheckWorkCurrentLogDAO;
 import hr.manage.component.checkwork.dao.CheckWorkDetailDAO;
+import hr.manage.component.checkwork.model.CheckWorkBaidu;
 import hr.manage.component.checkwork.model.CheckWorkCurrent;
 import hr.manage.component.checkwork.model.CheckWorkCurrentLog;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
@@ -32,6 +35,10 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	CheckWorkCurrentDAO checkWorkCurrentDAO;
 	@Autowired
 	CheckWorkCurrentLogDAO checkWorkCurrentLogDAO;
+	@Autowired
+	CheckWorkBaiduDAO checkWorkBaiduDAO;
+	@Autowired
+	CheckWorkBaiduDetailDAO checkWorkBaiduDetailDAO;
 	
 	@Override
 	public List<CheckWorkDetail> listCheckWorkDetail(CheckWorkDetailCondition condition){
@@ -240,6 +247,26 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 		    
 		}
 		result = 1;
+		return result;
+	}
+	
+	public  List<CheckWorkBaidu> listCheckWorkBaidu(CheckWorkDetailCondition condition){
+		return checkWorkBaiduDAO.listCheckWorkBaidu(condition);
+	}
+	
+	public  Long countCheckWorkBaidu(CheckWorkDetailCondition condition){
+		return checkWorkBaiduDAO.countCheckWorkBaidu(condition);
+	}
+
+	public  CheckWorkBaidu getCheckWorkBaiduById(Integer baiduId){
+		return checkWorkBaiduDAO.get(baiduId);
+	}
+	
+	public  int updateCheckWorkBaidu(CheckWorkBaidu baidu){
+		int result =0;
+		if(checkWorkBaiduDAO.update(baidu)){
+			result =1;
+		}
 		return result;
 	}
 }
