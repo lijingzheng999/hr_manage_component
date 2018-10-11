@@ -2,6 +2,7 @@ package hr.manage.component.checkwork.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import net.paoding.rose.jade.plugin.sql.annotations.Column;
 import net.paoding.rose.jade.plugin.sql.annotations.Table;
@@ -97,6 +98,9 @@ public class CheckWorkBaidu implements java.io.Serializable {
     @Column(value = "create_time")
     private Date createTime;
 
+    /** 详细考勤信息 */
+    private List<CheckWorkBaiduDetail> baiduDetails;
+    
     /**
      * 获取表的主键
      * 
@@ -476,4 +480,26 @@ public class CheckWorkBaidu implements java.io.Serializable {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    /**
+     * 获取考勤明细
+     * 
+     * @param baiduDetails
+     *         考勤明细
+     */
+	public List<CheckWorkBaiduDetail> getBaiduDetails() {
+		return baiduDetails;
+	}
+
+	/**
+     * 设置考勤明细
+     * 
+     * @param baiduDetails
+     *         考勤明细
+     */
+    public void setBaiduDetails(List<CheckWorkBaiduDetail> baiduDetails) {
+		this.baiduDetails = baiduDetails;
+	}
+    
+    
 }

@@ -33,6 +33,11 @@ public interface CheckWorkBaiduDetailDAO  extends GenericDAO<CheckWorkBaiduDetai
     Long countCheckWorkBaiduDetail(CheckWorkDetailCondition condition);
     
 
+    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
+            "#if(:1 != null  && :1 >0) { and check_work_id = :1 } " +
+            " and is_del=1 " )
+    List<CheckWorkBaiduDetail> getCheckWorkBaiduDetailByBaiduId(Integer baiduId);
+   
     
     @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
             "#if(:1 != null  && :1 !='') { and name = :1 } " +

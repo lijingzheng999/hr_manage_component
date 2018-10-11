@@ -6,6 +6,7 @@ import hr.manage.component.checkwork.dao.CheckWorkCurrentDAO;
 import hr.manage.component.checkwork.dao.CheckWorkCurrentLogDAO;
 import hr.manage.component.checkwork.dao.CheckWorkDetailDAO;
 import hr.manage.component.checkwork.model.CheckWorkBaidu;
+import hr.manage.component.checkwork.model.CheckWorkBaiduDetail;
 import hr.manage.component.checkwork.model.CheckWorkCurrent;
 import hr.manage.component.checkwork.model.CheckWorkCurrentLog;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
@@ -259,7 +260,10 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	}
 
 	public  CheckWorkBaidu getCheckWorkBaiduById(Integer baiduId){
-		return checkWorkBaiduDAO.get(baiduId);
+		CheckWorkBaidu baidu = checkWorkBaiduDAO.get(baiduId);
+		List<CheckWorkBaiduDetail> baiduDetails = checkWorkBaiduDetailDAO.getCheckWorkBaiduDetailByBaiduId(baiduId);
+		baidu.setBaiduDetails(baiduDetails);
+		return baidu;
 	}
 	
 	public  int updateCheckWorkBaidu(CheckWorkBaidu baidu){
