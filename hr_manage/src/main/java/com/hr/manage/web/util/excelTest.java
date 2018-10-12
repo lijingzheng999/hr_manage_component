@@ -1,26 +1,33 @@
 package com.hr.manage.web.util;
 
 import hr.manage.component.admin.model.Admin;
+import hr.manage.component.checkwork.model.CheckWorkBaidu;
+import hr.manage.component.checkwork.model.CheckWorkBaiduDetail;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
+import hr.manage.component.personal.model.PersonalInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,6 +41,9 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 
+import com.hr.manage.web.constant.CodeMsg;
+import com.hr.manage.web.constant.JSONResult;
+
 /**
  * 
  * @author wcyong
@@ -43,7 +53,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 public class excelTest {
 
 	  public static void main(String [] args){
-		  readExcelToObj("E:\\project_personal\\hr\\文档\\表格\\测试百度.xlsx");
+		  readExcelToObj("D:\\java_other\\人资\\测试表格\\百度考勤.xlsx");
+//		  readExcelToObj("E:\\project_personal\\hr\\文档\\表格\\测试百度.xlsx");
     }
 	  
 	@Test
@@ -130,128 +141,335 @@ public class excelTest {
 	private static void readExcel(Workbook wb, int sheetIndex, int startReadLine,
 			int tailLine) {
 		Sheet sheet = wb.getSheetAt(sheetIndex);
-		 Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器   
-		while (rows.hasNext()) {  
+		 Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器
+		 List<CheckWorkBaidu> baiduList = new ArrayList<CheckWorkBaidu>();
+		 CheckWorkBaidu baidu = null;
+		 List<CheckWorkBaiduDetail> baiduDetails = new ArrayList<CheckWorkBaiduDetail>();
+		 CheckWorkBaiduDetail detail = null;
+		 while (rows.hasNext()) {  
              Row row = rows.next();  //获得行数据  
              if(row.getRowNum()<5||isRowEmpty(row))
              	continue;
              Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
-//             CheckWorkDetail detail= new CheckWorkDetail();
+             
+             detail = new CheckWorkBaiduDetail();
+             if(row.getRowNum()%2==1){
+            	 baidu.setBaiduDetails(baiduDetails);
+            	 baiduList.add(baidu);
+            	 baiduDetails.clear();
+            	 baidu = new CheckWorkBaidu();
+             }
+                      
              while (cells.hasNext()) {  
             	 Cell cell = cells.next();  
-            	 CellStyle cellStyle = cell.getCellStyle();
-            	 XSSFColor color = (XSSFColor) cellStyle.getFillForegroundColorColor();
-					byte[] bColor =color.getRGBWithTint();
-					String bgColor = bytesToHexFun(bColor);
-					XSSFFont eFont = (XSSFFont) wb.getFontAt(cellStyle.getFontIndex());
-//					CTFont fc=eFont.getCTFont();
-					 CTColor[] d= eFont.getCTFont().getColorArray();
-					 byte[] b=null;
-					 if(d.length>0){
-						  b= d[0].getRgb();
-					 }
-					 String fColor="#";
-					 if(b!=null){
-						 fColor =bytesToHexFun(b);
-					 }
-	               
-//					System.out.print(" "+bgColor+" "+fColor+ " ");
-			
-//            	 Font eFont = wb.getFontAt(cellStyle.getFontIndex());
+            	 String cellValue = "";
+            	 
+	                
+					 switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
+	                    case HSSFCell.CELL_TYPE_NUMERIC:  
+	                    	if (DateUtil.isCellDateFormatted(cell)) {
+								Date d = cell.getDateCellValue(); // 对日期处理
+								DateFormat formater = new SimpleDateFormat(
+										"yyyy-MM-dd HH:mm:ss");
+								cellValue = formater.format(d);
+							} else {// 其余按照数字处理
+									// 防止科学计数法
+								DecimalFormat df = new DecimalFormat("0.000");
+								double acno = cell.getNumericCellValue();
+								String acnoStr = df.format(acno);
+								if (acnoStr.indexOf(".") > 0) {
+									acnoStr = acnoStr.replaceAll("0+?$", "");// 去掉多余的0
+									cellValue = acnoStr.replaceAll("[.]$", "");// 如最后一位是.则去掉
+								}
+							}  
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_STRING:  
+	                    	cellValue = cell.getRichStringCellValue().getString(); 
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_BOOLEAN:  
+	                    	cellValue = String.valueOf(cell.getBooleanCellValue());  
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_BLANK:  
+	                    	cellValue = "";
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_ERROR:  
+	                    	cellValue = "";
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_FORMULA:  
+	                    	cellValue = cell.getCellFormula() + "";
+	                        break;  
+	                    default:  
+	                    	cellValue = "";
+	                        break;  
+	                    } 
+	                    if(cell.getColumnIndex()==0&&cellValue.equals("")){
+	                    	continue;
+	                    }
+	                    /**
+						 * 处理文件中定义的属性
+						 */
+						String transforValue="";
+						String [] colorStrings=new String [2];
+						switch (cell.getColumnIndex()) {
+							case 0:// 序号
+								break;
+							case 1:// 姓名
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								baidu.setName(transforValue);
+								break;
+							case 2:// 日期 白班or夜班；偶数白班；奇数夜班
+								transforValue = String.valueOf(cellValue).trim();
+								if(transforValue.equals("白班")){
+									detail.setType(0);
+								}
+								else{
+									detail.setType(1);
+								}
+								break;
+							case 3:// 1号
+								// FABF8F背景红色;BFBFBF 背景黑色 FFFFFF背景白色
+								// FFFF0000字体红色
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print( "  1 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 4:// 2号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  2 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 5:// 3号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  3 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 6:// 4号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  4 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 7:// 5号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  5 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 8:// 6号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  6 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 9:// 7号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  7 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 10:// 8号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  8 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 11:// 9号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  9 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 12:// 10号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  10 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 13:// 11号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print( "  11 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 14:// 12号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  12 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 15:// 13号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  13 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 16:// 14号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  14 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+							case 17:// 15号
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									continue;
+								}
+								//0为背景色  1:为字体色
+								colorStrings = getColors(wb,cell);
+								if(colorStrings!=null){
+									System.out.print(  "  15 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+								}
+								detail.setCurrentDay(1);
+								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								break;
+						}
+						
+                   }  
+              baiduDetails.add(detail); 
+         	  System.out.println();      
+			}
 
-            	 boolean isMerge = isMergedRegion(sheet, row.getRowNum(), cell.getColumnIndex());
-            	// 判断是否具有合并单元格
- 				if (isMerge) {
- 					String rs = getMergedRegionValue(sheet, row.getRowNum(),
- 							cell.getColumnIndex());
- 					System.out.print(rs + " "+fColor+ " "+bgColor+" ");
- 				} else {
- 					if(StringUtils.isBlank(getCellValue(cell))){
- 						System.out.print("|" + " "+fColor+ " "+bgColor+" ");
- 					}
- 					else{
- 						System.out.print(getCellValue(cell) + " "+fColor+ " "+bgColor+" ");
- 					}
- 					
- 				}
-             }
- 			System.out.println();
- 		}
-//                 String cellValue = "";
-//                 switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
-//                 case HSSFCell.CELL_TYPE_NUMERIC:  
-//                 	if (DateUtil.isCellDateFormatted(cell)) {
-//							Date d = cell.getDateCellValue(); // 对日期处理
-//							DateFormat formater = new SimpleDateFormat(
-//									"yyyy-MM-dd HH:mm:ss");
-//							cellValue = formater.format(d);
-//						} else {// 其余按照数字处理
-//								// 防止科学计数法
-//							DecimalFormat df = new DecimalFormat("0.000");
-//							double acno = cell.getNumericCellValue();
-//							String acnoStr = df.format(acno);
-//							if (acnoStr.indexOf(".") > 0) {
-//								acnoStr = acnoStr.replaceAll("0+?$", "");// 去掉多余的0
-//								cellValue = acnoStr.replaceAll("[.]$", "");// 如最后一位是.则去掉
-//							}
-//						}  
-//                     break;  
-//                 case HSSFCell.CELL_TYPE_STRING:  
-//                 	cellValue = cell.getRichStringCellValue().getString(); 
-//                     break;  
-//                 case HSSFCell.CELL_TYPE_BOOLEAN:  
-//                 	cellValue = String.valueOf(cell.getBooleanCellValue());  
-//                     break;  
-//                 case HSSFCell.CELL_TYPE_BLANK:  
-//                 	cellValue = "";
-//                     break;  
-//                 case HSSFCell.CELL_TYPE_ERROR:  
-//                 	cellValue = "";
-//                     break;  
-//                 case HSSFCell.CELL_TYPE_FORMULA:  
-//                 	cellValue = cell.getCellFormula() + "";
-//                     break;  
-//                 default:  
-//                 	cellValue = "";
-//                     break;  
-//                 } 
-//                 if(cell.getColumnIndex()==0&&cellValue.equals("")){
-//                 	break;
-//                 }
-//                 /**
-//					 * 处理文件中定义的属性
-//					 */
-//					String transforValue="";
-//					switch (cell.getColumnIndex()) {
-//					
-//					}
-//             }
-//		}
-//		Row row = null;
-//		Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器  
-//		for (int i = startReadLine; i < sheet.getLastRowNum() - tailLine + 1; i++) {
-//			row = sheet.getRow(i);
-//			if(row.getRowNum()<5||row==null) continue;
-//			
-//			for (Cell c : row) {
-//				boolean isMerge = isMergedRegion(sheet, i, c.getColumnIndex());
-//				// 判断是否具有合并单元格
-//				if (isMerge) {
-//					String rs = getMergedRegionValue(sheet, row.getRowNum(),
-//							c.getColumnIndex());
-//					System.out.print(rs + " ");
-//				} else {
-//					if(StringUtils.isBlank(getCellValue(c))){
-//						System.out.print("#" + " ");
-//					}
-//					else{
-//						System.out.print(getCellValue(c) + " ");
-//					}
-//					
-//				}
-//			}
-//			System.out.println();
-//		}
+//            	 boolean isMerge = isMergedRegion(sheet, row.getRowNum(), cell.getColumnIndex());
+//            	// 判断是否具有合并单元格
+// 				if (isMerge) {
+// 					String rs = getMergedRegionValue(sheet, row.getRowNum(),
+// 							cell.getColumnIndex());
+// 					System.out.print(rs + " "+fColor+ " "+bgColor+" ");
+// 				} else {
+// 					if(StringUtils.isBlank(getCellValue(cell))){
+// 						System.out.print("|" + " "+fColor+ " "+bgColor+" ");
+// 					}
+// 					else{
+// 						System.out.print(getCellValue(cell) + " "+fColor+ " "+bgColor+" ");
+// 					}
+// 					
+// 				}
+
+	}
+
+	private static String [] getColors(Workbook wb,Cell cell) {
+		   String [] colorStrings =new String[2];
+		   CellStyle cellStyle = cell.getCellStyle();
+   	       XSSFColor color = (XSSFColor) cellStyle.getFillForegroundColorColor();
+			byte[] bColor =color.getRGBWithTint();
+			String bgColor = bytesToHexFun(bColor);
+			colorStrings[0]= bgColor;
+			XSSFFont eFont = (XSSFFont) wb.getFontAt(cellStyle.getFontIndex());
+			 CTColor[] ctColors= eFont.getCTFont().getColorArray();
+			 byte[] bColors=null;
+			 if(ctColors.length>0){
+				 bColors= ctColors[0].getRgb();
+			 }
+			 String fColor="#";
+			 if(bColors!=null){
+				 fColor =bytesToHexFun(bColors);
+			 }
+			 colorStrings[1]= fColor;
+			 return colorStrings;
 	}
 
 	/**

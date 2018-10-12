@@ -57,11 +57,15 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -562,23 +566,39 @@ public class CheckWorkController {
 	                wb = new HSSFWorkbook(is); 
 	            Sheet sheet= wb.getSheetAt(0);     //获得第一个表单   
 	            if(sheet.getLastRowNum()>5000){
-					return "@"+JSONResult.error(CodeMsg.ERROR,"数量不能超过500"); 
+					return "@"+JSONResult.error(CodeMsg.ERROR,"数量不能超过5000"); 
 				}
 	            Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器  
-	            List<CheckWorkDetail> checkWorkDetailList = new ArrayList<CheckWorkDetail>();
+	            List<CheckWorkBaidu> baiduList = new ArrayList<CheckWorkBaidu>();
 	            while (rows.hasNext()) {  
 	                Row row = rows.next();  //获得行数据  
-	                if(row.getRowNum()<4||row==null)
+	                if(row.getRowNum()<5||ExportBeanExcel.isRowEmpty(row))
 	                	continue;
 	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
-	                CheckWorkDetail detail= new CheckWorkDetail();
+	                CheckWorkBaidu baidu= new CheckWorkBaidu();
 	                while (cells.hasNext()) {  
 	                    Cell cell = cells.next();  
 	                    String cellValue = "";
+	                    CellStyle cellStyle = cell.getCellStyle();
+	               	    XSSFColor color = (XSSFColor) cellStyle.getFillForegroundColorColor();
+	   					byte[] bColor =color.getRGBWithTint();
+	   					String bgColor = ExportBeanExcel.bytesToHexFun(bColor);
+	   					XSSFFont eFont = (XSSFFont) wb.getFontAt(cellStyle.getFontIndex());
+//	   					CTFont fc=eFont.getCTFont();
+	   					CTColor[] d= eFont.getCTFont().getColorArray();
+	   					 byte[] b=null;
+	   					 if(d.length>0){
+	   						  b= d[0].getRgb();
+	   					 }
+	   					 String fColor="#";
+	   					 if(b!=null){
+	   						 fColor =ExportBeanExcel.bytesToHexFun(b);
+	   					 }
+	   	               
 	                    switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
 	                    case HSSFCell.CELL_TYPE_NUMERIC:  
 	                    	if (DateUtil.isCellDateFormatted(cell)) {
-								Date d = cell.getDateCellValue(); // 对日期处理
+								Date d1 = cell.getDateCellValue(); // 对日期处理
 								DateFormat formater = new SimpleDateFormat(
 										"yyyy-MM-dd HH:mm:ss");
 								cellValue = formater.format(d);
@@ -619,106 +639,13 @@ public class CheckWorkController {
 						 * 处理文件中定义的属性
 						 */
 						String transforValue="";
-						switch (cell.getColumnIndex()) {
-							case 0:// 序号
-								break;
-							case 1:// 合作厂家
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setManufacturer(transforValue);
-								break;
-							case 2:// 姓名
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setName(transforValue);
-								break;
-							case 3:// 外派单位
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setExpatriateUnit(transforValue);
-								break;
-							case 4:// 入职时间 
-								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
-									SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
-									java.util.Date entryrdate=sdt.parse(String.valueOf(cellValue).trim());
-									detail.setEntryTime(entryrdate);
-								}
-								break;
-							case 5:// 出勤天数
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setAttendanceDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								break;
-							case 6:// 考勤天数
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setCheckWorkDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								break;
-							case 7:// 加班天数
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setOvertimeDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								break;
-							case 8:// 请假天数
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								break;
-							case 9:// 负责人
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setManager(transforValue);
-								break;
-							case 10:// 备注
-								transforValue = String.valueOf(cellValue).trim();
-								detail.setMemo(transforValue);
-								break;
-							case 11:// 剩余加班小时数 
-								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
-								  detail.setSurplusOvertimeHours(Integer.parseInt(transforValue));
-								}
-								else{
-								  detail.setSurplusOvertimeHours(0);
-								}
-								break;
-							case 12://可休年假天数 
-								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
-								  detail.setAnnualLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								}
-								else{
-								  detail.setAnnualLeaveDays(BigDecimal.ZERO);
-								}
-								break;
-							case 13:// 剩余年休天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
-								  detail.setSurplusAnnualLeave(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								}
-								else{
-								  detail.setSurplusAnnualLeave(BigDecimal.ZERO);
-								}
-								break;
-							case 14:// 累计长期病假天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
-									  detail.setSickLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								}
-								else{
-								  detail.setSickLeaveDays(BigDecimal.ZERO);
-								}
-								break;
-							case 15:// 累计长期事假天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
-									  detail.setCompassionateLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								}
-								else{
-								  detail.setCompassionateLeaveDays(BigDecimal.ZERO);
-								}
-								break;
-						}
-	                }  
+					}  
 	                //验证员工信息是否存在
-	                PersonalInfo person = personalService.getPersonalByName(detail.getName());
-	                if(person==null){
-	                	logger.error("====="+String.format("员工信息不存在,姓名:%s", detail.getName())+"=====");
-	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工信息不存在,姓名:%s", detail.getName())); 
-	                }
+//	                PersonalInfo person = personalService.getPersonalByName(detail.getName());
+//	                if(person==null){
+//	                	logger.error("====="+String.format("员工信息不存在,姓名:%s", detail.getName())+"=====");
+//	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工信息不存在,姓名:%s", detail.getName())); 
+//	                }
 //	                //验证该员工是否有加班和年假表数据,没有的话需要初始化
 //	                CheckWorkCurrent checkWorkCurrent = checkWorkService.getCheckWorkCurrentByName(detail.getName());
 //	                if(checkWorkCurrent == null){
@@ -726,23 +653,23 @@ public class CheckWorkController {
 //	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())); 
 //	                }
 //	                detail.setCheckWorkCurrent(checkWorkCurrent);
-	                detail.setPersonalInfo(person);
-	                detail.setTerm(term.trim());
-	                SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
-					java.util.Date startDate=sdt.parse(String.valueOf(term).trim());
-					detail.setStartDate(startDate);
-			        Calendar endDate = Calendar.getInstance();  
-			        endDate.setTime(startDate);  
-			        endDate.add(Calendar.MONTH, 1);  
-			        detail.setEndDate(endDate.getTime());
-			        detail.setSettlementDays(BigDecimal.ZERO);
-	                detail.setIsDel(1);
-	                detail.setCreateTime(new Date());
-	                checkWorkDetailList.add(detail);              
+//	                detail.setPersonalInfo(person);
+//	                detail.setTerm(term.trim());
+//	                SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
+//					java.util.Date startDate=sdt.parse(String.valueOf(term).trim());
+//					detail.setStartDate(startDate);
+//			        Calendar endDate = Calendar.getInstance();  
+//			        endDate.setTime(startDate);  
+//			        endDate.add(Calendar.MONTH, 1);  
+//			        detail.setEndDate(endDate.getTime());
+//			        detail.setSettlementDays(BigDecimal.ZERO);
+//	                detail.setIsDel(1);
+//	                detail.setCreateTime(new Date());
+//	                checkWorkDetailList.add(detail);              
 			}
 	        //批量入库
 	        try {
-	        	checkWorkService.saveCheckWorkDetailListRecord(checkWorkDetailList);
+//	        	checkWorkService.saveCheckWorkDetailListRecord(checkWorkDetailList);
 			} catch (Exception e) {
 				e.printStackTrace();
 				// TODO: handle exception

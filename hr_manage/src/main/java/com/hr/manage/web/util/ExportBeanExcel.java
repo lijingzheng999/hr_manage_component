@@ -15,7 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -139,6 +141,27 @@ public class ExportBeanExcel<T> {
             e.printStackTrace();
         }
     }
+    
+    
+	public static boolean isRowEmpty(Row row) {
+	    for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
+	        Cell cell = row.getCell(c);
+	        if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK){
+	            return false;
+	        }
+	    }
+	    return true;
+	}
+	
+	public static String bytesToHexFun(byte[] bytes) {
+        StringBuilder buf = new StringBuilder(bytes.length * 2);
+//        buf.append("0xFF");
+        for(byte b : bytes) { // 使用String的format方法进行转换
+            buf.append(String.format("%02x", new Integer(b & 0xff)).toUpperCase());
+        }
+        return buf.toString();
+    }
+	
     public static void main(String [] args){
 //        List<String> headerId = new ArrayList<>();
 //        Field[] fields = Admin.class.getDeclaredFields();
