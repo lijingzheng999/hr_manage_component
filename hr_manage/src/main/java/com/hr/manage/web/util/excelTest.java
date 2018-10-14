@@ -53,8 +53,8 @@ import com.hr.manage.web.constant.JSONResult;
 public class excelTest {
 
 	  public static void main(String [] args){
-		  readExcelToObj("D:\\java_other\\人资\\测试表格\\百度考勤.xlsx");
-//		  readExcelToObj("E:\\project_personal\\hr\\文档\\表格\\测试百度.xlsx");
+//		  readExcelToObj("D:\\java_other\\人资\\测试表格\\百度考勤.xlsx");
+		  readExcelToObj("E:\\project_personal\\hr\\文档\\表格\\测试百度.xlsx");
     }
 	  
 	@Test
@@ -152,10 +152,12 @@ public class excelTest {
              	continue;
              Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
              
-             detail = new CheckWorkBaiduDetail();
+             
              if(row.getRowNum()%2==1){
-            	 baidu.setBaiduDetails(baiduDetails);
-            	 baiduList.add(baidu);
+            	 if(baiduDetails.size()>0){
+            		 baidu.setBaiduDetails(baiduDetails);
+            		 baiduList.add(baidu);
+            	 }
             	 baiduDetails.clear();
             	 baidu = new CheckWorkBaidu();
              }
@@ -163,7 +165,7 @@ public class excelTest {
              while (cells.hasNext()) {  
             	 Cell cell = cells.next();  
             	 String cellValue = "";
-            	 
+            	 detail = new CheckWorkBaiduDetail();
 	                
 					 switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
 	                    case HSSFCell.CELL_TYPE_NUMERIC:  
@@ -230,7 +232,7 @@ public class excelTest {
 								}
 								break;
 							case 3:// 1号
-								// FABF8F背景红色;BFBFBF 背景黑色 FFFFFF背景白色
+								// FABF8F背景红色;BFBFBF 背景黑色 FFFFFF背景白色 7F7F7F背景深黑
 								// FFFF0000字体红色
 								transforValue = String.valueOf(cellValue).trim();
 								if(StringUtils.isBlank(transforValue)){
@@ -242,7 +244,36 @@ public class excelTest {
 									System.out.print( "  1 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//判断是否为加班
+								if(colorStrings[1].equals("#")){
+									if(!transforValue.startsWith("年")&&!transforValue.startsWith("事")){
+										detail.setWorkType(0);
+										detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+									}
+									else{
+										detail.setWorkType(4);
+										detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue.substring(1, transforValue.length()))));
+									}
+								}
+								else if(colorStrings[1].equals("FFFF0000")){ //红色字体；判断几倍工资
+									switch (colorStrings[0]) {
+									case "7F7F7F":
+										detail.setWorkType(3); //节假日加班
+										detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+										break;
+									case "BFBFBF":
+										detail.setWorkType(2); //周末加班
+										detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+										break;
+									default:
+										detail.setWorkType(1); //普通加班
+										detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+										break;
+									}
+								}
+								baiduDetails.add(detail); 
+								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 4:// 2号
 								transforValue = String.valueOf(cellValue).trim();
@@ -255,7 +286,8 @@ public class excelTest {
 									System.out.print(  "  2 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								baiduDetails.add(detail); 
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 5:// 3号
 								transforValue = String.valueOf(cellValue).trim();
@@ -268,7 +300,7 @@ public class excelTest {
 									System.out.print(  "  3 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 6:// 4号
 								transforValue = String.valueOf(cellValue).trim();
@@ -281,7 +313,7 @@ public class excelTest {
 									System.out.print(  "  4 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 7:// 5号
 								transforValue = String.valueOf(cellValue).trim();
@@ -294,7 +326,7 @@ public class excelTest {
 									System.out.print(  "  5 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 8:// 6号
 								transforValue = String.valueOf(cellValue).trim();
@@ -307,7 +339,7 @@ public class excelTest {
 									System.out.print(  "  6 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								////detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 9:// 7号
 								transforValue = String.valueOf(cellValue).trim();
@@ -320,7 +352,7 @@ public class excelTest {
 									System.out.print(  "  7 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 10:// 8号
 								transforValue = String.valueOf(cellValue).trim();
@@ -333,7 +365,7 @@ public class excelTest {
 									System.out.print(  "  8 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 11:// 9号
 								transforValue = String.valueOf(cellValue).trim();
@@ -346,7 +378,7 @@ public class excelTest {
 									System.out.print(  "  9 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 12:// 10号
 								transforValue = String.valueOf(cellValue).trim();
@@ -359,7 +391,7 @@ public class excelTest {
 									System.out.print(  "  10 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 13:// 11号
 								transforValue = String.valueOf(cellValue).trim();
@@ -372,7 +404,7 @@ public class excelTest {
 									System.out.print( "  11 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 14:// 12号
 								transforValue = String.valueOf(cellValue).trim();
@@ -385,7 +417,7 @@ public class excelTest {
 									System.out.print(  "  12 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 15:// 13号
 								transforValue = String.valueOf(cellValue).trim();
@@ -398,7 +430,7 @@ public class excelTest {
 									System.out.print(  "  13 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 16:// 14号
 								transforValue = String.valueOf(cellValue).trim();
@@ -411,7 +443,7 @@ public class excelTest {
 									System.out.print(  "  14 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 17:// 15号
 								transforValue = String.valueOf(cellValue).trim();
@@ -424,12 +456,12 @@ public class excelTest {
 									System.out.print(  "  15 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
 								}
 								detail.setCurrentDay(1);
-								detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 						}
 						
                    }  
-              baiduDetails.add(detail); 
+             
          	  System.out.println();      
 			}
 
@@ -448,7 +480,7 @@ public class excelTest {
 // 					}
 // 					
 // 				}
-
+             int a =2;
 	}
 
 	private static String [] getColors(Workbook wb,Cell cell) {
