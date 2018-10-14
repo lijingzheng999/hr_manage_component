@@ -177,4 +177,16 @@ public interface CheckWorkService {
      */
 	public  int updateCheckWorkBaidu(CheckWorkBaidu baidu);
 	
+
+	/**
+     * 
+    * @Title: saveCheckWorkBaiduListRecord
+    * @Description: 保存百度考勤信息列表
+    * @param   String term
+    * @param  List<CheckWorkBaidu> baiduList
+    * @return int
+    * @throws
+     */
+	public  int saveCheckWorkBaiduListRecord( String term, List<CheckWorkBaidu> baiduList);
+	
 }

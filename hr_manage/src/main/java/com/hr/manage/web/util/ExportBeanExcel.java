@@ -5,6 +5,7 @@ package com.hr.manage.web.util;
  */
 
 import hr.manage.component.admin.model.Admin;
+import hr.manage.component.checkwork.model.CheckWorkBaiduDetail;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,16 +14,22 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.*;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 /**
  *            应用泛型，代表任意一个符合javabean风格的类
@@ -142,6 +149,61 @@ public class ExportBeanExcel<T> {
         }
     }
     
+    //获取百度考勤详情
+    public static CheckWorkBaiduDetail getDetail(CheckWorkBaiduDetail detail,String[] colorStrings,String transforValue,Integer type ) {
+		// FABF8F背景红色;BFBFBF 背景黑色 FFFFFF背景白色 7F7F7F背景深黑
+		// FFFF0000字体红色
+		detail.setType(type);
+		//判断是否为加班
+		if(colorStrings[1].equals("#")){
+			if(!transforValue.startsWith("年")&&!transforValue.startsWith("事")){
+				detail.setWorkType(0);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+			}
+			else{
+				detail.setWorkType(4);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue.substring(1, transforValue.length()))));
+			}
+		}
+		else if(colorStrings[1].equals("FFFF0000")){ //红色字体；判断几倍工资
+			switch (colorStrings[0]) {
+			case "7F7F7F":
+				detail.setWorkType(3); //节假日加班
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+				break;
+			case "BFBFBF":
+				detail.setWorkType(2); //周末加班
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+				break;
+			default:
+				detail.setWorkType(1); //普通加班
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+				break;
+			}
+		}
+		return detail;
+	}
+    //获取颜色；字体；背景色
+    public static String [] getColors(Workbook wb,Cell cell) {
+		   String [] colorStrings =new String[2];
+		   CellStyle cellStyle = cell.getCellStyle();
+	       XSSFColor color = (XSSFColor) cellStyle.getFillForegroundColorColor();
+			byte[] bColor =color.getRGBWithTint();
+			String bgColor = bytesToHexFun(bColor);
+			colorStrings[0]= bgColor;
+			XSSFFont eFont = (XSSFFont) wb.getFontAt(cellStyle.getFontIndex());
+			 CTColor[] ctColors= eFont.getCTFont().getColorArray();
+			 byte[] bColors=null;
+			 if(ctColors.length>0){
+				 bColors= ctColors[0].getRgb();
+			 }
+			 String fColor="#";
+			 if(bColors!=null){
+				 fColor =bytesToHexFun(bColors);
+			 }
+			 colorStrings[1]= fColor;
+			 return colorStrings;
+	}
     
 	public static boolean isRowEmpty(Row row) {
 	    for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {

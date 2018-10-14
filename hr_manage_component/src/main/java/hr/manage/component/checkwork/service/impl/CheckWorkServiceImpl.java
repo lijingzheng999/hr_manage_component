@@ -251,26 +251,37 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 		return result;
 	}
 	
+	@Override
 	public  List<CheckWorkBaidu> listCheckWorkBaidu(CheckWorkDetailCondition condition){
 		return checkWorkBaiduDAO.listCheckWorkBaidu(condition);
 	}
-	
+	@Override
 	public  Long countCheckWorkBaidu(CheckWorkDetailCondition condition){
 		return checkWorkBaiduDAO.countCheckWorkBaidu(condition);
 	}
-
+	@Override
 	public  CheckWorkBaidu getCheckWorkBaiduById(Integer baiduId){
 		CheckWorkBaidu baidu = checkWorkBaiduDAO.get(baiduId);
 		List<CheckWorkBaiduDetail> baiduDetails = checkWorkBaiduDetailDAO.getCheckWorkBaiduDetailByBaiduId(baiduId);
 		baidu.setBaiduDetails(baiduDetails);
 		return baidu;
 	}
-	
+	@Override
 	public  int updateCheckWorkBaidu(CheckWorkBaidu baidu){
 		int result =0;
 		if(checkWorkBaiduDAO.update(baidu)){
 			result =1;
 		}
+		return result;
+	}
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
+	public  int saveCheckWorkBaiduListRecord( String term, List<CheckWorkBaidu> baiduList){
+		int result = 0;
+		for (CheckWorkBaidu baidu : baiduList) {
+			
+		}
+		result = 1;
 		return result;
 	}
 }

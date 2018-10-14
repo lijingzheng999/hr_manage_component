@@ -3,6 +3,7 @@ package com.hr.manage.web.controllers;
 import hr.manage.component.admin.model.Admin;
 import hr.manage.component.admin.service.AdminService;
 import hr.manage.component.checkwork.model.CheckWorkBaidu;
+import hr.manage.component.checkwork.model.CheckWorkBaiduDetail;
 import hr.manage.component.checkwork.model.CheckWorkCurrent;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.checkwork.model.CheckWorkDetailCondition;
@@ -564,112 +565,591 @@ public class CheckWorkController {
 	                wb = new XSSFWorkbook(is);  
 	            else  
 	                wb = new HSSFWorkbook(is); 
-	            Sheet sheet= wb.getSheetAt(0);     //获得第一个表单   
-	            if(sheet.getLastRowNum()>5000){
-					return "@"+JSONResult.error(CodeMsg.ERROR,"数量不能超过5000"); 
-				}
-	            Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器  
-	            List<CheckWorkBaidu> baiduList = new ArrayList<CheckWorkBaidu>();
-	            while (rows.hasNext()) {  
+	            Sheet sheet = wb.getSheetAt(0);
+	   		 Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器
+	   		 List<CheckWorkBaidu> baiduList = new ArrayList<CheckWorkBaidu>();
+	   		 CheckWorkBaidu baidu = null;
+	   		 List<CheckWorkBaiduDetail> baiduDetails = new ArrayList<CheckWorkBaiduDetail>();
+	   		 CheckWorkBaiduDetail detail = null;
+	   		 while (rows.hasNext()) {  
 	                Row row = rows.next();  //获得行数据  
 	                if(row.getRowNum()<5||ExportBeanExcel.isRowEmpty(row))
 	                	continue;
 	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
-	                CheckWorkBaidu baidu= new CheckWorkBaidu();
+	                
+	                
+	                if(row.getRowNum()%2==1){
+//	               	 if(baiduDetails.size()>0){
+//	               		 baidu.setBaiduDetails(baiduDetails);
+//	               		 baiduList.add(baidu);
+//	               	 }
+//	               	 baiduDetails.clear();
+	               	 baidu = new CheckWorkBaidu();
+	                }
+	                
+	                Integer curType = -1;         
 	                while (cells.hasNext()) {  
-	                    Cell cell = cells.next();  
-	                    String cellValue = "";
-	                    CellStyle cellStyle = cell.getCellStyle();
-	               	    XSSFColor color = (XSSFColor) cellStyle.getFillForegroundColorColor();
-	   					byte[] bColor =color.getRGBWithTint();
-	   					String bgColor = ExportBeanExcel.bytesToHexFun(bColor);
-	   					XSSFFont eFont = (XSSFFont) wb.getFontAt(cellStyle.getFontIndex());
-//	   					CTFont fc=eFont.getCTFont();
-	   					CTColor[] d= eFont.getCTFont().getColorArray();
-	   					 byte[] b=null;
-	   					 if(d.length>0){
-	   						  b= d[0].getRgb();
-	   					 }
-	   					 String fColor="#";
-	   					 if(b!=null){
-	   						 fColor =ExportBeanExcel.bytesToHexFun(b);
-	   					 }
-	   	               
-	                    switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
-	                    case HSSFCell.CELL_TYPE_NUMERIC:  
-	                    	if (DateUtil.isCellDateFormatted(cell)) {
-								Date d1 = cell.getDateCellValue(); // 对日期处理
-								DateFormat formater = new SimpleDateFormat(
-										"yyyy-MM-dd HH:mm:ss");
-								cellValue = formater.format(d);
-							} else {// 其余按照数字处理
-									// 防止科学计数法
-								DecimalFormat df = new DecimalFormat("0.000");
-								double acno = cell.getNumericCellValue();
-								String acnoStr = df.format(acno);
-								if (acnoStr.indexOf(".") > 0) {
-									acnoStr = acnoStr.replaceAll("0+?$", "");// 去掉多余的0
-									cellValue = acnoStr.replaceAll("[.]$", "");// 如最后一位是.则去掉
-								}
-							}  
-	                        break;  
-	                    case HSSFCell.CELL_TYPE_STRING:  
-	                    	cellValue = cell.getRichStringCellValue().getString(); 
-	                        break;  
-	                    case HSSFCell.CELL_TYPE_BOOLEAN:  
-	                    	cellValue = String.valueOf(cell.getBooleanCellValue());  
-	                        break;  
-	                    case HSSFCell.CELL_TYPE_BLANK:  
-	                    	cellValue = "";
-	                        break;  
-	                    case HSSFCell.CELL_TYPE_ERROR:  
-	                    	cellValue = "";
-	                        break;  
-	                    case HSSFCell.CELL_TYPE_FORMULA:  
-	                    	cellValue = cell.getCellFormula() + "";
-	                        break;  
-	                    default:  
-	                    	cellValue = "";
-	                        break;  
-	                    } 
-	                    if(cell.getColumnIndex()==0&&cellValue.equals("")){
-	                    	break;
-	                    }
-	                    /**
-						 * 处理文件中定义的属性
-						 */
-						String transforValue="";
-					}  
-	                //验证员工信息是否存在
-//	                PersonalInfo person = personalService.getPersonalByName(detail.getName());
-//	                if(person==null){
-//	                	logger.error("====="+String.format("员工信息不存在,姓名:%s", detail.getName())+"=====");
-//	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工信息不存在,姓名:%s", detail.getName())); 
-//	                }
-//	                //验证该员工是否有加班和年假表数据,没有的话需要初始化
-//	                CheckWorkCurrent checkWorkCurrent = checkWorkService.getCheckWorkCurrentByName(detail.getName());
-//	                if(checkWorkCurrent == null){
-//	                	logger.error("====="+String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())+"=====");
-//	                	return "@"+JSONResult.error(CodeMsg.ERROR,String.format("员工加班及年休假信息不存在,请进行初始化,姓名:%s", detail.getName())); 
-//	                }
-//	                detail.setCheckWorkCurrent(checkWorkCurrent);
-//	                detail.setPersonalInfo(person);
-//	                detail.setTerm(term.trim());
-//	                SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
-//					java.util.Date startDate=sdt.parse(String.valueOf(term).trim());
-//					detail.setStartDate(startDate);
-//			        Calendar endDate = Calendar.getInstance();  
-//			        endDate.setTime(startDate);  
-//			        endDate.add(Calendar.MONTH, 1);  
-//			        detail.setEndDate(endDate.getTime());
-//			        detail.setSettlementDays(BigDecimal.ZERO);
-//	                detail.setIsDel(1);
-//	                detail.setCreateTime(new Date());
-//	                checkWorkDetailList.add(detail);              
-			}
+	               	 Cell cell = cells.next();  
+	               	 String cellValue = "";
+	               	 detail = new CheckWorkBaiduDetail();
+	   					 switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
+	   	                    case HSSFCell.CELL_TYPE_NUMERIC:  
+	   	                    	if (DateUtil.isCellDateFormatted(cell)) {
+	   								Date d = cell.getDateCellValue(); // 对日期处理
+	   								DateFormat formater = new SimpleDateFormat(
+	   										"yyyy-MM-dd HH:mm:ss");
+	   								cellValue = formater.format(d);
+	   							} else {// 其余按照数字处理
+	   									// 防止科学计数法
+	   								DecimalFormat df = new DecimalFormat("0.000");
+	   								double acno = cell.getNumericCellValue();
+	   								String acnoStr = df.format(acno);
+	   								if (acnoStr.indexOf(".") > 0) {
+	   									acnoStr = acnoStr.replaceAll("0+?$", "");// 去掉多余的0
+	   									cellValue = acnoStr.replaceAll("[.]$", "");// 如最后一位是.则去掉
+	   								}
+	   							}  
+	   	                        break;  
+	   	                    case HSSFCell.CELL_TYPE_STRING:  
+	   	                    	cellValue = cell.getRichStringCellValue().getString(); 
+	   	                        break;  
+	   	                    case HSSFCell.CELL_TYPE_BOOLEAN:  
+	   	                    	cellValue = String.valueOf(cell.getBooleanCellValue());  
+	   	                        break;  
+	   	                    case HSSFCell.CELL_TYPE_BLANK:  
+	   	                    	cellValue = "";
+	   	                        break;  
+	   	                    case HSSFCell.CELL_TYPE_ERROR:  
+	   	                    	cellValue = "";
+	   	                        break;  
+	   	                    case HSSFCell.CELL_TYPE_FORMULA:  
+	   	                    	cellValue = cell.getCellFormula() + "";
+	   	                        break;  
+	   	                    default:  
+	   	                    	cellValue = "";
+	   	                        break;  
+	   	                    } 
+	   	                    if(cell.getColumnIndex()==0&&cellValue.equals("")){
+	   	                    	continue;
+	   	                    }
+	   	                    /**
+	   						 * 处理文件中定义的属性
+	   						 */
+	   						String transforValue="";
+	   						String [] colorStrings=new String [2];
+	   						switch (cell.getColumnIndex()) {
+	   							case 0:// 序号
+	   								break;
+	   							case 1:// 姓名
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								baidu.setName(transforValue);
+	   								break;
+	   							case 2:// 日期 白班or夜班；偶数白班；奇数夜班
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(transforValue.equals("白班")){
+	   									curType = 0;  
+	   								}
+	   								else{
+	   									curType = 1;  
+	   								}
+	   								break;
+	   							case 3:// 1号
+	   								
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print( "  1 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(1);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+	   								break;
+	   							case 4:// 2号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  2 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(2);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								
+	   								break;
+	   							case 5:// 3号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  3 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(3);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								
+	   								break;
+	   							case 6:// 4号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  4 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(4);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								
+	   								break;
+	   							case 7:// 5号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  5 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(5);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 8:// 6号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  6 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(6);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 9:// 7号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  7 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(7);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 10:// 8号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  8 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(8);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 11:// 9号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  9 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(9);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 12:// 10号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  10 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(10);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 13:// 11号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print( "  11 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(11);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 14:// 12号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  12 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(12);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 15:// 13号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  13 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(13);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 16:// 14号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  14 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(14);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 17:// 15号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  15 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(15);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 18:// 16号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  16 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(16);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 19:// 17号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  17 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(17);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 20:// 18号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  18 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(18);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 21:// 19号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  19 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(19);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 22:// 20号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  20 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(20);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 23:// 21号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  21 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(21);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 24:// 22号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  22 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(22);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 25:// 23号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  23 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(23);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 26:// 24号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  24 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(24);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 27:// 25号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  25 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(25);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 28:// 26号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  26 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(26);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 29:// 27号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  27 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(27);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 30:// 28号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  28 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(28);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 31:// 29号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  29 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(29);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 32:// 30号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  30 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(30);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 33:// 31号
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								//0为背景色  1:为字体色
+	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								if(colorStrings!=null){
+	   									System.out.print(  "  31 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   								}
+	   								detail.setCurrentDay(31);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								baiduDetails.add(detail); 
+	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
+	   								break;
+	   							case 34:// 应出勤小时数
+	   								transforValue = String.valueOf(cellValue).trim();
+	   								if(StringUtils.isBlank(transforValue)){
+	   									continue;
+	   								}
+	   								baidu.setAttendanceHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+	   								break;
+	   						}
+	   						
+	                      }  
+	                
+	            	  System.out.println();
+	            	  if(row.getRowNum()%2==0){
+	               	 if(baiduDetails.size()>0){
+	               		 baidu.setBaiduDetails(baiduDetails);
+	               		 baiduList.add(baidu);
+	               	 }
+	               	 baiduDetails.clear();
+	               	
+	                 }
+	   			}
 	        //批量入库
 	        try {
-//	        	checkWorkService.saveCheckWorkDetailListRecord(checkWorkDetailList);
+	        	checkWorkService.saveCheckWorkBaiduListRecord(term,baiduList);
 			} catch (Exception e) {
 				e.printStackTrace();
 				// TODO: handle exception
@@ -679,11 +1159,11 @@ public class CheckWorkController {
 	        
 		}catch(Exception e1){
 			e1.printStackTrace();
-			logger.error("upload 导入全通物联网考勤信息 throws Exception", e1);
-			return "@"+JSONResult.error(CodeMsg.ERROR,"导入全通物联网考勤信息失败，请稍后重试"+e1);  
+			logger.error("upload 导入百度考勤信息 throws Exception", e1);
+			return "@"+JSONResult.error(CodeMsg.ERROR,"导入百度考勤信息失败，请稍后重试"+e1);  
 		}
 		if(result){
-			logger.info("adminUser : "+user.getUsername()+"upload 导入全通物联网考勤信息 ; fileNumber : OT"+fileNumber);
+			logger.info("adminUser : "+user.getUsername()+"upload 导入百度考勤信息 ; fileNumber : OT"+fileNumber);
 			return "@"+JSONResult.success("导入成功！文件编号为OT"+fileNumber);
 		}else{
 			logger.error("=====导入失败！请重新导入=====");
