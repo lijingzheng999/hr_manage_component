@@ -277,10 +277,20 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 		}
 		return result;
 	}
+	
+	private  Integer getattendanceDays(List<CheckWorkBaidu> baiduList) {
+		Integer attendanceDays = 22;
+		for (CheckWorkBaidu baidu : baiduList) {
+			
+		}
+		return attendanceDays;
+	}
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
 	public  int saveCheckWorkBaiduListRecord( String term, List<CheckWorkBaidu> baiduList){
 		int result = 0;
+		Integer attendanceDays = 0;
+		attendanceDays=getattendanceDays(baiduList);
 		for (CheckWorkBaidu baidu : baiduList) {
 			logger.info("saveCheckWorkBaiduListRecord : 员工姓名：" + baidu.getName() +" ---考勤月份："+term);
 			//判断是否导入过本月考勤
@@ -368,7 +378,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 		        	overstepDays=overstepDays.add(overstepHours);
 		        	overstepDays=overstepDays.multiply(new BigDecimal("1.5"));
 		        	overstepDays=overstepDays.divide(baidu.getAttendanceHours(),6,BigDecimal.ROUND_HALF_UP);
-		        	overstepDays=overstepDays.multiply(new BigDecimal("22"));
+		        	overstepDays=overstepDays.multiply(new BigDecimal(""+attendanceDays));
 		        	overstepDays=overstepDays.setScale(2, BigDecimal.ROUND_HALF_UP);
 		        	baidu.setOverstepDays(overstepDays);
 	        	}
@@ -395,7 +405,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	        	//折算全通给我司结算为天数=ROUND(加班应发工资合计小时数/应出勤小时数*22,2)
 	        	overtimeSettleDays=overtimeSettleDays.add(overtimeSumHours);
 	        	overtimeSettleDays=overtimeSettleDays.divide(baidu.getAttendanceHours(),6,BigDecimal.ROUND_HALF_UP);
-	        	overtimeSettleDays=overtimeSettleDays.multiply(new BigDecimal("22"));
+	        	overtimeSettleDays=overtimeSettleDays.multiply(new BigDecimal(""+attendanceDays));
 	        	overtimeSettleDays=overtimeSettleDays.setScale(2, BigDecimal.ROUND_HALF_UP);
 	        	baidu.setOvertimeSettleDays(overtimeSettleDays);
 	        	//全通加班结算天数合计=超出小时折算全通给我司结算为天数+折算全通给我司结算为天数
