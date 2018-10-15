@@ -465,6 +465,9 @@ public class PersonalController {
 								break;
 							case 19:// 合同签署次数
 								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									transforValue="1";
+								}
 								work.setContractCount(Integer.parseInt(transforValue));
 								break;
 							case 20:// 合同签订日期
@@ -641,10 +644,16 @@ public class PersonalController {
 								break;
 							case 50:// 绩效工资
 								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									transforValue="0";
+								}
 								salary.setMeritPay(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 51:// 补贴
 								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									transforValue="0";
+								}
 								salary.setSubsidy(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 52:// 转正工资=基本工资+绩效工资+补贴
@@ -708,7 +717,9 @@ public class PersonalController {
 	                personalAll.setPersonalInfo(person);
 	                personalAll.setPersonalWorkInfo(work);
 	                personalAll.setPersonalSalaryInfo(salary);
-	                personAllList.add(personalAll);              
+	                if(!StringUtils.isBlank(person.getName())){
+		                personAllList.add(personalAll);
+	                }              
 			}
 	        //批量入库
 	        try {

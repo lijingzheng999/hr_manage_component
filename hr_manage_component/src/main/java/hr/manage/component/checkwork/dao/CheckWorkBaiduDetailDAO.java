@@ -52,6 +52,6 @@ public interface CheckWorkBaiduDetailDAO  extends GenericDAO<CheckWorkBaiduDetai
     
     @SQL(" UPDATE " + TABLE +
    		 " SET is_del=0,update_time = now() " +
-			 " WHERE id= :1  and is_del=1 " )
+			 " WHERE check_work_id= :1  and is_del=1 " )
    int deleteCheckWorkBaiduDetailById(Integer currentId);
 }

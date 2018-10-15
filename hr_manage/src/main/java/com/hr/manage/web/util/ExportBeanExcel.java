@@ -154,15 +154,28 @@ public class ExportBeanExcel<T> {
 		// FABF8F背景红色;BFBFBF 背景黑色 FFFFFF背景白色 7F7F7F背景深黑
 		// FFFF0000字体红色
 		detail.setType(type);
+		if(colorStrings[0].equals("7F7F7F")){
+			detail.setWorkType(3); //节假日加班有可能字体为黑色
+			detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+			return detail;
+		}
 		//判断是否为加班
 		if(colorStrings[1].equals("#")){
-			if(!transforValue.startsWith("年")&&!transforValue.startsWith("事")){
-				detail.setWorkType(0);
-				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-			}
-			else{
+			if(transforValue.startsWith("年")){
 				detail.setWorkType(4);
 				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue.substring(1, transforValue.length()))));
+			}
+			else if(transforValue.startsWith("病")){
+				detail.setWorkType(5);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue.substring(1, transforValue.length()))));
+			}
+			else if(transforValue.startsWith("事")){
+				detail.setWorkType(6);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue.substring(1, transforValue.length()))));
+			}
+			else{
+				detail.setWorkType(0);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 			}
 		}
 		else if(colorStrings[1].equals("FFFF0000")){ //红色字体；判断几倍工资

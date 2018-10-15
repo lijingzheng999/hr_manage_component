@@ -146,6 +146,11 @@ public class HomeController {
 		    	return "batch-add-kaoqin";
 		    }
 			@NotCareLogin
+			@Get("testimportbaidu")
+		    public String testimportbaidu() {
+		    	return "batch-add-baidu";
+		    }
+			@NotCareLogin
 			@Get("testimportshebao")
 		    public String testimportshebao() {
 		    	return "batch-add-shebao";

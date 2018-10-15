@@ -247,6 +247,10 @@ public class CheckWorkController {
 	@Post("importQtWlwExcel")
 	public String importQtWlwExcel(@Param("term")  String term,@Param("filedata")MultipartFile filedata){
 		boolean result = true;
+		if(StringUtils.isBlank(term)){
+			logger.error("=====导入全通物联网考勤信息excel失败,账期不能为空");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"导入全通物联网考勤信息excel,账期不能为空");
+		}
 		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
 		if(insuranceDetailCount>0){
 			logger.error("=====导入全通物联网考勤信息excel失败,本月已经上传过社保信息");
@@ -516,11 +520,15 @@ public class CheckWorkController {
 	@Post("importBaiduExcel")
 	public String importBaiduExcel(@Param("term")  String term,@Param("filedata")MultipartFile filedata){
 		boolean result = true;
-		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
-		if(insuranceDetailCount>0){
-			logger.error("=====导入百度考勤信息excel失败,本月已经上传过社保信息");
-			return "@" + JSONResult.error(CodeMsg.ERROR,"导入百度考勤信息excel,本月已经上传过社保信息");
+		if(StringUtils.isBlank(term)){
+			logger.error("=====导入全通物联网考勤信息excel失败,账期不能为空");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"导入全通物联网考勤信息excel,账期不能为空");
 		}
+//		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
+//		if(insuranceDetailCount>0){
+//			logger.error("=====导入百度考勤信息excel失败,本月已经上传过社保信息");
+//			return "@" + JSONResult.error(CodeMsg.ERROR,"导入百度考勤信息excel,本月已经上传过社保信息");
+//		}
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
 		long fileNumber = 0;
 		try {
@@ -569,7 +577,7 @@ public class CheckWorkController {
 	   		 Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器
 	   		 List<CheckWorkBaidu> baiduList = new ArrayList<CheckWorkBaidu>();
 	   		 CheckWorkBaidu baidu = null;
-	   		 List<CheckWorkBaiduDetail> baiduDetails = new ArrayList<CheckWorkBaiduDetail>();
+	   		 List<CheckWorkBaiduDetail> baiduDetails =null;
 	   		 CheckWorkBaiduDetail detail = null;
 	   		 while (rows.hasNext()) {  
 	                Row row = rows.next();  //获得行数据  
@@ -583,7 +591,7 @@ public class CheckWorkController {
 //	               		 baidu.setBaiduDetails(baiduDetails);
 //	               		 baiduList.add(baidu);
 //	               	 }
-//	               	 baiduDetails.clear();
+	               	 baiduDetails = new ArrayList<CheckWorkBaiduDetail>();
 	               	 baidu = new CheckWorkBaidu();
 	                }
 	                
@@ -1143,7 +1151,7 @@ public class CheckWorkController {
 	               		 baidu.setBaiduDetails(baiduDetails);
 	               		 baiduList.add(baidu);
 	               	 }
-	               	 baiduDetails.clear();
+	               	 
 	               	
 	                 }
 	   			}

@@ -43,8 +43,8 @@ public interface CheckWorkBaiduDAO  extends GenericDAO<CheckWorkBaidu,Integer>{
     
     @SQL(" UPDATE " + TABLE +
     		 " SET is_del=0,update_time = now() " +
-			 " WHERE name= :1.name  and is_del=1 " )
-    int deleteCheckWorkBaiduByName(CheckWorkDetailCondition condition);
+			 " WHERE name= :1 and term=:2  and is_del=1 " )
+    int deleteCheckWorkBaiduByName(String name,String term);
     
     @SQL(" UPDATE " + TABLE +
    		 " SET is_del=0,update_time = now() " +

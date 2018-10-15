@@ -14,6 +14,9 @@ import hr.manage.component.checkwork.model.CheckWorkDetailCondition;
 import hr.manage.component.checkwork.service.CheckWorkService;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -279,7 +282,141 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	public  int saveCheckWorkBaiduListRecord( String term, List<CheckWorkBaidu> baiduList){
 		int result = 0;
 		for (CheckWorkBaidu baidu : baiduList) {
-			
+			logger.info("saveCheckWorkBaiduListRecord : 员工姓名：" + baidu.getName() +" ---考勤月份："+term);
+			//判断是否导入过本月考勤
+			CheckWorkBaidu curBaidu = checkWorkBaiduDAO.getCheckWorkBaiduByNameTerm(baidu.getName(),term);
+			if(curBaidu!=null && curBaidu.getUpdateTime()!=null){
+				continue;
+			}
+			if(curBaidu!=null){
+				//之前导入过,进行恢复处理
+				//删除导入的当月考勤数据
+				checkWorkBaiduDAO.deleteCheckWorkBaiduByName(baidu.getName(),term);
+				//删除导入的考勤日明细;
+				checkWorkBaiduDetailDAO.deleteCheckWorkBaiduDetailById(curBaidu.getId());
+			}
+			//构造百度考勤	
+			baidu.setTerm(term);
+			SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
+			java.util.Date startDate=null;
+			try {
+				startDate = sdt.parse(String.valueOf(term).trim());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			baidu.setStartDate(startDate);
+	        Calendar endDate = Calendar.getInstance();  
+	        endDate.setTime(startDate);  
+	        endDate.add(Calendar.MONTH, 1);  
+	        baidu.setEndDate(endDate.getTime());
+	        if(baidu.getBaiduDetails()!=null){
+	        	//实际出勤小时数 
+	        	BigDecimal checkWorkHours=BigDecimal.ZERO;
+	        	//超出小时数（实际出勤-应出勤=超出小时数）
+	        	BigDecimal overstepHours=BigDecimal.ZERO;
+	        	//超出小时折算全通给我司结算为天数
+	        	BigDecimal overstepDays=BigDecimal.ZERO;
+	        	//加班小时数
+	        	BigDecimal overtimeHours=BigDecimal.ZERO;
+	        	//1倍核算天数
+	        	BigDecimal oneHours=BigDecimal.ZERO;
+	        	//1.5倍核算天数
+	        	BigDecimal onePointFiveHours=BigDecimal.ZERO;
+	        	//2倍核算天数
+	        	BigDecimal twoHours=BigDecimal.ZERO;
+	        	//3倍核算天数
+	        	BigDecimal threeHours=BigDecimal.ZERO;
+	        	//加班应发工资合计小时数
+	        	BigDecimal overtimeSumHours=BigDecimal.ZERO;
+	        	//折算全通给我司结算为天数
+	        	BigDecimal overtimeSettleDays=BigDecimal.ZERO;
+	        	//全通加班结算天数合计
+	        	BigDecimal settlementDays=BigDecimal.ZERO;
+	        	for (CheckWorkBaiduDetail detail : baidu.getBaiduDetails()) {
+	        		/** 0:正常班；1：普通加班；2：周末加班；3：节假日加班  ；4：年假算正常班 ；5：病假算正常班；6病假不算上班*/
+	        		switch (detail.getWorkType()) {
+					case 0:
+						checkWorkHours=checkWorkHours.add(detail.getWorkHours());
+						break;
+					case 1:
+						onePointFiveHours=onePointFiveHours.add(detail.getWorkHours());
+						break;
+					case 2:
+						twoHours=twoHours.add(detail.getWorkHours());
+						break;
+					case 3:
+						threeHours=threeHours.add(detail.getWorkHours());
+						checkWorkHours=checkWorkHours.add(detail.getWorkHours());
+						break;
+					case 4:
+						checkWorkHours=checkWorkHours.add(detail.getWorkHours());
+						break;
+					case 5:
+						checkWorkHours=checkWorkHours.add(detail.getWorkHours());
+						break;
+					default:
+						break;
+					}
+				}
+	        	baidu.setCheckWorkHours(checkWorkHours);
+	        	overstepHours=checkWorkHours.subtract(baidu.getAttendanceHours());
+	        	int r =overstepHours.compareTo(BigDecimal.ZERO);
+	        	if(r>=0){
+	        		baidu.setOverstepHours(overstepHours);
+	        		//=ROUND(超出小时数*1.5/应出勤*22,2)
+		        	overstepDays=overstepDays.add(overstepHours);
+		        	overstepDays=overstepDays.multiply(new BigDecimal("1.5"));
+		        	overstepDays=overstepDays.divide(baidu.getAttendanceHours(),6,BigDecimal.ROUND_HALF_UP);
+		        	overstepDays=overstepDays.multiply(new BigDecimal("22"));
+		        	overstepDays=overstepDays.setScale(2, BigDecimal.ROUND_HALF_UP);
+		        	baidu.setOverstepDays(overstepDays);
+	        	}
+	        	else{
+	        		baidu.setOverstepHours(BigDecimal.ZERO);
+	        		baidu.setOverstepDays(BigDecimal.ZERO);
+	        	}
+	        	//加班小时数
+	        	overtimeHours=overtimeHours.add(oneHours);
+	        	overtimeHours=overtimeHours.add(onePointFiveHours);
+	        	overtimeHours=overtimeHours.add(twoHours);
+	        	overtimeHours=overtimeHours.add(threeHours);
+	        	baidu.setOvertimeHours(overtimeHours);
+	        	baidu.setOneHours(oneHours);
+	        	baidu.setOnePointFiveHours(onePointFiveHours);
+	        	baidu.setTwoHours(twoHours);
+	        	baidu.setThreeHours(threeHours);
+	        	//加班应发工资合计小时数=(oneHours*1)+(onePointFiveHours*1.5)+(twoHours*2)+(threeHours*3)
+	        	overtimeSumHours=overtimeSumHours.add(oneHours.multiply(new BigDecimal("1")));
+	        	overtimeSumHours=overtimeSumHours.add(onePointFiveHours.multiply(new BigDecimal("1.5")));
+	        	overtimeSumHours=overtimeSumHours.add(twoHours.multiply(new BigDecimal("2")));
+	        	overtimeSumHours=overtimeSumHours.add(threeHours.multiply(new BigDecimal("3")));
+	        	baidu.setOvertimeSumHours(overtimeSumHours);
+	        	//折算全通给我司结算为天数=ROUND(加班应发工资合计小时数/应出勤小时数*22,2)
+	        	overtimeSettleDays=overtimeSettleDays.add(overtimeSumHours);
+	        	overtimeSettleDays=overtimeSettleDays.divide(baidu.getAttendanceHours(),6,BigDecimal.ROUND_HALF_UP);
+	        	overtimeSettleDays=overtimeSettleDays.multiply(new BigDecimal("22"));
+	        	overtimeSettleDays=overtimeSettleDays.setScale(2, BigDecimal.ROUND_HALF_UP);
+	        	baidu.setOvertimeSettleDays(overtimeSettleDays);
+	        	//全通加班结算天数合计=超出小时折算全通给我司结算为天数+折算全通给我司结算为天数
+	        	settlementDays=settlementDays.add(overstepDays);
+	        	settlementDays=settlementDays.add(overtimeSettleDays);
+	        	baidu.setSettlementDays(settlementDays);
+	        	
+	        }
+	        baidu.setIsDel(1);
+	        baidu.setCreateTime(new Date());
+	        Integer baiduId= checkWorkBaiduDAO.save(baidu);
+	        if(baiduId>0){
+	        	//百度考勤入库成功,报错考勤日明细;
+	        	for (CheckWorkBaiduDetail detail : baidu.getBaiduDetails()) {
+	        		detail.setCheckWorkId(baiduId);
+	        		detail.setIsDel(1);
+	        		detail.setCreateTime(new Date());
+//	        		checkWorkBaiduDetailDAO.save(detail);
+	        	}
+	        	checkWorkBaiduDetailDAO.save(baidu.getBaiduDetails());
+	        }
 		}
 		result = 1;
 		return result;

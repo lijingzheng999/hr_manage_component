@@ -60,11 +60,11 @@ public class CheckWorkBaidu implements java.io.Serializable {
 
     /** 1倍核算天数 */
     @Column(value = "one_hours")
-    private String oneHours;
+    private BigDecimal oneHours;
 
     /** 1.5倍核算天数 */
     @Column(value = "one_point_five_hours")
-    private Integer onePointFiveHours;
+    private BigDecimal onePointFiveHours;
 
     /** 2倍核算天数 */
     @Column(value = "two_hours")
@@ -296,7 +296,7 @@ public class CheckWorkBaidu implements java.io.Serializable {
      * 
      * @return 1倍核算天数
      */
-    public String getOneHours() {
+    public BigDecimal getOneHours() {
         return this.oneHours;
     }
 
@@ -306,7 +306,7 @@ public class CheckWorkBaidu implements java.io.Serializable {
      * @param oneHours
      *          1倍核算天数
      */
-    public void setOneHours(String oneHours) {
+    public void setOneHours(BigDecimal oneHours) {
         this.oneHours = oneHours;
     }
 
@@ -315,7 +315,7 @@ public class CheckWorkBaidu implements java.io.Serializable {
      * 
      * @return 1.5倍核算天数
      */
-    public Integer getOnePointFiveHours() {
+    public BigDecimal getOnePointFiveHours() {
         return this.onePointFiveHours;
     }
 
@@ -325,7 +325,7 @@ public class CheckWorkBaidu implements java.io.Serializable {
      * @param onePointFiveHours
      *          1.5倍核算天数
      */
-    public void setOnePointFiveHours(Integer onePointFiveHours) {
+    public void setOnePointFiveHours(BigDecimal onePointFiveHours) {
         this.onePointFiveHours = onePointFiveHours;
     }
 
