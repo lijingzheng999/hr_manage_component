@@ -511,6 +511,7 @@ public class CheckWorkController {
     * Description:导入百度考勤信息excel
     * Url: checkwork/importBaiduExcel
     * @param   String term,考勤月份
+    * @param   Integer attendanceDays,应出勤天数
     * @param  MultipartFile filedata,  excel文件
     * @return String    
     * @throws
@@ -518,11 +519,15 @@ public class CheckWorkController {
 	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
 	@Post("importBaiduExcel")
-	public String importBaiduExcel(@Param("term")  String term,@Param("filedata")MultipartFile filedata){
+	public String importBaiduExcel(@Param("term")  String term,@Param("attendanceDays")  Integer attendanceDays,@Param("filedata")MultipartFile filedata){
 		boolean result = true;
 		if(StringUtils.isBlank(term)){
-			logger.error("=====导入全通物联网考勤信息excel失败,账期不能为空");
+			logger.error("=====导入百度考勤信息excel失败,账期不能为空");
 			return "@" + JSONResult.error(CodeMsg.ERROR,"导入全通物联网考勤信息excel,账期不能为空");
+		}
+		if(attendanceDays==null||attendanceDays<=0){
+			logger.error("=====导入百度考勤信息excel失败,应出勤天数不能为空");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"导入全通物联网考勤信息excel,应出勤天数不能为空");
 		}
 //		int insuranceDetailCount = salaryService.countInsuranceDetailByTerm(term);
 //		if(insuranceDetailCount>0){
@@ -1157,7 +1162,7 @@ public class CheckWorkController {
 	   			}
 	        //批量入库
 	        try {
-	        	checkWorkService.saveCheckWorkBaiduListRecord(term,baiduList);
+	        	checkWorkService.saveCheckWorkBaiduListRecord(term,attendanceDays,baiduList);
 			} catch (Exception e) {
 				e.printStackTrace();
 				// TODO: handle exception

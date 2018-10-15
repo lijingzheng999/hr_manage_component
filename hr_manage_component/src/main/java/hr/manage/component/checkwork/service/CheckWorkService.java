@@ -187,6 +187,6 @@ public interface CheckWorkService {
     * @return int
     * @throws
      */
-	public  int saveCheckWorkBaiduListRecord( String term, List<CheckWorkBaidu> baiduList);
+	public  int saveCheckWorkBaiduListRecord( String term, Integer attendanceDays, List<CheckWorkBaidu> baiduList);
 	
 }

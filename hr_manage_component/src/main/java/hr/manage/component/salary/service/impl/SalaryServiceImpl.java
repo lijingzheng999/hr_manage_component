@@ -1,6 +1,8 @@
 package hr.manage.component.salary.service.impl;
 
+import hr.manage.component.checkwork.dao.CheckWorkBaiduDAO;
 import hr.manage.component.checkwork.dao.CheckWorkDetailDAO;
+import hr.manage.component.checkwork.model.CheckWorkBaidu;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.personal.dao.PersonalInfoDAO;
 import hr.manage.component.personal.dao.PersonalSalaryInfoDAO;
@@ -55,6 +57,8 @@ public class SalaryServiceImpl implements SalaryService {
 	InsuranceDetailDAO insuranceDetailDAO;
 	@Autowired
 	ProfitDetailDAO profitDetailDAO;
+	@Autowired
+	CheckWorkBaiduDAO checkWorkBaiduDAO;
 
 	@Override
 	public List<SalaryChange> listSalaryChange(SalaryChangeCondition condition) {
@@ -135,7 +139,7 @@ public class SalaryServiceImpl implements SalaryService {
 		// 构造工资出账周期
 		SimpleDateFormat sdt = new SimpleDateFormat("yyyyMM");
 		Date startDate = null;
-		try {
+		try { 
 			startDate = sdt.parse(String.valueOf(term).trim());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -894,9 +898,9 @@ public class SalaryServiceImpl implements SalaryService {
 			// 全通物联网考勤表数据
 			CheckWorkDetail checkWork = checkWorkDetailDAO
 					.getCheckWorkDetailByName(personalAll.getName(), term);
-			if (checkWork == null) {
-				// 全通没考勤取百度考勤
-			}
+			//取百度考勤
+			CheckWorkBaidu baidu = checkWorkBaiduDAO.getCheckWorkBaiduByNameTerm(personalAll.getName(), term);
+			
 			ProfitDetail detail = new ProfitDetail();
 			// 构造信息
 			detail.setTerm(term);
@@ -950,11 +954,14 @@ public class SalaryServiceImpl implements SalaryService {
 				detail.setHousingPay(BigDecimal.ZERO);
 			}
 			detail.setSettlementPrice(personalAll.getSettlementPrice());
+			//默认22天
+			detail.setSettlementDays(new BigDecimal(22));
 			// 结算天数从考勤表取
 			if (checkWork != null) {
 				detail.setSettlementDays(checkWork.getCheckWorkDays());
-			} else {
-				detail.setSettlementDays(new BigDecimal(22));
+			} 
+			if (baidu!=null ) {
+				detail.setSettlementDays(baidu.getSettlementDays());
 			}
 			// 日单价=结算价/结算天数
 			detail.setSettlementDayPrice(detail.getSettlementPrice().divide(
@@ -994,6 +1001,7 @@ public class SalaryServiceImpl implements SalaryService {
 			BigDecimal pProfitRate = new BigDecimal(0);
 			pProfitRate = pProfit.divide(detail.getSettlementPrice(), 4,
 					BigDecimal.ROUND_HALF_UP);
+			pProfitRate=pProfitRate.multiply(new BigDecimal("100"));
 			detail.setProbationaryProfitRate(pProfitRate);
 			// 转正后利润 =R3-O3-P3-Q3-X3-Y3-Z3
 			// 全通结算价-转正后薪资-转正后社保-公积金-工会经费-残疾人就业保障金-增值税及附加税
@@ -1010,6 +1018,7 @@ public class SalaryServiceImpl implements SalaryService {
 			BigDecimal profitRate = new BigDecimal(0);
 			profitRate = profit.divide(detail.getSettlementPrice(), 4,
 					BigDecimal.ROUND_HALF_UP);
+			profitRate=profitRate.multiply(new BigDecimal("100"));
 			detail.setProfitRate(profitRate);
 			detail.setIsDel(1);
 			detail.setCreateTime(new Date());

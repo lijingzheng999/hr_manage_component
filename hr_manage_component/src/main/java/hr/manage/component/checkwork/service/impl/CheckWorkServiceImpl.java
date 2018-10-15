@@ -287,10 +287,8 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	}
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
-	public  int saveCheckWorkBaiduListRecord( String term, List<CheckWorkBaidu> baiduList){
+	public  int saveCheckWorkBaiduListRecord( String term, Integer attendanceDays, List<CheckWorkBaidu> baiduList){
 		int result = 0;
-		Integer attendanceDays = 0;
-		attendanceDays=getattendanceDays(baiduList);
 		for (CheckWorkBaidu baidu : baiduList) {
 			logger.info("saveCheckWorkBaiduListRecord : 员工姓名：" + baidu.getName() +" ---考勤月份："+term);
 			//判断是否导入过本月考勤
