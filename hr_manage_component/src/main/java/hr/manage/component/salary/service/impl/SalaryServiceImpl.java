@@ -131,15 +131,10 @@ public class SalaryServiceImpl implements SalaryService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
 	public int createSalaryDetailByTerm(String term) {
 		int result = 0;
-		// int salaryCount = salaryDetailDAO.countSalaryDetailByTerm(term);
-		// if (salaryCount > 0) {
-		// // 工资表已经出过，不能重复出
-		// return -2;
-		// }
 		// 构造工资出账周期
 		SimpleDateFormat sdt = new SimpleDateFormat("yyyyMM");
 		Date startDate = null;
-		try { 
+		try {
 			startDate = sdt.parse(String.valueOf(term).trim());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -156,10 +151,6 @@ public class SalaryServiceImpl implements SalaryService {
 				.listPersonalAllExport(condition);
 		// 遍历所有人员,构造工资表
 		for (PersonalAllExport personalAll : personalAllExports) {
-			//过滤百度
-			if(personalAll.getExpatriateUnit().equals("百度")){
-				continue;
-			}
 			// 过滤已离职人员
 			int leaveStatus = personalAll.getLeaveStatus();
 			if (leaveStatus == 0) {
@@ -169,13 +160,20 @@ public class SalaryServiceImpl implements SalaryService {
 					continue;
 				}
 			}
+			// 外派单位
+			if (personalAll.getExpatriateUnit().equals("百度")) {
+				// 百度处理流程
+				SalaryDetail detail =getBaiduSalaryDetail(term, startDate, endDate.getTime(), personalAll);
+				salaryDetails.add(detail);
+				continue;
+			} 
+			// 全通物联网处理流程
 			// 获取考勤信息
 			CheckWorkDetail checkWork = checkWorkDetailDAO
-					.getCheckWorkDetailByName(personalAll.getName(),
-							term);
-			if(checkWork==null){
+					.getCheckWorkDetailByName(personalAll.getName(), term);
+			if (checkWork == null) {
 				// 没有考勤记录，不生成工资表
-				logger.info("没有考勤记录，不生成工资表 name:"+personalAll.getName());
+				logger.info("没有考勤记录，不生成工资表 name:" + personalAll.getName());
 				continue;
 			}
 			SalaryDetail detail = new SalaryDetail();
@@ -212,11 +210,45 @@ public class SalaryServiceImpl implements SalaryService {
 				detail.setPhoneSubsidy(BigDecimal.ZERO);
 				// 计算考勤扣款//////////////////////////////////
 				BigDecimal attendanceDeduction = new BigDecimal(0);
-//				// 获取考勤信息
-//				CheckWorkDetail checkWork = checkWorkDetailDAO
-//						.getCheckWorkDetailByName(personalAll.getName(), term);
-				// 全通或物联网考勤有数据
-//				if (checkWork != null) {
+				// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getProbationaryPay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getBasePay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getMeritPay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getTrafficSubsidy());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getComputerSubsidy());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getMealSubsidy());
+				// 所有费用/考勤天数
+				attendanceDeduction = attendanceDeduction.divide(
+						checkWork.getCheckWorkDays(), 2,
+						BigDecimal.ROUND_HALF_UP);
+				// 乘以缺勤天数
+				attendanceDeduction = attendanceDeduction.multiply(checkWork
+						.getSettlementDays());
+				detail.setAttendanceDeduction(attendanceDeduction);
+				detail.setOtherDeduction(BigDecimal.ZERO);
+
+			} else {
+				// 判断是否在本月转正;仍有部分试用期或全是试用期
+				// 本月未转正 workTime>endDate
+				if (endDate != null && endDate.getTime().before(workTime)) {
+					// 全是试用期
+					detail.setProbationaryPay(personalAll.getProbationaryPay());
+					detail.setBasePay(BigDecimal.ZERO);
+					detail.setMeritPay(BigDecimal.ZERO);
+					detail.setOtherPay(BigDecimal.ZERO);
+					detail.setTrafficSubsidy(BigDecimal.ZERO);
+					detail.setComputerSubsidy(BigDecimal.ZERO);
+					detail.setMealSubsidy(BigDecimal.ZERO);
+					detail.setPhoneSubsidy(BigDecimal.ZERO);
+					// 计算考勤扣款//////////////////////////////////
+					BigDecimal attendanceDeduction = new BigDecimal(0);
+
 					// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
 					attendanceDeduction = attendanceDeduction.add(detail
 							.getProbationaryPay());
@@ -237,132 +269,74 @@ public class SalaryServiceImpl implements SalaryService {
 					// 乘以缺勤天数
 					attendanceDeduction = attendanceDeduction
 							.multiply(checkWork.getSettlementDays());
-//				} else {
-//					// 没有考勤记录，不生成工资表
-//					logger.info("没有考勤记录，不生成工资表 name:"+personalAll.getName());
-//					continue;
-//				}
-				detail.setAttendanceDeduction(attendanceDeduction);
-				detail.setOtherDeduction(BigDecimal.ZERO);
 
-			} else {
-				// 判断是否在本月转正;仍有部分试用期或全是试用期
-				// 本月未转正 workTime>endDate
-				if (endDate != null && endDate.getTime().before(workTime)) {
-					// 全是试用期
-					detail.setProbationaryPay(personalAll.getProbationaryPay());
-					detail.setBasePay(BigDecimal.ZERO);
+					detail.setAttendanceDeduction(attendanceDeduction);
+					detail.setOtherDeduction(BigDecimal.ZERO);
+
+				} else {
+
+					// 本月转正startDate<workTime<endDate 仍有部分试用期
+					// 计算考勤扣款//////////////////////////////////
+					BigDecimal attendanceDeduction = new BigDecimal(0);
+
+					// 计算试用期天数
+					int dutyDays = DateTimeUtil
+							.getDutyDays(startDate, workTime);
+					// 计算转正天数
+					BigDecimal workDays = checkWork.getCheckWorkDays()
+							.subtract(new BigDecimal(dutyDays));
+					// 获取试用期工资
+					BigDecimal probationaryPay = personalAll
+							.getProbationaryPay();
+
+					// 除去本月考勤天数
+					probationaryPay = probationaryPay.divide(
+							checkWork.getCheckWorkDays(), 2,
+							BigDecimal.ROUND_HALF_UP);
+					// 乘以本月试用期天数
+					probationaryPay = probationaryPay.multiply(new BigDecimal(
+							dutyDays));
+
+					probationaryPay = probationaryPay.setScale(2,
+							BigDecimal.ROUND_HALF_UP);
+					detail.setProbationaryPay(probationaryPay);
+
+					// 转正工资
+					BigDecimal workPay = personalAll.getWorkerPay();
+					// 除去本月考勤天数
+					workPay = workPay.divide(checkWork.getCheckWorkDays(), 2,
+							BigDecimal.ROUND_HALF_UP);
+					// 乘以本月试用期天数
+					workPay = workPay.multiply(workDays);
+					workPay = workPay.setScale(2, BigDecimal.ROUND_HALF_UP);
+					detail.setBasePay(workPay);
 					detail.setMeritPay(BigDecimal.ZERO);
 					detail.setOtherPay(BigDecimal.ZERO);
 					detail.setTrafficSubsidy(BigDecimal.ZERO);
 					detail.setComputerSubsidy(BigDecimal.ZERO);
 					detail.setMealSubsidy(BigDecimal.ZERO);
 					detail.setPhoneSubsidy(BigDecimal.ZERO);
-					// 计算考勤扣款//////////////////////////////////
-					BigDecimal attendanceDeduction = new BigDecimal(0);
-					// 获取考勤信息
-//					CheckWorkDetail checkWork = checkWorkDetailDAO
-//							.getCheckWorkDetailByName(personalAll.getName(),
-//									term);
-//					// 全通或物联网考勤有数据
-//					if (checkWork != null) {
-						// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getProbationaryPay());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getBasePay());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getMeritPay());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getTrafficSubsidy());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getComputerSubsidy());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getMealSubsidy());
-						// 所有费用/考勤天数
-						attendanceDeduction = attendanceDeduction.divide(
-								checkWork.getCheckWorkDays(), 2,
-								BigDecimal.ROUND_HALF_UP);
-						// 乘以缺勤天数
-						attendanceDeduction = attendanceDeduction
-								.multiply(checkWork.getSettlementDays());
-//					} else {
-//						// 没有考勤记录，不生成工资表
-//						logger.info("没有考勤记录，不生成工资表 name:"+personalAll.getName());
-//						continue;
-//					}
-					detail.setAttendanceDeduction(attendanceDeduction);
-					detail.setOtherDeduction(BigDecimal.ZERO);
+					// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getProbationaryPay());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getBasePay());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getMeritPay());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getTrafficSubsidy());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getComputerSubsidy());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getMealSubsidy());
+					// 所有费用/考勤天数
+					attendanceDeduction = attendanceDeduction.divide(
+							checkWork.getCheckWorkDays(), 2,
+							BigDecimal.ROUND_HALF_UP);
+					// 乘以缺勤天数
+					attendanceDeduction = attendanceDeduction
+							.multiply(checkWork.getSettlementDays());
 
-				} else {
-					// 本月转正startDate<workTime<endDate 仍有部分试用期
-					// 计算考勤扣款//////////////////////////////////
-					BigDecimal attendanceDeduction = new BigDecimal(0);
-					
-//					// 全通或物联网考勤有数据
-//					if (checkWork != null) {
-						// 计算试用期天数
-						int dutyDays = DateTimeUtil.getDutyDays(startDate,
-								workTime);
-						// 计算转正天数
-						BigDecimal workDays = checkWork.getCheckWorkDays()
-								.subtract(new BigDecimal(dutyDays));
-						// 获取试用期工资
-						BigDecimal probationaryPay = personalAll
-								.getProbationaryPay();
-
-						// 除去本月考勤天数
-						probationaryPay = probationaryPay.divide(
-								checkWork.getCheckWorkDays(), 2,
-								BigDecimal.ROUND_HALF_UP);
-						// 乘以本月试用期天数
-						probationaryPay = probationaryPay
-								.multiply(new BigDecimal(dutyDays));
-
-						probationaryPay = probationaryPay.setScale(2,
-								BigDecimal.ROUND_HALF_UP);
-						detail.setProbationaryPay(probationaryPay);
-
-						// 转正工资
-						BigDecimal workPay = personalAll.getWorkerPay();
-						// 除去本月考勤天数
-						workPay = workPay.divide(checkWork.getCheckWorkDays(),
-								2, BigDecimal.ROUND_HALF_UP);
-						// 乘以本月试用期天数
-						workPay = workPay.multiply(workDays);
-						workPay = workPay.setScale(2, BigDecimal.ROUND_HALF_UP);
-						detail.setBasePay(workPay);
-						detail.setMeritPay(BigDecimal.ZERO);
-						detail.setOtherPay(BigDecimal.ZERO);
-						detail.setTrafficSubsidy(BigDecimal.ZERO);
-						detail.setComputerSubsidy(BigDecimal.ZERO);
-						detail.setMealSubsidy(BigDecimal.ZERO);
-						detail.setPhoneSubsidy(BigDecimal.ZERO);
-						// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getProbationaryPay());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getBasePay());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getMeritPay());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getTrafficSubsidy());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getComputerSubsidy());
-						attendanceDeduction = attendanceDeduction.add(detail
-								.getMealSubsidy());
-						// 所有费用/考勤天数
-						attendanceDeduction = attendanceDeduction.divide(
-								checkWork.getCheckWorkDays(), 2,
-								BigDecimal.ROUND_HALF_UP);
-						// 乘以缺勤天数
-						attendanceDeduction = attendanceDeduction
-								.multiply(checkWork.getSettlementDays());
-//					} else {
-//						// 没有考勤记录，不生成工资表
-//						logger.info("没有考勤记录，不生成工资表 name:"+personalAll.getName());
-//						continue;
-//					}
 					detail.setAttendanceDeduction(attendanceDeduction);
 					detail.setOtherDeduction(BigDecimal.ZERO);
 
@@ -458,6 +432,260 @@ public class SalaryServiceImpl implements SalaryService {
 			result = -1;
 		}
 		return result;
+	}
+
+	private SalaryDetail getBaiduSalaryDetail(String term,Date startDate,Date endDate,PersonalAllExport personalAll) {
+		// 构造工资出账周期
+		SalaryDetail detail = new SalaryDetail();
+		detail.setTerm(term);
+		detail.setStartDate(startDate);
+		detail.setEndDate(endDate);
+		detail.setPersonalInfoId(personalAll.getId());
+		detail.setName(personalAll.getName());
+		detail.setEntryTime(personalAll.getEntryTime());
+		detail.setExpatriateUnit(personalAll.getExpatriateUnit());
+		Date workTime = personalAll.getWorkerTime();
+		// 判断是否已转正;workTime<startDate 本月已转正
+		if (workTime != null && workTime.before(startDate)) {
+			detail.setProbationaryPay(BigDecimal.ZERO);
+			detail.setBasePay(personalAll.getBasePay());
+			detail.setMeritPay(personalAll.getMeritPay());
+			detail.setOtherPay(BigDecimal.ZERO);
+			BigDecimal subsidy = personalAll.getSubsidy();
+			// 补贴为500
+			if (subsidy.compareTo(new BigDecimal(500)) == 0) {
+				detail.setTrafficSubsidy(new BigDecimal(100));
+				detail.setComputerSubsidy(new BigDecimal(100));
+				detail.setMealSubsidy(new BigDecimal(300));
+			} else if (subsidy.compareTo(new BigDecimal(400)) == 0) {
+				detail.setTrafficSubsidy(new BigDecimal(100));
+				detail.setComputerSubsidy(new BigDecimal(0));
+				detail.setMealSubsidy(new BigDecimal(300));
+			} else {
+				detail.setTrafficSubsidy(new BigDecimal(100));
+				detail.setComputerSubsidy(new BigDecimal(0));
+				detail.setMealSubsidy(new BigDecimal(0));
+			}
+
+			detail.setPhoneSubsidy(BigDecimal.ZERO);
+			// 计算考勤扣款//////////////////////////////////
+			BigDecimal attendanceDeduction = new BigDecimal(0);
+			// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
+			attendanceDeduction = attendanceDeduction.add(detail
+					.getProbationaryPay());
+			attendanceDeduction = attendanceDeduction.add(detail
+					.getBasePay());
+			attendanceDeduction = attendanceDeduction.add(detail
+					.getMeritPay());
+			attendanceDeduction = attendanceDeduction.add(detail
+					.getTrafficSubsidy());
+			attendanceDeduction = attendanceDeduction.add(detail
+					.getComputerSubsidy());
+			attendanceDeduction = attendanceDeduction.add(detail
+					.getMealSubsidy());
+			// 所有费用/考勤天数
+			attendanceDeduction = attendanceDeduction.divide(
+					checkWork.getCheckWorkDays(), 2,
+					BigDecimal.ROUND_HALF_UP);
+			// 乘以缺勤天数
+			attendanceDeduction = attendanceDeduction.multiply(checkWork
+					.getSettlementDays());
+			detail.setAttendanceDeduction(attendanceDeduction);
+			detail.setOtherDeduction(BigDecimal.ZERO);
+
+		} else {
+			// 判断是否在本月转正;仍有部分试用期或全是试用期
+			// 本月未转正 workTime>endDate
+			if (endDate != null && endDate.before(workTime)) {
+				// 全是试用期
+				detail.setProbationaryPay(personalAll.getProbationaryPay());
+				detail.setBasePay(BigDecimal.ZERO);
+				detail.setMeritPay(BigDecimal.ZERO);
+				detail.setOtherPay(BigDecimal.ZERO);
+				detail.setTrafficSubsidy(BigDecimal.ZERO);
+				detail.setComputerSubsidy(BigDecimal.ZERO);
+				detail.setMealSubsidy(BigDecimal.ZERO);
+				detail.setPhoneSubsidy(BigDecimal.ZERO);
+				// 计算考勤扣款//////////////////////////////////
+				BigDecimal attendanceDeduction = new BigDecimal(0);
+
+				// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getProbationaryPay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getBasePay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getMeritPay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getTrafficSubsidy());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getComputerSubsidy());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getMealSubsidy());
+				// 所有费用/考勤天数
+				attendanceDeduction = attendanceDeduction.divide(
+						checkWork.getCheckWorkDays(), 2,
+						BigDecimal.ROUND_HALF_UP);
+				// 乘以缺勤天数
+				attendanceDeduction = attendanceDeduction
+						.multiply(checkWork.getSettlementDays());
+
+				detail.setAttendanceDeduction(attendanceDeduction);
+				detail.setOtherDeduction(BigDecimal.ZERO);
+
+			} else {
+
+				// 本月转正startDate<workTime<endDate 仍有部分试用期
+				// 计算考勤扣款//////////////////////////////////
+				BigDecimal attendanceDeduction = new BigDecimal(0);
+
+				// 计算试用期天数
+				int dutyDays = DateTimeUtil
+						.getDutyDays(startDate, workTime);
+				// 计算转正天数
+				BigDecimal workDays = checkWork.getCheckWorkDays()
+						.subtract(new BigDecimal(dutyDays));
+				// 获取试用期工资
+				BigDecimal probationaryPay = personalAll
+						.getProbationaryPay();
+
+				// 除去本月考勤天数
+				probationaryPay = probationaryPay.divide(
+						checkWork.getCheckWorkDays(), 2,
+						BigDecimal.ROUND_HALF_UP);
+				// 乘以本月试用期天数
+				probationaryPay = probationaryPay.multiply(new BigDecimal(
+						dutyDays));
+
+				probationaryPay = probationaryPay.setScale(2,
+						BigDecimal.ROUND_HALF_UP);
+				detail.setProbationaryPay(probationaryPay);
+
+				// 转正工资
+				BigDecimal workPay = personalAll.getWorkerPay();
+				// 除去本月考勤天数
+				workPay = workPay.divide(checkWork.getCheckWorkDays(), 2,
+						BigDecimal.ROUND_HALF_UP);
+				// 乘以本月试用期天数
+				workPay = workPay.multiply(workDays);
+				workPay = workPay.setScale(2, BigDecimal.ROUND_HALF_UP);
+				detail.setBasePay(workPay);
+				detail.setMeritPay(BigDecimal.ZERO);
+				detail.setOtherPay(BigDecimal.ZERO);
+				detail.setTrafficSubsidy(BigDecimal.ZERO);
+				detail.setComputerSubsidy(BigDecimal.ZERO);
+				detail.setMealSubsidy(BigDecimal.ZERO);
+				detail.setPhoneSubsidy(BigDecimal.ZERO);
+				// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getProbationaryPay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getBasePay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getMeritPay());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getTrafficSubsidy());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getComputerSubsidy());
+				attendanceDeduction = attendanceDeduction.add(detail
+						.getMealSubsidy());
+				// 所有费用/考勤天数
+				attendanceDeduction = attendanceDeduction.divide(
+						checkWork.getCheckWorkDays(), 2,
+						BigDecimal.ROUND_HALF_UP);
+				// 乘以缺勤天数
+				attendanceDeduction = attendanceDeduction
+						.multiply(checkWork.getSettlementDays());
+
+				detail.setAttendanceDeduction(attendanceDeduction);
+				detail.setOtherDeduction(BigDecimal.ZERO);
+
+			}
+		}
+
+		// 本月应发工资
+		// 试用期工资+基本工资+绩效工资+其他工资+交通补助+电脑补助+餐补+话补-考勤扣款-其它扣款
+		BigDecimal totalShouldPay = new BigDecimal(0);
+		totalShouldPay = totalShouldPay.add(detail.getProbationaryPay());
+		totalShouldPay = totalShouldPay.add(detail.getBasePay());
+		totalShouldPay = totalShouldPay.add(detail.getMeritPay());
+		totalShouldPay = totalShouldPay.add(detail.getOtherPay());
+		totalShouldPay = totalShouldPay.add(detail.getTrafficSubsidy());
+		totalShouldPay = totalShouldPay.add(detail.getComputerSubsidy());
+		totalShouldPay = totalShouldPay.add(detail.getMealSubsidy());
+		totalShouldPay = totalShouldPay.add(detail.getPhoneSubsidy());
+		totalShouldPay = totalShouldPay.subtract(detail
+				.getAttendanceDeduction());
+		totalShouldPay = totalShouldPay
+				.subtract(detail.getOtherDeduction());
+		detail.setShouldPay(totalShouldPay);
+		InsuranceDetail insurance = insuranceDetailDAO
+				.getInsuranceDetailByName(personalAll.getName(), term);
+		if (insurance != null) {
+			detail.setEndowment(insurance.getEndowmentPayPersonal());
+			detail.setMedical(insurance.getMedicalPayPersonal());
+			detail.setUnemployment(insurance.getUnemploymentPayPersonal());
+			detail.setAccumulationFund(insurance.getHousingPayPersonal());
+			detail.setInsuranceDeduction(insurance
+					.getInsurancePayPersonal());
+		}
+		// 报税工资=本月应发工资-个人社保及公积金扣款合计
+		if (detail.getInsuranceDeduction() == null) {
+			detail.setTaxPay(detail.getShouldPay());
+		} else {
+			detail.setTaxPay(detail.getShouldPay().subtract(
+					detail.getInsuranceDeduction()));
+		}
+		// 应纳税所得额==IF(U-3500>0,U-3500,0) U为报税工资
+		if (detail.getTaxPay().compareTo(new BigDecimal(3500)) > 0) {
+			detail.setShouldTaxAmount(detail.getTaxPay().subtract(
+					new BigDecimal(3500)));
+		} else {
+			detail.setShouldTaxAmount(BigDecimal.ZERO);
+		}
+		// 税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
+		// V为应纳税所得额
+		if (detail.getShouldTaxAmount().compareTo(new BigDecimal(9000)) > 0) {
+			detail.setTax(new BigDecimal("0.25"));
+		} else if (detail.getShouldTaxAmount().compareTo(
+				new BigDecimal(4500)) > 0) {
+			detail.setTax(new BigDecimal("0.20"));
+		} else if (detail.getShouldTaxAmount().compareTo(
+				new BigDecimal(1500)) > 0) {
+			detail.setTax(new BigDecimal("0.10"));
+		} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(0)) > 0) {
+			detail.setTax(new BigDecimal("0.03"));
+		} else {
+			detail.setTax(new BigDecimal("0.00"));
+		}
+		// 速算扣除数
+		// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
+		// W为税率
+		if (detail.getTax().compareTo(new BigDecimal("0.25")) == 0) {
+			detail.setDeductNumber(new BigDecimal(1005));
+		} else if (detail.getTax().compareTo(new BigDecimal("0.20")) == 0) {
+			detail.setDeductNumber(new BigDecimal(555));
+		} else if (detail.getTax().compareTo(new BigDecimal("0.10")) == 0) {
+			detail.setDeductNumber(new BigDecimal(105));
+		} else if (detail.getTax().compareTo(new BigDecimal("0.03")) == 0) {
+			detail.setDeductNumber(new BigDecimal(0));
+		} else {
+			detail.setDeductNumber(new BigDecimal(0));
+		}
+		// 代扣代缴所得税=ROUND((V*W-X),2)
+		// V应纳税所得额 W税率 X速算扣除数
+		BigDecimal incomeTax = detail.getShouldTaxAmount()
+				.multiply(detail.getTax())
+				.subtract(detail.getDeductNumber())
+				.setScale(2, BigDecimal.ROUND_HALF_UP);
+		detail.setIncomeTax(incomeTax);
+		// 实发工资=U-Y U报税工资 Y代扣代缴所得税
+		detail.setRealPay(detail.getTaxPay().subtract(incomeTax));
+		detail.setBankPay(detail.getRealPay());
+		detail.setIsDel(1);
+		detail.setCreateTime(new Date());
+		
+		return detail;
 	}
 
 	@Override
@@ -568,8 +796,8 @@ public class SalaryServiceImpl implements SalaryService {
 		detail.setRealPay(detail.getTaxPay().subtract(incomeTax));
 		detail.setBankPay(detail.getRealPay());
 		detail.setUpdateTime(new Date());
-		if(salaryDetailDAO.update(detail)){
-			result=1;
+		if (salaryDetailDAO.update(detail)) {
+			result = 1;
 		}
 		return result;
 	}
@@ -716,8 +944,8 @@ public class SalaryServiceImpl implements SalaryService {
 				.getInsurancePayPersonal());
 		insurancePayTotal = insurancePayTotal.add(insurance.getAgencyPay());
 		insurance.setInsurancePayTotal(insurancePayTotal);
-		if(insuranceDetailDAO.update(insurance)){
-			result=1;
+		if (insuranceDetailDAO.update(insurance)) {
+			result = 1;
 		}
 		return result;
 	}
@@ -898,9 +1126,10 @@ public class SalaryServiceImpl implements SalaryService {
 			// 全通物联网考勤表数据
 			CheckWorkDetail checkWork = checkWorkDetailDAO
 					.getCheckWorkDetailByName(personalAll.getName(), term);
-			//取百度考勤
-			CheckWorkBaidu baidu = checkWorkBaiduDAO.getCheckWorkBaiduByNameTerm(personalAll.getName(), term);
-			
+			// 取百度考勤
+			CheckWorkBaidu baidu = checkWorkBaiduDAO
+					.getCheckWorkBaiduByNameTerm(personalAll.getName(), term);
+
 			ProfitDetail detail = new ProfitDetail();
 			// 构造信息
 			detail.setTerm(term);
@@ -954,13 +1183,13 @@ public class SalaryServiceImpl implements SalaryService {
 				detail.setHousingPay(BigDecimal.ZERO);
 			}
 			detail.setSettlementPrice(personalAll.getSettlementPrice());
-			//默认22天
+			// 默认22天
 			detail.setSettlementDays(new BigDecimal(22));
 			// 结算天数从考勤表取
 			if (checkWork != null) {
 				detail.setSettlementDays(checkWork.getCheckWorkDays());
-			} 
-			if (baidu!=null ) {
+			}
+			if (baidu != null) {
 				detail.setSettlementDays(baidu.getSettlementDays());
 			}
 			// 日单价=结算价/结算天数
@@ -1001,7 +1230,7 @@ public class SalaryServiceImpl implements SalaryService {
 			BigDecimal pProfitRate = new BigDecimal(0);
 			pProfitRate = pProfit.divide(detail.getSettlementPrice(), 4,
 					BigDecimal.ROUND_HALF_UP);
-			pProfitRate=pProfitRate.multiply(new BigDecimal("100"));
+			pProfitRate = pProfitRate.multiply(new BigDecimal("100"));
 			detail.setProbationaryProfitRate(pProfitRate);
 			// 转正后利润 =R3-O3-P3-Q3-X3-Y3-Z3
 			// 全通结算价-转正后薪资-转正后社保-公积金-工会经费-残疾人就业保障金-增值税及附加税
@@ -1018,7 +1247,7 @@ public class SalaryServiceImpl implements SalaryService {
 			BigDecimal profitRate = new BigDecimal(0);
 			profitRate = profit.divide(detail.getSettlementPrice(), 4,
 					BigDecimal.ROUND_HALF_UP);
-			profitRate=profitRate.multiply(new BigDecimal("100"));
+			profitRate = profitRate.multiply(new BigDecimal("100"));
 			detail.setProfitRate(profitRate);
 			detail.setIsDel(1);
 			detail.setCreateTime(new Date());

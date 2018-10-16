@@ -38,6 +38,10 @@ public class CheckWorkBaidu implements java.io.Serializable {
     @Column(value = "name")
     private String name;
 
+    /** 应出勤天数 */
+    @Column(value = "attendance_days")
+    private Integer attendanceDays;
+    
     /** 应出勤小时数 */
     @Column(value = "attendance_hours")
     private BigDecimal attendanceHours;
@@ -85,6 +89,32 @@ public class CheckWorkBaidu implements java.io.Serializable {
     /** 全通加班结算天数合计 */
     @Column(value = "settlement_days")
     private BigDecimal settlementDays;
+    
+
+    /** 绩效本月应发 */
+    @Column(value = "merit_pay")
+    private BigDecimal meritPay;
+    /** 暂估残保金（绩效本月应发*1.7%） */
+    @Column(value = "residual_pay")
+    private BigDecimal residualPay;
+    /** 增值税及附加税 */
+    @Column(value = "added_tax")
+    private BigDecimal addedTax;
+    /** 合计给我司结算金额 */
+    @Column(value = "settlement_pay")
+    private BigDecimal settlementPay;
+    /** 全通结算单价 */
+    @Column(value = "settlement_price")
+    private BigDecimal settlementPrice;
+    /** 全通日结算单价 */
+    @Column(value = "settlement_price_day")
+    private BigDecimal settlementPriceDay;
+    /** 绩效奖励金额折算为天数 */
+    @Column(value = "merit_pay_days")
+    private BigDecimal meritPayDays;
+    /** 记录上报全通考勤总天数 */
+    @Column(value = "settlement_final_days")
+    private BigDecimal settlementFinalDays;
 
     /** 是否删除 1未删除 0已删除 */
     @Column(value = "is_del")
@@ -196,7 +226,15 @@ public class CheckWorkBaidu implements java.io.Serializable {
         this.name = name;
     }
 
-    /**
+    public Integer getAttendanceDays() {
+		return attendanceDays;
+	}
+
+	public void setAttendanceDays(Integer attendanceDays) {
+		this.attendanceDays = attendanceDays;
+	}
+
+	/**
      * 获取应出勤小时数
      * 
      * @return 应出勤小时数
@@ -424,7 +462,72 @@ public class CheckWorkBaidu implements java.io.Serializable {
         this.settlementDays = settlementDays;
     }
 
-    /**
+    
+    public BigDecimal getMeritPay() {
+		return meritPay;
+	}
+
+	public void setMeritPay(BigDecimal meritPay) {
+		this.meritPay = meritPay;
+	}
+
+	public BigDecimal getResidualPay() {
+		return residualPay;
+	}
+
+	public void setResidualPay(BigDecimal residualPay) {
+		this.residualPay = residualPay;
+	}
+
+	public BigDecimal getAddedTax() {
+		return addedTax;
+	}
+
+	public void setAddedTax(BigDecimal addedTax) {
+		this.addedTax = addedTax;
+	}
+
+	public BigDecimal getSettlementPay() {
+		return settlementPay;
+	}
+
+	public void setSettlementPay(BigDecimal settlementPay) {
+		this.settlementPay = settlementPay;
+	}
+
+	public BigDecimal getSettlementPrice() {
+		return settlementPrice;
+	}
+
+	public void setSettlementPrice(BigDecimal settlementPrice) {
+		this.settlementPrice = settlementPrice;
+	}
+
+	public BigDecimal getSettlementPriceDay() {
+		return settlementPriceDay;
+	}
+
+	public void setSettlementPriceDay(BigDecimal settlementPriceDay) {
+		this.settlementPriceDay = settlementPriceDay;
+	}
+
+	public BigDecimal getMeritPayDays() {
+		return meritPayDays;
+	}
+
+	public void setMeritPayDays(BigDecimal meritPayDays) {
+		this.meritPayDays = meritPayDays;
+	}
+
+	public BigDecimal getSettlementFinalDays() {
+		return settlementFinalDays;
+	}
+
+	public void setSettlementFinalDays(BigDecimal settlementFinalDays) {
+		this.settlementFinalDays = settlementFinalDays;
+	}
+
+	/**
      * 获取是否删除 1未删除 0已删除
      * 
      * @return 是否删除 1未删除 0已删除

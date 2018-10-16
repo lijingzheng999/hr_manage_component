@@ -15,7 +15,7 @@ public interface CheckWorkBaiduDAO  extends GenericDAO<CheckWorkBaidu,Integer>{
 	
 	public static final String TABLE = " check_work_baidu ";
 	
-	public static final String COLUMNS = " id,term,start_date,end_date,name,attendance_hours,check_work_hours,overstep_hours,overstep_days,overtime_hours,one_hours,one_point_five_hours,two_hours,three_hours,overtime_sum_hours,overtime_settle_days,settlement_days,is_del,update_time,create_time ";
+	public static final String COLUMNS = " id,term,start_date,end_date,name,attendance_days,attendance_hours,check_work_hours,overstep_hours,overstep_days,overtime_hours,one_hours,one_point_five_hours,two_hours,three_hours,overtime_sum_hours,overtime_settle_days,settlement_days,merit_pay,residual_pay,added_tax,settlement_pay,settlement_price,settlement_price_day,merit_pay_days,settlement_final_days,is_del,update_time,create_time ";
 
 	    
 	@SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +

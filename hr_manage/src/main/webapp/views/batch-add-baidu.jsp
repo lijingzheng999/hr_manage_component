@@ -48,6 +48,7 @@ input.span2{width: 135px;}
 							<label class="control-label">请选择上传的文件：</label>
 							<div class="controls">
 							    <input class="" type="text" id="term" name="term" value="201807"/>
+							    <input class="" type="text" id="attendanceDays" name="attendanceDays" value="20"/>
 							
 								<input class="" type="file" id="filedata" name="filedata" />
 							</div>

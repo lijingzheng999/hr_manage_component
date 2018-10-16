@@ -12,6 +12,11 @@ import hr.manage.component.checkwork.model.CheckWorkCurrentLog;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.checkwork.model.CheckWorkDetailCondition;
 import hr.manage.component.checkwork.service.CheckWorkService;
+import hr.manage.component.personal.dao.PersonalInfoDAO;
+import hr.manage.component.personal.dao.PersonalSalaryInfoDAO;
+import hr.manage.component.personal.model.PersonalInfo;
+import hr.manage.component.personal.model.PersonalSalaryInfo;
+import hr.manage.component.personal.model.PersonalWorkInfo;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -43,6 +48,10 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	CheckWorkBaiduDAO checkWorkBaiduDAO;
 	@Autowired
 	CheckWorkBaiduDetailDAO checkWorkBaiduDetailDAO;
+	@Autowired
+	PersonalInfoDAO personalInfoDAO;
+	@Autowired
+	PersonalSalaryInfoDAO personalSalaryInfoDAO;
 	
 	@Override
 	public List<CheckWorkDetail> listCheckWorkDetail(CheckWorkDetailCondition condition){
@@ -265,26 +274,51 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	@Override
 	public  CheckWorkBaidu getCheckWorkBaiduById(Integer baiduId){
 		CheckWorkBaidu baidu = checkWorkBaiduDAO.get(baiduId);
-		List<CheckWorkBaiduDetail> baiduDetails = checkWorkBaiduDetailDAO.getCheckWorkBaiduDetailByBaiduId(baiduId);
-		baidu.setBaiduDetails(baiduDetails);
+		if(baidu!=null){
+			List<CheckWorkBaiduDetail> baiduDetails = checkWorkBaiduDetailDAO.getCheckWorkBaiduDetailByBaiduId(baiduId);
+			baidu.setBaiduDetails(baiduDetails);
+		}
 		return baidu;
 	}
 	@Override
 	public  int updateCheckWorkBaidu(CheckWorkBaidu baidu){
 		int result =0;
+	    		//修改绩效部分-绩效本月应发
+//    		baidu.setMeritPay(personalSalaryInfo.getMeritPay());
+    		//暂估残保金（绩效本月应发*1.7%）
+    		baidu.setResidualPay(baidu.getMeritPay().multiply(new BigDecimal("0.017")).setScale(2,BigDecimal.ROUND_HALF_UP));
+    		//增值税及附加税=(绩效本月应发+暂估残保金)*6.72%
+    		BigDecimal addedTax=baidu.getMeritPay().add(baidu.getResidualPay());
+    		addedTax = addedTax.multiply(new BigDecimal("0.0672")).setScale(2,BigDecimal.ROUND_HALF_UP);
+    		baidu.setAddedTax(addedTax);
+    		//合计给我司结算金额=绩效本月应发+暂估残保金+增值税及附加税
+    		BigDecimal settlementPay = baidu.getMeritPay().add(baidu.getResidualPay());
+    		settlementPay=settlementPay.add(baidu.getAddedTax());
+    		baidu.setSettlementPay(settlementPay);
+    		//全通结算单价
+//    		baidu.setSettlementPrice(personalSalaryInfo.getSettlementPrice());
+    		//全通日结算单价=全通结算单价/应出勤天数
+    		BigDecimal settlementPriceDay = baidu.getSettlementPrice();
+    		settlementPriceDay=settlementPriceDay.divide(new BigDecimal(""+baidu.getAttendanceDays()),2,BigDecimal.ROUND_HALF_UP);
+    		baidu.setSettlementPriceDay(settlementPriceDay);
+    		//绩效奖励金额折算为天数=ROUND(合计给我司结算金额/全通日结算单价,2)
+    		BigDecimal meritPayDays= baidu.getSettlementPay();
+    		meritPayDays=meritPayDays.divide(baidu.getSettlementPriceDay(),2,BigDecimal.ROUND_HALF_UP);
+    		baidu.setMeritPayDays(meritPayDays);
+    		//记录上报全通考勤总天数=ROUND(应出勤天数+超出小时折算全通给我司结算为天数 +折算全通给我司结算为天数+绩效奖励金额折算为天数,2)
+    		BigDecimal settlementFinalDays = new BigDecimal(""+baidu.getAttendanceDays());
+    		settlementFinalDays = settlementFinalDays.add(baidu.getOverstepDays());
+    		settlementFinalDays=settlementFinalDays.add(baidu.getOvertimeSettleDays());
+    		settlementFinalDays=settlementFinalDays.add(meritPayDays).setScale(2,BigDecimal.ROUND_HALF_UP);
+    		baidu.setSettlementFinalDays(settlementFinalDays);
+    	
 		if(checkWorkBaiduDAO.update(baidu)){
+			
 			result =1;
 		}
 		return result;
 	}
 	
-	private  Integer getattendanceDays(List<CheckWorkBaidu> baiduList) {
-		Integer attendanceDays = 22;
-		for (CheckWorkBaidu baidu : baiduList) {
-			
-		}
-		return attendanceDays;
-	}
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
 	public  int saveCheckWorkBaiduListRecord( String term, Integer attendanceDays, List<CheckWorkBaidu> baiduList){
@@ -303,8 +337,17 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 				//删除导入的考勤日明细;
 				checkWorkBaiduDetailDAO.deleteCheckWorkBaiduDetailById(curBaidu.getId());
 			}
+			PersonalSalaryInfo personalSalaryInfo=null;
+			PersonalInfo personalInfo = personalInfoDAO
+					.getPersonalByName(baidu.getName());
+			if(personalInfo!=null){
+				personalSalaryInfo = personalSalaryInfoDAO
+						.getPersonalSalaryInfoById(personalInfo.getId());
+			}
+			
 			//构造百度考勤	
 			baidu.setTerm(term);
+			baidu.setAttendanceDays(attendanceDays);
 			SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
 			java.util.Date startDate=null;
 			try {
@@ -369,21 +412,29 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 				}
 	        	baidu.setCheckWorkHours(checkWorkHours);
 	        	overstepHours=checkWorkHours.subtract(baidu.getAttendanceHours());
-	        	int r =overstepHours.compareTo(BigDecimal.ZERO);
-	        	if(r>=0){
-	        		baidu.setOverstepHours(overstepHours);
-	        		//=ROUND(超出小时数*1.5/应出勤*22,2)
-		        	overstepDays=overstepDays.add(overstepHours);
-		        	overstepDays=overstepDays.multiply(new BigDecimal("1.5"));
-		        	overstepDays=overstepDays.divide(baidu.getAttendanceHours(),6,BigDecimal.ROUND_HALF_UP);
-		        	overstepDays=overstepDays.multiply(new BigDecimal(""+attendanceDays));
-		        	overstepDays=overstepDays.setScale(2, BigDecimal.ROUND_HALF_UP);
-		        	baidu.setOverstepDays(overstepDays);
-	        	}
-	        	else{
-	        		baidu.setOverstepHours(BigDecimal.ZERO);
-	        		baidu.setOverstepDays(BigDecimal.ZERO);
-	        	}
+	        	baidu.setOverstepHours(overstepHours);
+        		//=ROUND(超出小时数*1.5/应出勤*22,2)
+	        	overstepDays=overstepDays.add(overstepHours);
+	        	overstepDays=overstepDays.multiply(new BigDecimal("1.5"));
+	        	overstepDays=overstepDays.divide(baidu.getAttendanceHours(),6,BigDecimal.ROUND_HALF_UP);
+	        	overstepDays=overstepDays.multiply(new BigDecimal(""+attendanceDays));
+	        	overstepDays=overstepDays.setScale(2, BigDecimal.ROUND_HALF_UP);
+	        	baidu.setOverstepDays(overstepDays);
+//	        	int r =overstepHours.compareTo(BigDecimal.ZERO);
+//	        	if(r>=0){
+//	        		baidu.setOverstepHours(overstepHours);
+//	        		//=ROUND(超出小时数*1.5/应出勤*22,2)
+//		        	overstepDays=overstepDays.add(overstepHours);
+//		        	overstepDays=overstepDays.multiply(new BigDecimal("1.5"));
+//		        	overstepDays=overstepDays.divide(baidu.getAttendanceHours(),6,BigDecimal.ROUND_HALF_UP);
+//		        	overstepDays=overstepDays.multiply(new BigDecimal(""+attendanceDays));
+//		        	overstepDays=overstepDays.setScale(2, BigDecimal.ROUND_HALF_UP);
+//		        	baidu.setOverstepDays(overstepDays);
+//	        	}
+//	        	else{
+//	        		baidu.setOverstepHours(BigDecimal.ZERO);
+//	        		baidu.setOverstepDays(BigDecimal.ZERO);
+//	        	}
 	        	//加班小时数
 	        	overtimeHours=overtimeHours.add(oneHours);
 	        	overtimeHours=overtimeHours.add(onePointFiveHours);
@@ -410,6 +461,36 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	        	settlementDays=settlementDays.add(overstepDays);
 	        	settlementDays=settlementDays.add(overtimeSettleDays);
 	        	baidu.setSettlementDays(settlementDays);
+	        	if(personalSalaryInfo!=null){
+	        		//绩效本月应发
+	        		baidu.setMeritPay(BigDecimal.ZERO);
+	        		//暂估残保金（绩效本月应发*1.7%）
+	        		baidu.setResidualPay(baidu.getMeritPay().multiply(new BigDecimal("0.017")).setScale(2,BigDecimal.ROUND_HALF_UP));
+	        		//增值税及附加税=(绩效本月应发+暂估残保金)*6.72%
+	        		BigDecimal addedTax=baidu.getMeritPay().add(baidu.getResidualPay());
+	        		addedTax = addedTax.multiply(new BigDecimal("0.0672")).setScale(2,BigDecimal.ROUND_HALF_UP);
+	        		baidu.setAddedTax(addedTax);
+	        		//合计给我司结算金额=绩效本月应发+暂估残保金+增值税及附加税
+	        		BigDecimal settlementPay = baidu.getMeritPay().add(baidu.getResidualPay());
+	        		settlementPay=settlementPay.add(baidu.getAddedTax());
+	        		baidu.setSettlementPay(settlementPay);
+	        		//全通结算单价
+	        		baidu.setSettlementPrice(personalSalaryInfo.getSettlementPrice());
+	        		//全通日结算单价=全通结算单价/应出勤天数
+	        		BigDecimal settlementPriceDay = baidu.getSettlementPrice();
+	        		settlementPriceDay=settlementPriceDay.divide(new BigDecimal(""+attendanceDays),2,BigDecimal.ROUND_HALF_UP);
+	        		baidu.setSettlementPriceDay(settlementPriceDay);
+	        		//绩效奖励金额折算为天数=ROUND(合计给我司结算金额/全通日结算单价,2)
+	        		BigDecimal meritPayDays= baidu.getSettlementPay();
+	        		meritPayDays=meritPayDays.divide(baidu.getSettlementPriceDay(),2,BigDecimal.ROUND_HALF_UP);
+	        		baidu.setMeritPayDays(meritPayDays);
+	        		//记录上报全通考勤总天数=ROUND(应出勤天数+超出小时折算全通给我司结算为天数 +折算全通给我司结算为天数+绩效奖励金额折算为天数,2)
+	        		BigDecimal settlementFinalDays = new BigDecimal(""+attendanceDays);
+	        		settlementFinalDays = settlementFinalDays.add(overstepDays);
+	        		settlementFinalDays=settlementFinalDays.add(overtimeSettleDays);
+	        		settlementFinalDays=settlementFinalDays.add(meritPayDays).setScale(2,BigDecimal.ROUND_HALF_UP);
+	        		baidu.setSettlementFinalDays(settlementFinalDays);
+	        	}
 	        	
 	        }
 	        baidu.setIsDel(1);
