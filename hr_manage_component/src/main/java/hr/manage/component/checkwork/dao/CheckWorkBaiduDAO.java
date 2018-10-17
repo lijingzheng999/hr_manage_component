@@ -38,7 +38,7 @@ public interface CheckWorkBaiduDAO  extends GenericDAO<CheckWorkBaidu,Integer>{
     @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
             "#if(:1 != null  && :1 !='') { and name = :1 } " +
             "#if(:2 != null  && :2 !='') { and term = :2 } " +
-            " and is_del=1 " )
+            " and is_del=1 order by id " )
     CheckWorkBaidu getCheckWorkBaiduByNameTerm(String name,String term);
     
     @SQL(" UPDATE " + TABLE +
