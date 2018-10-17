@@ -50,4 +50,13 @@ public class DateTimeUtil {
 
 		return result;
 	}
+	
+	//获取两个时间中的工作日天数
+	public static int getDay(Date curDate) {
+	  Calendar cal = Calendar.getInstance(); 
+	  cal.setTime(curDate); 
+	  int day=cal.get(Calendar.DATE);//获取日 
+	  return day;
+	} 
+	
 }

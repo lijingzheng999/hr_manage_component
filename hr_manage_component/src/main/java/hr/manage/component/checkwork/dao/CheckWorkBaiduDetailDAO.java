@@ -3,6 +3,7 @@ package hr.manage.component.checkwork.dao;
 import hr.manage.component.checkwork.model.CheckWorkBaiduDetail;
 import hr.manage.component.checkwork.model.CheckWorkDetailCondition;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import net.paoding.rose.jade.annotation.DAO;
@@ -43,7 +44,14 @@ public interface CheckWorkBaiduDetailDAO  extends GenericDAO<CheckWorkBaiduDetai
             "#if(:1 != null  && :1 !='') { and name = :1 } " +
             "#if(:2 != null  && :2 !='') { and term = :2 } " +
             " and is_del=1 " )
-    CheckWorkBaiduDetail getCheckWorkBaiduDetailByNameTerm(String name,String term);
+    List<CheckWorkBaiduDetail> getCheckWorkBaiduDetailByNameTerm(String name,String term);
+    
+    @SQL("SELECT  SUM(work_hours) FROM "+TABLE+" WHERE 1 = 1 " +
+            "#if(:1 != null  && :1 >0) { and check_work_id = :1 } " +
+            "#if(:2 != null  && :2 >0) { and current_day < :2 } " +
+            " work_type in(0,4,5) and is_del=1 " )
+    BigDecimal getSumHoursByDay(Integer baiduId,Integer workDay);
+    
     
     @SQL(" UPDATE " + TABLE +
     		 " SET is_del=0,update_time = now() " +

@@ -1,6 +1,7 @@
 package hr.manage.component.salary.service.impl;
 
 import hr.manage.component.checkwork.dao.CheckWorkBaiduDAO;
+import hr.manage.component.checkwork.dao.CheckWorkBaiduDetailDAO;
 import hr.manage.component.checkwork.dao.CheckWorkDetailDAO;
 import hr.manage.component.checkwork.model.CheckWorkBaidu;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
@@ -59,6 +60,8 @@ public class SalaryServiceImpl implements SalaryService {
 	ProfitDetailDAO profitDetailDAO;
 	@Autowired
 	CheckWorkBaiduDAO checkWorkBaiduDAO;
+	@Autowired
+	CheckWorkBaiduDetailDAO checkWorkBaiduDetailDAO;
 
 	@Override
 	public List<SalaryChange> listSalaryChange(SalaryChangeCondition condition) {
@@ -538,45 +541,81 @@ public class SalaryServiceImpl implements SalaryService {
 			} else {
 
 				// 本月转正startDate<workTime<endDate 仍有部分试用期
-				
 
-//				// 计算试用期天数
-//				int dutyDays = DateTimeUtil
-//						.getDutyDays(startDate, workTime);
-//				// 计算转正天数
-//				BigDecimal workDays = checkWork.getCheckWorkDays()
-//						.subtract(new BigDecimal(dutyDays));
-//				// 获取试用期工资
-//				BigDecimal probationaryPay = personalAll
-//						.getProbationaryPay();
-//
-//				// 除去本月考勤天数
-//				probationaryPay = probationaryPay.divide(
-//						checkWork.getCheckWorkDays(), 2,
-//						BigDecimal.ROUND_HALF_UP);
-//				// 乘以本月试用期天数
-//				probationaryPay = probationaryPay.multiply(new BigDecimal(
-//						dutyDays));
-//
-//				probationaryPay = probationaryPay.setScale(2,
-//						BigDecimal.ROUND_HALF_UP);
-//				detail.setProbationaryPay(probationaryPay);
-//
-//				// 转正工资
-//				BigDecimal workPay = personalAll.getWorkerPay();
-//				// 除去本月考勤天数
-//				workPay = workPay.divide(checkWork.getCheckWorkDays(), 2,
-//						BigDecimal.ROUND_HALF_UP);
-//				// 乘以本月试用期天数
-//				workPay = workPay.multiply(workDays);
-//				workPay = workPay.setScale(2, BigDecimal.ROUND_HALF_UP);
-//				detail.setBasePay(workPay);
-//				detail.setMeritPay(BigDecimal.ZERO);
-//				detail.setOtherPay(BigDecimal.ZERO);
-//				detail.setTrafficSubsidy(BigDecimal.ZERO);
-//				detail.setComputerSubsidy(BigDecimal.ZERO);
-//				detail.setMealSubsidy(BigDecimal.ZERO);
-//				detail.setPhoneSubsidy(BigDecimal.ZERO);
+				// 计算试用期小时数
+				int curDay = DateTimeUtil.getDay(workTime);
+				BigDecimal dutyHours = checkWorkBaiduDetailDAO.getSumHoursByDay(baidu.getId(),curDay);
+				
+				// 计算转正小时数
+				BigDecimal workHours = baidu.getAttendanceHours()
+						.subtract(dutyHours);
+				// 获取试用期工资
+				BigDecimal probationaryPay = personalAll
+						.getProbationaryPay();
+
+				// 除去本月考勤小时数
+				probationaryPay = probationaryPay.divide(
+						baidu.getAttendanceHours(), 2,
+						BigDecimal.ROUND_HALF_UP);
+				// 乘以本月试用期小时数
+				probationaryPay = probationaryPay.multiply(dutyHours);
+
+				probationaryPay = probationaryPay.setScale(2,
+						BigDecimal.ROUND_HALF_UP);
+				detail.setProbationaryPay(probationaryPay);
+
+				// 转正工资
+				BigDecimal workPay = personalAll.getWorkerPay();
+				// 除去本月考勤小时数
+				workPay = workPay.divide(baidu.getAttendanceHours(), 2,
+						BigDecimal.ROUND_HALF_UP);
+				// 乘以本月试用期小时数
+				workPay = workPay.multiply(workHours);
+				workPay = workPay.setScale(2, BigDecimal.ROUND_HALF_UP);
+				detail.setBasePay(workPay);
+				//百度绩效工资= 考勤表中绩效工资
+				detail.setMeritPay(baidu.getMeritPay());
+				//百度其他工资=百度基本工资/174*加班应发工资合计小时数overtimeSumHours
+				BigDecimal basePay = detail.getProbationaryPay().add(detail.getBasePay());
+				BigDecimal otherPay = basePay.divide(new BigDecimal("174"),6,BigDecimal.ROUND_HALF_UP);
+				otherPay = otherPay.multiply(baidu.getOvertimeSumHours()).setScale(2,BigDecimal.ROUND_HALF_UP);
+				detail.setOtherPay(otherPay);
+				//百度补贴默认为0
+				detail.setTrafficSubsidy(BigDecimal.ZERO);
+				detail.setComputerSubsidy(BigDecimal.ZERO);
+				detail.setMealSubsidy(BigDecimal.ZERO);
+				detail.setPhoneSubsidy(BigDecimal.ZERO);
+				
+				// 计算考勤扣款 =百度基本工资/考勤应出勤小时数*(应出勤小时数-实际出勤小时数)
+				int r = baidu.getOverstepHours().compareTo(BigDecimal.ZERO);
+				if(r>=0){
+					detail.setAttendanceDeduction(BigDecimal.ZERO);
+				}
+				else{
+					// 计算考勤扣款 =百度基本工资/考勤应出勤小时数*(应出勤小时数-实际出勤小时数)
+					BigDecimal attendanceDeduction = BigDecimal.ZERO;
+					// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getProbationaryPay());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getBasePay());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getMeritPay());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getTrafficSubsidy());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getComputerSubsidy());
+					attendanceDeduction = attendanceDeduction.add(detail
+							.getMealSubsidy());
+					attendanceDeduction = attendanceDeduction.divide(
+							baidu.getAttendanceHours(), 6,
+							BigDecimal.ROUND_HALF_UP);
+					// 乘以缺勤天数
+					attendanceDeduction = attendanceDeduction.multiply(baidu.getAttendanceHours().subtract(baidu.getCheckWorkHours())).setScale(2,BigDecimal.ROUND_HALF_UP);
+					detail.setAttendanceDeduction(attendanceDeduction);
+					
+				}
+				detail.setOtherDeduction(BigDecimal.ZERO);
 //				// 计算考勤扣款//////////////////////////////////
 //				BigDecimal attendanceDeduction = new BigDecimal(0);
 //				// 所有费用=试用期工资+基本工资+绩效工资+交通补助+电脑补助+餐补
