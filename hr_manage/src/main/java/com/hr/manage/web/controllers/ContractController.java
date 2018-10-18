@@ -299,6 +299,7 @@ public class ContractController {
 		String strContractCount = new DecimalFormat("00").format(contractInfo.getContractCount());
 		contractInfo.setContractNumber(contractInfo.getEmployeeNumber()+strContractCount);
 		contractInfo.setUpdateTime(new Date());
+		contractInfo.setStatus(lastContract.getStatus());
 		// 进行修改
 		int result  = contractService.updateContractInfo(contractInfo);
 		if (result>0) {
