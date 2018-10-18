@@ -7,6 +7,7 @@ import hr.manage.component.contract.service.ContractService;
 import hr.manage.component.personal.dao.PersonalWorkInfoDAO;
 import hr.manage.component.personal.model.PersonalWorkInfo;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +42,10 @@ public class ContractServiceImpl implements ContractService {
 		return contractInfoDAO.get(contractInfoId);
 	}
 	@Override
+	public ContractInfo getCurContractInfoByPersonId(Integer personalId){
+		return contractInfoDAO.getCurContractInfoByPersonId(personalId);
+	}
+	@Override
 	public int deleteContractInfoById(Integer contractInfoId){
 	    return 	contractInfoDAO.deleteContractInfoById(contractInfoId);
 	}
@@ -48,6 +53,21 @@ public class ContractServiceImpl implements ContractService {
 	@Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor={Exception.class})
 	public int addContractInfo(ContractInfo contractInfo){
 		int result =0;
+		//验证修改的合同签订次数是否递增；
+		int curContractCount  = 0;
+		ContractInfo lastContract  = contractInfoDAO.getCurContractInfoByPersonId(contractInfo.getPersonalInfoId());
+		if(lastContract!=null){
+			curContractCount = lastContract.getContractCount()+1;
+		}
+		else{
+			curContractCount=1;
+		}
+		contractInfo.setContractCount(curContractCount);
+		contractInfo.setStatus(1);
+
+		String strContractCount = new DecimalFormat("00").format(contractInfo.getContractCount());
+		contractInfo.setContractNumber(contractInfo.getEmployeeNumber()+strContractCount);
+					
 		//同步员工基本信息
 		PersonalWorkInfo work = personalWorkInfoDAO.getPersonalWorkInfoById(contractInfo.getPersonalInfoId());
 		if(work==null){
@@ -66,6 +86,10 @@ public class ContractServiceImpl implements ContractService {
 				result = -3;
 			}
 		}
+		//上一次合同修改为历史合同
+		lastContract.setStatus(0);
+		lastContract.setUpdateTime(new Date());
+		contractInfoDAO.update(lastContract);
 		//保存合同信息
 		contractInfo.setPosition(work.getPosition());
 		contractInfo.setIsDel(1);

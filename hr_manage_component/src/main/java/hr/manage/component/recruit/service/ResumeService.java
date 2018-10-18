@@ -58,7 +58,7 @@ public interface ResumeService {
     * @return int    
     * @throws
      */
-	public int updateStatusComplete(Integer recruitInfoId);
+	public int updateStatusComplete(Integer recruitInfoId,Integer status);
 	/**
      * 
     * @Title: updateRecruitInfo

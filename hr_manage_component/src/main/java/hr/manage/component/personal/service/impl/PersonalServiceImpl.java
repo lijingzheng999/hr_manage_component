@@ -96,6 +96,7 @@ public class PersonalServiceImpl implements PersonalService {
 			contractInfo.setEndDate(work.getContractEnddate());
 			contractInfo.setContractCount(1); // 导入默认为第一次；
 			contractInfo.setMemo(person.getMemo());
+			contractInfo.setStatus(1);
 			contractInfo.setIsDel(1);
 			contractInfo.setCreateTime(new Date());
 			contractInfoDAO.save(contractInfo);
@@ -551,6 +552,7 @@ public class PersonalServiceImpl implements PersonalService {
 		contractInfo.setEndDate(work.getContractEnddate());
 		contractInfo.setContractCount(1); // 导入默认为第一次；
 		contractInfo.setMemo(person.getMemo());
+		contractInfo.setStatus(1);
 		contractInfo.setIsDel(1);
 		contractInfo.setCreateTime(new Date());
 		contractInfoDAO.save(contractInfo);

@@ -26,6 +26,8 @@ public class ContractCondition implements Serializable {
     private Date startDate;
     /**合同结束时间查询的截止时间 */
     private Date endDate;
+    /**是否为最新合同(1:最新合同 ； 0：历史合同)*/
+    private Integer status;
   
    
     /**分页开始位置*/
@@ -57,6 +59,13 @@ public class ContractCondition implements Serializable {
 	}
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 	public Integer getOffset() {
 		return offset;

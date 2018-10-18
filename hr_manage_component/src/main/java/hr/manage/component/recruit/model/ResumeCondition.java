@@ -22,12 +22,18 @@ public class ResumeCondition implements Serializable {
     private String name;
     /** 岗位名称(职位) */
     private String position;
-    /** 经验要求(工作年限,单位年) */
-    private Integer experience;
     /** 面试状态 1:进行中;0:未通过;2:面试通过 */
     private Integer status;
     /** 外派单位 -需求表用*/
     private String expatriateUnit;
+    /** 起始年龄*/
+    private Date startAge;
+    /** 截至年龄*/
+    private Date endAge;
+    /** 起始  经验要求(工作年限,单位年) */
+    private Integer startExperience;
+    /** 截至 经验要求(工作年限,单位年) */
+    private Integer endExperience;
    
     /**分页开始位置*/
     private Integer offset;
@@ -49,13 +55,31 @@ public class ResumeCondition implements Serializable {
 	public void setPosition(String position) {
 		this.position = position;
 	}
-	public Integer getExperience() {
-		return experience;
-	}
-	public void setExperience(Integer experience) {
-		this.experience = experience;
-	}
 	
+	public Date getStartAge() {
+		return startAge;
+	}
+	public void setStartAge(Date startAge) {
+		this.startAge = startAge;
+	}
+	public Date getEndAge() {
+		return endAge;
+	}
+	public void setEndAge(Date endAge) {
+		this.endAge = endAge;
+	}
+	public Integer getStartExperience() {
+		return startExperience;
+	}
+	public void setStartExperience(Integer startExperience) {
+		this.startExperience = startExperience;
+	}
+	public Integer getEndExperience() {
+		return endExperience;
+	}
+	public void setEndExperience(Integer endExperience) {
+		this.endExperience = endExperience;
+	}
 	public String getExpatriateUnit() {
 		return expatriateUnit;
 	}

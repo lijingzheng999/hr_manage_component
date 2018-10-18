@@ -55,6 +55,11 @@ public class ContractInfo implements java.io.Serializable {
     @Column(value = "memo")
     private String memo;
 
+    /** 是否为最新合同(1:最新合同 ； 0：历史合同) */
+    @Column(value = "status")
+    private Integer status;
+
+
     /** 是否删除 1未删除 0已删除 */
     @Column(value = "is_del")
     private Integer isDel;
@@ -251,7 +256,15 @@ public class ContractInfo implements java.io.Serializable {
         this.memo = memo;
     }
 
-    /**
+    public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	/**
      * 获取是否删除 1未删除 0已删除
      * 
      * @return 是否删除 1未删除 0已删除

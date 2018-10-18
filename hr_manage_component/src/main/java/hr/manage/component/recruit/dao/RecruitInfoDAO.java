@@ -14,7 +14,7 @@ public interface RecruitInfoDAO  extends GenericDAO<RecruitInfo,Integer>{
 	
 	public static final String TABLE = " recruit_info ";
 	
-	public static final String COLUMNS = " id,expatriate_unit,center,city,work_place,pepole_need,position,status,post_duty,create_user ,is_del ,update_time ,create_time  ";
+	public static final String COLUMNS = " id,expatriate_unit,center,city,work_place,pepole_need,position,status,urgent_status,post_duty,create_user ,is_del ,update_time ,create_time  ";
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
@@ -22,7 +22,7 @@ public interface RecruitInfoDAO  extends GenericDAO<RecruitInfo,Integer>{
 		        "#if(:1.expatriateUnit != null  && :1.expatriateUnit !='') { and expatriate_unit = :1.expatriateUnit } " +
 		        "#if(:1.status != null ) { and status = :1.status } " +
 		        " and is_del = 1 " +
-	            " order by id " +
+	            " order by urgent_status desc,id desc " +
 	             "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
 	    List<RecruitInfo> listRecruitInfo(ResumeCondition condition);
 	   
@@ -39,7 +39,7 @@ public interface RecruitInfoDAO  extends GenericDAO<RecruitInfo,Integer>{
 	    int deleteRecruitInfo(Integer recruitInfoId);
 	    
 	    @SQL(" UPDATE "+TABLE+
-	    		" set status=0 ,update_time = now()  " +
+	    		" set status=:2 ,update_time = now()  " +
 	            " WHERE id= :1 and is_del=1 ")
-	    int updateStatusComplete(Integer recruitInfoId);
+	    int updateStatusComplete(Integer recruitInfoId,Integer status);
 }

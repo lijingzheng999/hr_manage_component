@@ -41,7 +41,7 @@ public class ResumeInfo implements java.io.Serializable {
     
     /** 出生日期 */
     @Column(value = "birthday")
-    private String birthday;
+    private Date birthday;
     
     /** 经验要求(工作年限,单位年) */
     @Column(value = "experience")
@@ -281,7 +281,7 @@ public class ResumeInfo implements java.io.Serializable {
      * 
      * @return 出生日期
      */
-    public String getBirthday() {
+    public Date getBirthday() {
         return this.birthday;
     }
 
@@ -291,7 +291,7 @@ public class ResumeInfo implements java.io.Serializable {
      * @param birthday
      *          出生日期
      */
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 

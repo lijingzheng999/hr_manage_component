@@ -18,9 +18,12 @@ public interface ResumeInfoDAO  extends GenericDAO<ResumeInfo,Integer>{
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
+	    		"#if(:1.status != null ) { and status = :1.status } " +
 	            "#if(:1.position != null  && :1.position !='') { and position = :1.position } " +
-	            "#if(:1.experience != null  && :1.experience >0) { and experience >= :1.experience } " +
-	            "#if(:1.status != null ) { and status = :1.status } " +
+	            "#if(:1.startExperience != null  && :1.startExperience >0) { and experience >= :1.startExperience } " +
+	            "#if(:1.endExperience != null  && :1.endExperience >0) { and experience <= :1.endExperience } " +
+	            "#if(:1.startAge != null ) { and birthday >= :1.startAge } " +
+	            "#if(:1.endAge != null ) { and birthday <= :1.endAge } " +
 	            " and is_del = 1 " +
 	            " order by id " +
 	             "#if(:1.offset != null && :1.limit != null ){ limit :1.offset , :1.limit }")
@@ -28,9 +31,12 @@ public interface ResumeInfoDAO  extends GenericDAO<ResumeInfo,Integer>{
 	 
 	    
 	    @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +
-	    		"#if(:1.position != null  && :1.position !='') { and position = :1.position } " +
-	            "#if(:1.experience != null  && :1.experience >0) { and experience >= :1.experience } " +
-	            "#if(:1.status != null ) { and status = :1.status } " +
+	    		"#if(:1.status != null ) { and status = :1.status } " +
+	            "#if(:1.position != null  && :1.position !='') { and position = :1.position } " +
+	            "#if(:1.startExperience != null  && :1.startExperience >0) { and experience >= :1.startExperience } " +
+	            "#if(:1.endExperience != null  && :1.endExperience >0) { and experience <= :1.endExperience } " +
+	            "#if(:1.startAge != null ) { and birthday >= :1.startAge } " +
+	            "#if(:1.endAge != null ) { and birthday <= :1.endAge } " +
 	            " and is_del=1 ")
 	    Long countResumeInfo(ResumeCondition condition);
 	    

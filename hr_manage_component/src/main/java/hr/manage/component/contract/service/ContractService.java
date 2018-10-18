@@ -22,6 +22,18 @@ public interface ContractService {
      */
 	public ContractInfo getContractInfoById(Integer contractInfoId);
 	
+
+	
+	/**
+     * 
+    * @Title: getCurContractInfoByPersonId
+    * @Description: 查询合同信息
+    * @Param Integer personalId
+    * @return ContractInfo    
+    * @throws
+     */
+	public ContractInfo getCurContractInfoByPersonId(Integer personalId);
+	
 	/**
      * 
     * @Title: deleteContractInfoById

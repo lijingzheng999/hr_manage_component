@@ -57,8 +57,8 @@ public class ResumeServiceImpl implements ResumeService {
 	}
 	
 	@Override
-	public int updateStatusComplete(Integer recruitInfoId){
-		return recruitInfoDAO.updateStatusComplete(recruitInfoId);
+	public int updateStatusComplete(Integer recruitInfoId,Integer status){
+		return recruitInfoDAO.updateStatusComplete(recruitInfoId,status);
 	}
 	
 	

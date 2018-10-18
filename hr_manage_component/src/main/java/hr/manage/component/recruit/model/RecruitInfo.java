@@ -47,6 +47,10 @@ public class RecruitInfo implements java.io.Serializable {
     @Column(value = "status")
     private Integer status;
 
+    /** 紧急状态; 0:普通的；1:紧急的 */
+    @Column(value = "urgent_status")
+    private Integer urgentStatus;
+    
     /** 岗位职责 */
     @Column(value = "post_duty")
     private String postDuty;
@@ -129,6 +133,14 @@ public class RecruitInfo implements java.io.Serializable {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public Integer getUrgentStatus() {
+		return urgentStatus;
+	}
+
+	public void setUrgentStatus(Integer urgentStatus) {
+		this.urgentStatus = urgentStatus;
 	}
 
 	public String getPostDuty() {
