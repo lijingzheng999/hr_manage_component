@@ -66,6 +66,15 @@ public class ResumeServiceImpl implements ResumeService {
 	public boolean updateRecruitInfo(RecruitInfo recruitInfo){
 		return recruitInfoDAO.update(recruitInfo);
 	}
+	
+	@Override
+//	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
+	public  int saveResumeInfoListRecord( List<ResumeInfo> resumeInfoList){
+		int result = 1;
+		resumeInfoDAO.save(resumeInfoList);
+		return result;
+	}
+	
 	@Override
 	public RecruitInfo getRecruitInfo(Integer recruitInfoId){
 		return recruitInfoDAO.get(recruitInfoId);

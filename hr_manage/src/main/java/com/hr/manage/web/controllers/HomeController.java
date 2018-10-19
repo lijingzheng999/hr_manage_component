@@ -156,6 +156,11 @@ public class HomeController {
 		    	return "batch-add-shebao";
 		    }
 			@NotCareLogin
+			@Get("testimportjianli")
+		    public String testimportjianli() {
+		    	return "batch-add-jianli";
+		    }
+			@NotCareLogin
 			@Get("testupload")
 		    public String testupload() {
 		    	return "upload-image";

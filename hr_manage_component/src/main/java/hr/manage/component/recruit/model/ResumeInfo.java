@@ -56,6 +56,10 @@ public class ResumeInfo implements java.io.Serializable {
     @Column(value = "email")
     private String email;
 
+    /** 毕业时间 -员工可修改 */
+    @Column(value = "graduation_time")
+    private Date graduationTime;
+    
     /** 毕业学校 */
     @Column(value = "school")
     private String school;
@@ -72,6 +76,11 @@ public class ResumeInfo implements java.io.Serializable {
     @Column(value = "status")
     private Integer status;
 
+
+    /** 备注 */
+    @Column(value = "memo")
+    private String memo;
+    
     /** 是否删除 1未删除 0已删除 */
     @Column(value = "is_del")
     private Integer isDel;
@@ -340,6 +349,22 @@ public class ResumeInfo implements java.io.Serializable {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public Date getGraduationTime() {
+		return graduationTime;
+	}
+
+	public void setGraduationTime(Date graduationTime) {
+		this.graduationTime = graduationTime;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
 
 	/**

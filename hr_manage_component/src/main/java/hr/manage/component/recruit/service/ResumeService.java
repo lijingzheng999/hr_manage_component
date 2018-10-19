@@ -1,5 +1,6 @@
 package hr.manage.component.recruit.service;
 
+import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.recruit.model.RecruitInfo;
 import hr.manage.component.recruit.model.ResumeCondition;
 import hr.manage.component.recruit.model.ResumeInfo;
@@ -68,6 +69,17 @@ public interface ResumeService {
     * @throws
      */
 	public boolean updateRecruitInfo(RecruitInfo recruitInfo);
+	
+	/**
+     * 
+    * @Title: saveResumeInfoListRecord
+    * @Description: 保存邀约面试信息列表
+    * @param  List<ResumeInfo>
+    * @return int
+    * @throws
+     */
+	public  int saveResumeInfoListRecord( List<ResumeInfo> resumeInfoList);
+	
 	
 	/**
      * 

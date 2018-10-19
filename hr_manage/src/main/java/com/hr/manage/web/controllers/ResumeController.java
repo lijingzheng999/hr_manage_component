@@ -2,6 +2,8 @@ package com.hr.manage.web.controllers;
 
 import hr.manage.component.admin.model.Admin;
 import hr.manage.component.admin.service.AdminService;
+import hr.manage.component.checkwork.model.CheckWorkDetail;
+import hr.manage.component.personal.model.PersonalInfo;
 import hr.manage.component.recruit.model.RecruitInfo;
 import hr.manage.component.recruit.model.ResumeCondition;
 import hr.manage.component.recruit.model.ResumeInfo;
@@ -9,6 +11,7 @@ import hr.manage.component.recruit.model.ResumeInterview;
 import hr.manage.component.recruit.model.ResumeInterviewCondition;
 import hr.manage.component.recruit.service.ResumeService;
 
+import com.hr.manage.config.ServiceConfigFactory;
 import com.hr.manage.web.constant.JSONResult;
 import com.hr.manage.web.constant.CodeMsg;
 
@@ -81,6 +84,7 @@ public class ResumeController {
 	@Autowired
 	AdminService adminService;
 	private final Log logger = LogFactory.getLog(ResumeController.class);
+	private static final String FILE_UPLOAD_PATH=ServiceConfigFactory.getValue("file.upload.path");
 	
 	
 	/**
@@ -299,6 +303,230 @@ public class ResumeController {
 		}
 
 	}
+	
+
+	/**
+     * 
+    * Title:importResumeExcel
+    * Description:导入邀约面试信息excel
+    * Url: resume/importResumeExcel
+    * @param  MultipartFile filedata,  excel文件
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_10)
+	@NotCareLogin
+	@Post("importResumeExcel")
+	public String importResumeExcel(@Param("filedata")MultipartFile filedata){
+		boolean result = true;
+		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
+		long fileNumber = 0;
+		try {
+			/**
+			 * 1.上传文件
+			 */
+			String filePathInServer = "";
+			String separator = File.separator;
+			String filepath = FILE_UPLOAD_PATH;
+			java.util.Date dt = new java.util.Date();
+			SimpleDateFormat fmt = new SimpleDateFormat("yyMMddHHmmssSSSS");
+			String type = filedata
+					.getOriginalFilename()
+					.substring(
+							filedata.getOriginalFilename().lastIndexOf(".") + 1)
+					.toLowerCase();// 获得文件扩展名
+	
+			String originalname = filedata.getOriginalFilename().substring(0,
+					filedata.getOriginalFilename().lastIndexOf("."));// 获得原文件名称
+			String filename = originalname+"_"+ fmt.format(dt) + "." + type;// 文件原名+时间+.+文件扩展名
+			File filepaths = new File(filepath);
+			if (!filepaths.exists()) {
+				filepaths.mkdirs();
+			}
+			File orgFile = new File(filepath + separator
+					+ filename);
+			filedata.transferTo(orgFile);// 上传文件
+			filePathInServer = orgFile.getPath();
+			logger.info("adminUser : "+user.getUsername()+" upload 导入邀约面试信息excel  file wait for whether to save ");
+		
+			/**
+			 * 2. 解析文件xls
+			 */
+			boolean isE2007 = false;    //判断是否是excel2007格式  
+			 if(filename.endsWith("xlsx"))  
+		            isE2007 = true;  
+			File myfile = new File(filePathInServer);
+			InputStream is = new FileInputStream(myfile);
+			 Workbook wb  = null;  
+	            //根据文件格式(2003或者2007)来初始化  
+	            if(isE2007)  
+	                wb = new XSSFWorkbook(is);  
+	            else  
+	                wb = new HSSFWorkbook(is); 
+	            Sheet sheet= wb.getSheetAt(0);     //获得第一个表单   
+	            if(sheet.getLastRowNum()>5000){
+					return "@"+JSONResult.error(CodeMsg.ERROR,"数量不能超过500"); 
+				}
+	            Iterator<Row> rows = sheet.rowIterator(); //获得第一个表单的迭代器  
+	            List<ResumeInfo> resumeInfoList = new ArrayList<ResumeInfo>();
+	            while (rows.hasNext()) {  
+	                Row row = rows.next();  //获得行数据  
+	                if(row.getRowNum()<1||row==null)
+	                	continue;
+	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
+	                ResumeInfo detail= new ResumeInfo();
+	                while (cells.hasNext()) {  
+	                    Cell cell = cells.next();  
+	                    String cellValue = "";
+	                    switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
+	                    case HSSFCell.CELL_TYPE_NUMERIC:  
+	                    	if (DateUtil.isCellDateFormatted(cell)) {
+								Date d = cell.getDateCellValue(); // 对日期处理
+								DateFormat formater = new SimpleDateFormat(
+										"yyyy-MM-dd HH:mm:ss");
+								cellValue = formater.format(d);
+							} else {// 其余按照数字处理
+									// 防止科学计数法
+								DecimalFormat df = new DecimalFormat("0.000");
+								double acno = cell.getNumericCellValue();
+								String acnoStr = df.format(acno);
+								if (acnoStr.indexOf(".") > 0) {
+									acnoStr = acnoStr.replaceAll("0+?$", "");// 去掉多余的0
+									cellValue = acnoStr.replaceAll("[.]$", "");// 如最后一位是.则去掉
+								}
+							}  
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_STRING:  
+	                    	cellValue = cell.getRichStringCellValue().getString(); 
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_BOOLEAN:  
+	                    	cellValue = String.valueOf(cell.getBooleanCellValue());  
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_BLANK:  
+	                    	cellValue = "";
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_ERROR:  
+	                    	cellValue = "";
+	                        break;  
+	                    case HSSFCell.CELL_TYPE_FORMULA:  
+	                    	cellValue = cell.getCellFormula() + "";
+	                        break;  
+	                    default:  
+	                    	cellValue = "";
+	                        break;  
+	                    } 
+	                    if(cell.getColumnIndex()==0&&cellValue.equals("")){
+	                    	break;
+	                    }
+	                    /**
+						 * 处理文件中定义的属性
+						 */
+						String transforValue="";
+						switch (cell.getColumnIndex()) {
+							case 0:// 邀约时间
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setInviteTime(transforValue);
+								break;
+							case 1:// 序号
+						
+								break;
+							case 2:// 姓名
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setName(transforValue);
+								break;
+							case 3:// 面试时间
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setInterviewTime(transforValue);
+								break;
+							case 4:// 岗位
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+									detail.setPosition(transforValue);
+								}
+								break;
+							case 5:// 性别
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setSex(transforValue);
+								break;
+							case 6:// 出生日期
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+									SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM");//小写的mm表示的是分钟  
+									java.util.Date birthday=sdt.parse(String.valueOf(cellValue).trim());
+									detail.setBirthday(birthday);
+								}
+								break;
+							case 7:// 工作年限
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setExperience(Integer.parseInt(transforValue));
+								break;
+							case 8:// 移动电话
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setPhone(transforValue);
+								break;
+							case 9:// 电子邮件
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setEmail(transforValue);
+								break;
+							case 10:// 毕业时间
+								transforValue = String.valueOf(cellValue).trim();
+								if(!transforValue.equals("")){
+									SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM");//小写的mm表示的是分钟  
+									java.util.Date graduationTime=sdt.parse(String.valueOf(cellValue).trim());
+									detail.setGraduationTime(graduationTime);
+								}
+								break;
+							case 11:// 学校名称
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setSchool(transforValue);
+								
+								break;
+							case 12://专业名称
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setMajor(transforValue);
+								break;
+							case 13:// 最高学历
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setEducation(transforValue);
+								break;
+							case 14:// 备注
+								transforValue = String.valueOf(cellValue).trim();
+								detail.setMemo(transforValue);
+								break;
+							
+						}
+	                }  
+	               
+	                detail.setStatus(1);
+	                detail.setIsDel(1);
+	                detail.setCreateTime(new Date());
+	                resumeInfoList.add(detail);              
+			}
+	        //批量入库
+	        try {
+	        	resumeService.saveResumeInfoListRecord(resumeInfoList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				// TODO: handle exception
+				logger.error("保存数据库异常,已回滚", e);
+				return "@"+JSONResult.error(CodeMsg.ERROR,"保存数据库异常,已回滚"+ e.getMessage());  
+			}
+	        
+		}catch(Exception e1){
+			e1.printStackTrace();
+			logger.error("upload 导入邀约面试信息 throws Exception", e1);
+			return "@"+JSONResult.error(CodeMsg.ERROR,"导入邀约面试信息失败，请稍后重试"+e1);  
+		}
+		if(result){
+			logger.info("adminUser : "+user.getUsername()+"upload 导入邀约面试信息 ; fileNumber : OT"+fileNumber);
+			return "@"+JSONResult.success("导入成功！文件编号为OT"+fileNumber);
+		}else{
+			logger.error("=====导入失败！请重新导入=====");
+			return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！请重新导入");  
+		}
+		
+	}
+	
 	
 	/**
      * 

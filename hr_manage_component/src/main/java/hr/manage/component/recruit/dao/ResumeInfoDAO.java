@@ -14,7 +14,7 @@ public interface ResumeInfoDAO  extends GenericDAO<ResumeInfo,Integer>{
 	
 	public static final String TABLE = " resume_info ";
 	
-	public static final String COLUMNS = " id,name,invite_time,interview_time,position,sex,birthday,experience,phone,email ,school ,major ,education ,status,is_del,update_time,create_time ";
+	public static final String COLUMNS = " id,name,invite_time,interview_time,position,sex,birthday,experience,phone,email ,graduation_time,school ,major ,education ,status,memo,is_del,update_time,create_time ";
 
 	    
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
