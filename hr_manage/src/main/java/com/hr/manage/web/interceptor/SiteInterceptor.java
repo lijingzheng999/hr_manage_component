@@ -7,10 +7,15 @@ import javax.servlet.http.Cookie;
 
 import net.paoding.rose.web.ControllerInterceptorAdapter;
 import net.paoding.rose.web.Invocation;
+import net.paoding.rose.web.InvocationChain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hr.manage.web.annotation.NotCareLogin;
 import com.hr.manage.web.constant.CodeMsg;
 import com.hr.manage.web.constant.JSONResult;
@@ -21,6 +26,8 @@ public class SiteInterceptor extends ControllerInterceptorAdapter {
 	@Autowired
 	private AdminService adminService;
 
+    private final Log logger = LogFactory.getLog("log_main");
+    private final Log loggerTime = LogFactory.getLog("log_time");
 
 	@Override
 	protected Object before(Invocation inv) throws Exception {
@@ -92,6 +99,32 @@ public class SiteInterceptor extends ControllerInterceptorAdapter {
 		return true;
 	}
 
+	
+	 @Override
+	    protected Object round(Invocation inv, InvocationChain chain) throws Exception {
+	        try {
+	            long beginTime = System.currentTimeMillis();
+	            StringBuilder reqBuilder = new StringBuilder();
+	          //获取请求参数信息
+	            String paramData = JSON.toJSONString(inv.getRequest().getParameterMap(),
+	                    SerializerFeature.DisableCircularReferenceDetect,
+	                    SerializerFeature.WriteMapNullValue);
+	            paramData = "paramData:" + paramData + "...";
+	            reqBuilder.append(paramData + "frontCall：MethodName——" + inv.getMethod().getName() + ",CallTime——" + beginTime + ",InParam" + JSON.toJSONString(inv.getMethodParameters()));
+	            reqBuilder.append(" ... ");
+	            Object o = chain.doNext();
+	            long endTime = System.currentTimeMillis();
+	            reqBuilder.append(paramData + "frontCall：MethodName——" + inv.getMethod().getName() + ",CallTime——" + beginTime + ",ReturnTime" + endTime + ",totalTime——" + (endTime - beginTime) + "ms,OutParam" + JSON.toJSONString(o));
+	            logger.info(reqBuilder.toString());
+	            loggerTime.info("frontCall：MethodName——" + inv.getMethod().getName() + ",CallTime——" + beginTime + ",ReturnTime" + endTime + "，totalTime——" + (endTime - beginTime) + "ms");
+	            return o;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            throw e;
+	        }
+
+	    }
+	 
 	@Override
 	protected Object after(Invocation inv, Object instruction) throws Exception {
 		inv.getResponse().setCharacterEncoding("UTF-8");
