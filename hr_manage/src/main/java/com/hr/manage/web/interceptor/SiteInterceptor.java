@@ -104,18 +104,18 @@ public class SiteInterceptor extends ControllerInterceptorAdapter {
 	    protected Object round(Invocation inv, InvocationChain chain) throws Exception {
 	        try {
 	            long beginTime = System.currentTimeMillis();
-	            StringBuilder reqBuilder = new StringBuilder();
-	          //获取请求参数信息
-	            String paramData = JSON.toJSONString(inv.getRequest().getParameterMap(),
-	                    SerializerFeature.DisableCircularReferenceDetect,
-	                    SerializerFeature.WriteMapNullValue);
-	            paramData = "paramData:" + paramData + "...";
-	            reqBuilder.append(paramData + "frontCall：MethodName——" + inv.getMethod().getName() + ",CallTime——" + beginTime + ",InParam" + JSON.toJSONString(inv.getMethodParameters()));
-	            reqBuilder.append(" ... ");
+//	            StringBuilder reqBuilder = new StringBuilder();
+//	          //获取请求参数信息
+//	            String paramData = JSON.toJSONString(inv.getRequest().getParameterMap(),
+//	                    SerializerFeature.DisableCircularReferenceDetect,
+//	                    SerializerFeature.WriteMapNullValue);
+//	            paramData = "paramData:" + paramData + "...";
+//	            reqBuilder.append(paramData + "frontCall：MethodName——" + inv.getMethod().getName() + ",CallTime——" + beginTime + ",InParam" + JSON.toJSONString(inv.getMethodParameters()));
+//	            reqBuilder.append(" ... ");
 	            Object o = chain.doNext();
 	            long endTime = System.currentTimeMillis();
-	            reqBuilder.append(paramData + "frontCall：MethodName——" + inv.getMethod().getName() + ",CallTime——" + beginTime + ",ReturnTime" + endTime + ",totalTime——" + (endTime - beginTime) + "ms,OutParam" + JSON.toJSONString(o));
-	            logger.info(reqBuilder.toString());
+//	            reqBuilder.append(paramData + "frontCall：MethodName——" + inv.getMethod().getName() + ",CallTime——" + beginTime + ",ReturnTime" + endTime + ",totalTime——" + (endTime - beginTime) + "ms,OutParam" + JSON.toJSONString(o));
+//	            logger.info(reqBuilder.toString());
 	            loggerTime.info("frontCall：MethodName——" + inv.getMethod().getName() + ",CallTime——" + beginTime + ",ReturnTime" + endTime + "，totalTime——" + (endTime - beginTime) + "ms");
 	            return o;
 	        } catch (Exception e) {

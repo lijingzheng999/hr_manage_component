@@ -66,6 +66,7 @@ import com.hr.manage.web.annotation.AuthorityCheck;
 import com.hr.manage.web.annotation.NotCareLogin;
 import com.hr.manage.web.constant.FunctionIds;
 import com.hr.manage.web.util.DataMapUtil;
+import com.hr.manage.web.util.ExportBeanExcel;
 
 /**
  * 
@@ -371,7 +372,7 @@ public class ResumeController {
 	            List<ResumeInfo> resumeInfoList = new ArrayList<ResumeInfo>();
 	            while (rows.hasNext()) {  
 	                Row row = rows.next();  //获得行数据  
-	                if(row.getRowNum()<1||row==null)
+	                if(row.getRowNum()<1||ExportBeanExcel.isRowEmpty(row))
 	                	continue;
 	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
 	                ResumeInfo detail= new ResumeInfo();
@@ -500,7 +501,10 @@ public class ResumeController {
 	                detail.setStatus(1);
 	                detail.setIsDel(1);
 	                detail.setCreateTime(new Date());
-	                resumeInfoList.add(detail);              
+	                if(!StringUtils.isBlank(detail.getName())){
+	                	resumeInfoList.add(detail); 
+	                }
+	                             
 			}
 	        //批量入库
 	        try {

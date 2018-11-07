@@ -640,6 +640,9 @@ public class PersonalController {
 								break;
 							case 49:// 基本工资
 								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									transforValue="0";
+								}
 								salary.setBasePay(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 50:// 绩效工资
