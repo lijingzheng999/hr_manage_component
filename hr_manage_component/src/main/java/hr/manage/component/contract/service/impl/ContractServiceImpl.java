@@ -74,9 +74,15 @@ public class ContractServiceImpl implements ContractService {
 			return -2;
 		}
 		else{
+			//已离职员工不能新增合同
+			if(work.getLeaveStatus().equals(0)){
+				return -4;
+			}
 			work.setContractCount(contractInfo.getContractCount());
-			work.setContractRenewDate(contractInfo.getStartDate());
-			work.setContractRenewEnddate(contractInfo.getEndDate());
+			if(curContractCount==2){
+				work.setContractRenewDate(contractInfo.getStartDate());
+				work.setContractRenewEnddate(contractInfo.getEndDate());
+			}
 			work.setUpdateTime(new Date());
 			boolean curResult = personalWorkInfoDAO.update(work);
 			if(curResult){

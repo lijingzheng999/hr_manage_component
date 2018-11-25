@@ -277,6 +277,68 @@ public class SalaryController {
 		return "@" + JSONResult.success(dataMap);
 	}
 	
+	/**
+     * 
+    * Title: exportSalaryDetailList
+    * Description: 通过条件导出工资表明细
+    * Url: salary/exportSalaryDetailList
+    * @param String name, 姓名
+    * @param String term,账期
+    * @param String expatriateUnit,外派单位
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@NotCareLogin
+	@Get("exportSalaryDetailList")
+	@Post("exportSalaryDetailList")
+	public String exportSalaryDetailList(@Param("name") String name,
+			@Param("term") String term,
+			@Param("expatriateUnit") String expatriateUnit) {
+		SalaryDetailCondition condition = new SalaryDetailCondition();
+			condition.setName(name);
+			condition.setTerm(term);
+			condition.setExpatriateUnit(expatriateUnit);
+		List<SalaryDetail> salaryLists = new ArrayList<>();
+		try {
+			salaryLists = salaryService.listSalaryDetail(condition);
+		} catch (Exception e) {
+			logger.error("=====根据条件导出工资表明细查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		//根据查询条件和字段导出到excel
+		Admin admin = (Admin)inv.getRequest().getSession().getAttribute("user");
+		String dateStr = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+		String fileName = "SalaryListExport-" + dateStr + ".xlsx";
+		HttpServletResponse response = inv.getResponse();
+		response.setCharacterEncoding("UTF-8");
+		response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");//xlsx
+//		response.setContentType("application/vnd.ms-excel");//xls
+		String heads = "";
+		String columns = "";
+		List<String> listHeads = StringToListUtil.getStringList(heads, ",");
+		List<String> listColumns = StringToListUtil.getStringList(columns, ",");
+		OutputStream out = null;
+		try {
+			out = response.getOutputStream();
+			ExportBeanExcel<SalaryDetail> exportBeanExcelUtil = new ExportBeanExcel();
+			exportBeanExcelUtil.exportExcel("工资表列表",listHeads,listColumns,salaryLists,out);
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.error(admin.getRealname() + " 操作导出工资表列表文件出错", e);
+			e.printStackTrace();
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		} finally {
+			try {
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;	
+}
 
 	/**
      * 
@@ -793,6 +855,69 @@ public class SalaryController {
 			return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！请重新导入");  
 		}
 		
+	}
+	
+	/**
+     * 
+    * Title: exportProfitDetailList
+    * Description: 通过条件导出利润测算表明细
+    * Url: salary/exportProfitDetailList
+    * @param String name, 姓名
+    * @param String term,账期
+    * @return String    
+    * @see ProfitDetail
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_19)
+	@NotCareLogin
+	@Get("exportProfitDetailList")
+	@Post("exportProfitDetailList")
+	public String exportProfitDetailList(@Param("name") String name,
+			@Param("term") String term) {
+		ProfitDetailCondition condition = new ProfitDetailCondition();
+			condition.setName(name);
+			condition.setTerm(term);
+			
+		
+		List<ProfitDetail> profitLists = new ArrayList<>();
+		try {
+			profitLists = salaryService.listProfitDetail(condition);
+		} catch (Exception e) {
+			logger.error("=====通过条件查询利润测算表明细查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		//根据查询条件和字段导出到excel
+				Admin admin = (Admin)inv.getRequest().getSession().getAttribute("user");
+				String dateStr = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+				String fileName = "ProfitListExport-" + dateStr + ".xlsx";
+				HttpServletResponse response = inv.getResponse();
+				response.setCharacterEncoding("UTF-8");
+				response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+				response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");//xlsx
+//				response.setContentType("application/vnd.ms-excel");//xls
+				String heads = "";
+				String columns = "";
+				List<String> listHeads = StringToListUtil.getStringList(heads, ",");
+				List<String> listColumns = StringToListUtil.getStringList(columns, ",");
+				OutputStream out = null;
+				try {
+					out = response.getOutputStream();
+					ExportBeanExcel<ProfitDetail> exportBeanExcelUtil = new ExportBeanExcel();
+					exportBeanExcelUtil.exportExcel("利润测算表列表",listHeads,listColumns,profitLists,out);
+				} catch (IOException e) {
+					e.printStackTrace();
+					logger.error(admin.getRealname() + " 操作导出利润测算表列表文件出错", e);
+					e.printStackTrace();
+					return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+				} finally {
+					try {
+						out.flush();
+						out.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				return null;	
 	}
 	
 	

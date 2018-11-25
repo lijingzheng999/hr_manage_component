@@ -96,10 +96,27 @@ public class PersonalServiceImpl implements PersonalService {
 			contractInfo.setEndDate(work.getContractEnddate());
 			contractInfo.setContractCount(1); // 导入默认为第一次；
 			contractInfo.setMemo(person.getMemo());
-			contractInfo.setStatus(1);
 			contractInfo.setIsDel(1);
 			contractInfo.setCreateTime(new Date());
-			contractInfoDAO.save(contractInfo);
+			//判断是否有续签
+			if(work.getContractRenewDate()!=null && work.getContractRenewEnddate()!=null){
+				
+				contractInfo.setStatus(0);
+				contractInfoDAO.save(contractInfo);
+				
+				
+				contractInfo.setContractNumber(employeeNumber + "02"); // 合同编号=员工编号+"02"
+				contractInfo.setStartDate(work.getContractRenewDate());
+				contractInfo.setEndDate(work.getContractRenewEnddate());
+				contractInfo.setContractCount(2); // 导入默认为第一次；
+				contractInfo.setStatus(1);
+				contractInfoDAO.save(contractInfo);
+			}
+			else{
+				contractInfo.setStatus(1);
+				contractInfoDAO.save(contractInfo);
+			}
+			
 			logger.info("savePersonalAll : 员工编号：" + employeeNumber
 					+ person.getName());
 		}
@@ -552,10 +569,27 @@ public class PersonalServiceImpl implements PersonalService {
 		contractInfo.setEndDate(work.getContractEnddate());
 		contractInfo.setContractCount(1); // 导入默认为第一次；
 		contractInfo.setMemo(person.getMemo());
-		contractInfo.setStatus(1);
 		contractInfo.setIsDel(1);
 		contractInfo.setCreateTime(new Date());
-		contractInfoDAO.save(contractInfo);
+		//判断是否有续签
+		if(work.getContractRenewDate()!=null && work.getContractRenewEnddate()!=null){
+			
+			contractInfo.setStatus(0);
+			contractInfoDAO.save(contractInfo);
+			
+			
+			contractInfo.setContractNumber(employeeNumber + "02"); // 合同编号=员工编号+"02"
+			contractInfo.setStartDate(work.getContractRenewDate());
+			contractInfo.setEndDate(work.getContractRenewEnddate());
+			contractInfo.setContractCount(2); // 导入默认为第一次；
+			contractInfo.setStatus(1);
+			contractInfoDAO.save(contractInfo);
+		}
+		else{
+			contractInfo.setStatus(1);
+			contractInfoDAO.save(contractInfo);
+		}
+		
 		logger.info("savePersonalAll : 员工编号：" + employeeNumber
 				+ person.getName());
 		result=1;
