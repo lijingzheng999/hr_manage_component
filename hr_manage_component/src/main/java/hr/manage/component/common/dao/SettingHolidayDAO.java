@@ -21,7 +21,7 @@ public interface SettingHolidayDAO  extends GenericDAO<SettingHoliday,Integer>{
 	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE 1 = 1 " +
 	            "#if(:1 != null) { and type = :1 } " +
 	            "#if(:2 != null) { and cur_date >= :2 } " +
-	            "#if(:3 != null) { and cur_date <= :3 } " +
+	            "#if(:3 != null) { and cur_date < :3 } " +
 	            " and is_del=1 " +
 	            " order by id ")
 	    List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate);
@@ -30,4 +30,8 @@ public interface SettingHolidayDAO  extends GenericDAO<SettingHoliday,Integer>{
 		           " set is_del=0,update_time = now() " +
 		    		" where id = :1 ")
 		    int deleteSettingHoliday(Integer fileId);
+	    
+	    @SQL("SELECT  " + COLUMNS + " FROM "+TABLE+" WHERE cur_date=:1 " +
+	            " and is_del=1 ")
+	    SettingHoliday getSettingHolidayByDay(Date curDay);
 }

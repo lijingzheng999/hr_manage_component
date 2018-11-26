@@ -77,4 +77,8 @@ public class CommonServiceImpl implements CommonService {
 	public int saveSettingHoliday(SettingHoliday holiday){
 		return settingHolidayDAO.save(holiday);
 	}
+	@Override
+	public SettingHoliday getSettingHolidayByDay(Date curDay){
+		return settingHolidayDAO.getSettingHolidayByDay(curDay);
+	}
 }

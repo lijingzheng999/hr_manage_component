@@ -8,6 +8,8 @@ import hr.manage.component.checkwork.model.CheckWorkCurrent;
 import hr.manage.component.checkwork.model.CheckWorkDetail;
 import hr.manage.component.checkwork.model.CheckWorkDetailCondition;
 import hr.manage.component.checkwork.service.CheckWorkService;
+import hr.manage.component.common.model.SettingHoliday;
+import hr.manage.component.common.service.CommonService;
 import hr.manage.component.contract.model.ContractCondition;
 import hr.manage.component.contract.model.ContractInfo;
 import hr.manage.component.contract.service.ContractService;
@@ -105,6 +107,8 @@ public class CheckWorkController {
 	PersonalService personalService;
 	@Autowired
 	SalaryService salaryService;
+	@Autowired
+	CommonService commonService;
 	private final Log logger = LogFactory.getLog(CheckWorkController.class);
 	private static final String FILE_UPLOAD_PATH=ServiceConfigFactory.getValue("file.upload.path");
 	
@@ -257,6 +261,7 @@ public class CheckWorkController {
 			return "@" + JSONResult.error(CodeMsg.ERROR,"导入全通物联网考勤信息excel,本月已经上传过社保信息");
 		}
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
+		
 		long fileNumber = 0;
 		try {
 			/**
@@ -535,6 +540,23 @@ public class CheckWorkController {
 //			return "@" + JSONResult.error(CodeMsg.ERROR,"导入百度考勤信息excel,本月已经上传过社保信息");
 //		}
 		Admin user = (Admin)inv.getRequest().getSession().getAttribute("user");
+		SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
+		java.util.Date startDate=null;
+		try {
+			startDate = sdt.parse(String.valueOf(term).trim());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        Calendar endDate = Calendar.getInstance();  
+        endDate.setTime(startDate);  
+        endDate.add(Calendar.MONTH, 1);  
+        //获取节假日列表
+        List<SettingHoliday> listSettingHolidays = commonService.listSettingHoliday(null,startDate,endDate.getTime());
+        Map<Integer,Integer> mapHolidays = new HashMap<Integer,Integer>();
+        for (SettingHoliday settingHoliday : listSettingHolidays) {
+        	mapHolidays.put(settingHoliday.getCurDate().getDate(), settingHoliday.getType());
+		}
 		long fileNumber = 0;
 		try {
 			/**
@@ -649,7 +671,8 @@ public class CheckWorkController {
 	   						 * 处理文件中定义的属性
 	   						 */
 	   						String transforValue="";
-	   						String [] colorStrings=new String [2];
+//	   						String [] colorStrings=new String [2];
+	   						String colorStrings="";
 	   						switch (cell.getColumnIndex()) {
 	   							case 0:// 序号
 	   								break;
@@ -676,9 +699,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print( "  1 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print( "  1 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(1);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -692,9 +715,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  2 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  2 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(2);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -708,9 +731,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  3 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  3 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(3);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -724,9 +747,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  4 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  4 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(4);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -740,9 +763,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  5 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  5 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(5);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -755,9 +778,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  6 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  6 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(6);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -770,9 +793,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  7 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  7 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(7);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -785,9 +808,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  8 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  8 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(8);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -800,9 +823,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  9 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  9 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(9);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -815,9 +838,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  10 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  10 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(10);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -830,9 +853,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print( "  11 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print( "  11 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(11);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -845,9 +868,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  12 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  12 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(12);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -860,9 +883,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  13 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  13 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(13);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -875,9 +898,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  14 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  14 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(14);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -890,9 +913,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  15 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  15 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(15);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -905,9 +928,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  16 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  16 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(16);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -920,9 +943,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  17 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  17 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(17);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -935,9 +958,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  18 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  18 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(18);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -950,9 +973,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  19 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  19 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(19);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -965,9 +988,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  20 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  20 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(20);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -980,9 +1003,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  21 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  21 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(21);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -995,9 +1018,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  22 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  22 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(22);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1010,9 +1033,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  23 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  23 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(23);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1025,9 +1048,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  24 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  24 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(24);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1040,9 +1063,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  25 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  25 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(25);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1055,9 +1078,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  26 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  26 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(26);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1070,9 +1093,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  27 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  27 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(27);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1085,9 +1108,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  28 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  28 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(28);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1100,9 +1123,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  29 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  29 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(29);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1115,9 +1138,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  30 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  30 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(30);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
@@ -1130,9 +1153,9 @@ public class CheckWorkController {
 	   									continue;
 	   								}
 	   								//0为背景色  1:为字体色
-	   								colorStrings = ExportBeanExcel.getColors(wb,cell);
+	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
-	   									System.out.print(  "  31 "+colorStrings[0]+ " "+colorStrings[1]+" "+transforValue);
+	   									System.out.print(  "  31 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(31);
 	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);

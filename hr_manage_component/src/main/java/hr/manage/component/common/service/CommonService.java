@@ -93,5 +93,16 @@ public interface CommonService {
     * @throws
      */
 	public int saveSettingHoliday(SettingHoliday holiday);
+	
+	/**
+     * 
+    * @Title: getSettingHolidayByDay
+    * @Description: 根据日期获取节假日信息
+    * @Param Date curDay
+    * @param @return    
+    * @return SettingHoliday    
+    * @throws
+     */
+	public SettingHoliday getSettingHolidayByDay(Date curDay);
 
 }
