@@ -387,21 +387,23 @@ public class SalaryServiceImpl implements SalaryService {
 						detail.getInsuranceDeduction()));
 			}
 			// 应纳税所得额==IF(U-3500>0,U-3500,0) U为报税工资
-			if (detail.getTaxPay().compareTo(new BigDecimal(3500)) > 0) {
+			// new应纳税所得额==IF(U-5000>0,U-5000,0) U为报税工资
+			if (detail.getTaxPay().compareTo(new BigDecimal(5000)) > 0) {
 				detail.setShouldTaxAmount(detail.getTaxPay().subtract(
-						new BigDecimal(3500)));
+						new BigDecimal(5000)));
 			} else {
 				detail.setShouldTaxAmount(BigDecimal.ZERO);
 			}
 			// 税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
+			//new 税率=IF(V2>25000,"25%",IF(V2>12000,"20%",IF(V2>3000,"10%",IF(V2>0,"3%",0))))
 			// V为应纳税所得额
-			if (detail.getShouldTaxAmount().compareTo(new BigDecimal(9000)) > 0) {
+			if (detail.getShouldTaxAmount().compareTo(new BigDecimal(25000)) > 0) {
 				detail.setTax(new BigDecimal("0.25"));
 			} else if (detail.getShouldTaxAmount().compareTo(
-					new BigDecimal(4500)) > 0) {
+					new BigDecimal(12000)) > 0) {
 				detail.setTax(new BigDecimal("0.20"));
 			} else if (detail.getShouldTaxAmount().compareTo(
-					new BigDecimal(1500)) > 0) {
+					new BigDecimal(3000)) > 0) {
 				detail.setTax(new BigDecimal("0.10"));
 			} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(0)) > 0) {
 				detail.setTax(new BigDecimal("0.03"));
@@ -410,13 +412,14 @@ public class SalaryServiceImpl implements SalaryService {
 			}
 			// 速算扣除数
 			// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
+			//new =IF(W2="25%",2660,IF(W2="20%",1410,IF(W2="10%",210,IF(W2="3%",0,0))))
 			// W为税率
 			if (detail.getTax().compareTo(new BigDecimal("0.25")) == 0) {
-				detail.setDeductNumber(new BigDecimal(1005));
+				detail.setDeductNumber(new BigDecimal(2660));
 			} else if (detail.getTax().compareTo(new BigDecimal("0.20")) == 0) {
-				detail.setDeductNumber(new BigDecimal(555));
+				detail.setDeductNumber(new BigDecimal(1410));
 			} else if (detail.getTax().compareTo(new BigDecimal("0.10")) == 0) {
-				detail.setDeductNumber(new BigDecimal(105));
+				detail.setDeductNumber(new BigDecimal(210));
 			} else if (detail.getTax().compareTo(new BigDecimal("0.03")) == 0) {
 				detail.setDeductNumber(new BigDecimal(0));
 			} else {
@@ -679,41 +682,45 @@ public class SalaryServiceImpl implements SalaryService {
 					detail.getInsuranceDeduction()));
 		}
 		// 应纳税所得额==IF(U-3500>0,U-3500,0) U为报税工资
-		if (detail.getTaxPay().compareTo(new BigDecimal(3500)) > 0) {
-			detail.setShouldTaxAmount(detail.getTaxPay().subtract(
-					new BigDecimal(3500)));
-		} else {
-			detail.setShouldTaxAmount(BigDecimal.ZERO);
-		}
-		// 税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
-		// V为应纳税所得额
-		if (detail.getShouldTaxAmount().compareTo(new BigDecimal(9000)) > 0) {
-			detail.setTax(new BigDecimal("0.25"));
-		} else if (detail.getShouldTaxAmount().compareTo(
-				new BigDecimal(4500)) > 0) {
-			detail.setTax(new BigDecimal("0.20"));
-		} else if (detail.getShouldTaxAmount().compareTo(
-				new BigDecimal(1500)) > 0) {
-			detail.setTax(new BigDecimal("0.10"));
-		} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(0)) > 0) {
-			detail.setTax(new BigDecimal("0.03"));
-		} else {
-			detail.setTax(new BigDecimal("0.00"));
-		}
-		// 速算扣除数
-		// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
-		// W为税率
-		if (detail.getTax().compareTo(new BigDecimal("0.25")) == 0) {
-			detail.setDeductNumber(new BigDecimal(1005));
-		} else if (detail.getTax().compareTo(new BigDecimal("0.20")) == 0) {
-			detail.setDeductNumber(new BigDecimal(555));
-		} else if (detail.getTax().compareTo(new BigDecimal("0.10")) == 0) {
-			detail.setDeductNumber(new BigDecimal(105));
-		} else if (detail.getTax().compareTo(new BigDecimal("0.03")) == 0) {
-			detail.setDeductNumber(new BigDecimal(0));
-		} else {
-			detail.setDeductNumber(new BigDecimal(0));
-		}
+					// new应纳税所得额==IF(U-5000>0,U-5000,0) U为报税工资
+					if (detail.getTaxPay().compareTo(new BigDecimal(5000)) > 0) {
+						detail.setShouldTaxAmount(detail.getTaxPay().subtract(
+								new BigDecimal(5000)));
+					} else {
+						detail.setShouldTaxAmount(BigDecimal.ZERO);
+					}
+					// 税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
+					//new 税率=IF(V2>25000,"25%",IF(V2>12000,"20%",IF(V2>3000,"10%",IF(V2>0,"3%",0))))
+					// V为应纳税所得额
+					if (detail.getShouldTaxAmount().compareTo(new BigDecimal(25000)) > 0) {
+						detail.setTax(new BigDecimal("0.25"));
+					} else if (detail.getShouldTaxAmount().compareTo(
+							new BigDecimal(12000)) > 0) {
+						detail.setTax(new BigDecimal("0.20"));
+					} else if (detail.getShouldTaxAmount().compareTo(
+							new BigDecimal(3000)) > 0) {
+						detail.setTax(new BigDecimal("0.10"));
+					} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(0)) > 0) {
+						detail.setTax(new BigDecimal("0.03"));
+					} else {
+						detail.setTax(new BigDecimal("0.00"));
+					}
+					// 速算扣除数
+					// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
+					//new =IF(W2="25%",2660,IF(W2="20%",1410,IF(W2="10%",210,IF(W2="3%",0,0))))
+					// W为税率
+					if (detail.getTax().compareTo(new BigDecimal("0.25")) == 0) {
+						detail.setDeductNumber(new BigDecimal(2660));
+					} else if (detail.getTax().compareTo(new BigDecimal("0.20")) == 0) {
+						detail.setDeductNumber(new BigDecimal(1410));
+					} else if (detail.getTax().compareTo(new BigDecimal("0.10")) == 0) {
+						detail.setDeductNumber(new BigDecimal(210));
+					} else if (detail.getTax().compareTo(new BigDecimal("0.03")) == 0) {
+						detail.setDeductNumber(new BigDecimal(0));
+					} else {
+						detail.setDeductNumber(new BigDecimal(0));
+					}
+		
 		// 代扣代缴所得税=ROUND((V*W-X),2)
 		// V应纳税所得额 W税率 X速算扣除数
 		BigDecimal incomeTax = detail.getShouldTaxAmount()
@@ -795,39 +802,44 @@ public class SalaryServiceImpl implements SalaryService {
 		detail.setTaxPay(detail.getShouldPay().subtract(
 				detail.getInsuranceDeduction()));
 		// 应纳税所得额==IF(U-3500>0,U-3500,0) U为报税工资
-		if (detail.getTaxPay().compareTo(new BigDecimal(3500)) > 0) {
-			detail.setShouldTaxAmount(detail.getTaxPay().subtract(
-					new BigDecimal(3500)));
-		} else {
-			detail.setShouldTaxAmount(BigDecimal.ZERO);
-		}
-		// 税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
-		// V为应纳税所得额
-		if (detail.getShouldTaxAmount().compareTo(new BigDecimal(9000)) > 0) {
-			detail.setTax(new BigDecimal("0.25"));
-		} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(4500)) > 0) {
-			detail.setTax(new BigDecimal("0.20"));
-		} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(1500)) > 0) {
-			detail.setTax(new BigDecimal("0.10"));
-		} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(0)) > 0) {
-			detail.setTax(new BigDecimal("0.03"));
-		} else {
-			detail.setTax(new BigDecimal("0.00"));
-		}
-		// 速算扣除数
-		// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
-		// W为税率
-		if (detail.getTax().compareTo(new BigDecimal("0.25")) == 0) {
-			detail.setDeductNumber(new BigDecimal(1005));
-		} else if (detail.getTax().compareTo(new BigDecimal("0.20")) == 0) {
-			detail.setDeductNumber(new BigDecimal(555));
-		} else if (detail.getTax().compareTo(new BigDecimal("0.10")) == 0) {
-			detail.setDeductNumber(new BigDecimal(105));
-		} else if (detail.getTax().compareTo(new BigDecimal("0.03")) == 0) {
-			detail.setDeductNumber(new BigDecimal(0));
-		} else {
-			detail.setDeductNumber(new BigDecimal(0));
-		}
+					// new应纳税所得额==IF(U-5000>0,U-5000,0) U为报税工资
+					if (detail.getTaxPay().compareTo(new BigDecimal(5000)) > 0) {
+						detail.setShouldTaxAmount(detail.getTaxPay().subtract(
+								new BigDecimal(5000)));
+					} else {
+						detail.setShouldTaxAmount(BigDecimal.ZERO);
+					}
+					// 税率=IF(V>9000,"25%",IF(V>4500,"20%",IF(V>1500,"10%",IF(V>0,"3%",0))))
+					//new 税率=IF(V2>25000,"25%",IF(V2>12000,"20%",IF(V2>3000,"10%",IF(V2>0,"3%",0))))
+					// V为应纳税所得额
+					if (detail.getShouldTaxAmount().compareTo(new BigDecimal(25000)) > 0) {
+						detail.setTax(new BigDecimal("0.25"));
+					} else if (detail.getShouldTaxAmount().compareTo(
+							new BigDecimal(12000)) > 0) {
+						detail.setTax(new BigDecimal("0.20"));
+					} else if (detail.getShouldTaxAmount().compareTo(
+							new BigDecimal(3000)) > 0) {
+						detail.setTax(new BigDecimal("0.10"));
+					} else if (detail.getShouldTaxAmount().compareTo(new BigDecimal(0)) > 0) {
+						detail.setTax(new BigDecimal("0.03"));
+					} else {
+						detail.setTax(new BigDecimal("0.00"));
+					}
+					// 速算扣除数
+					// =IF(W="25%",1005,IF(W="20%",555,IF(W="10%",105,IF(W="3%",0,0))))
+					//new =IF(W2="25%",2660,IF(W2="20%",1410,IF(W2="10%",210,IF(W2="3%",0,0))))
+					// W为税率
+					if (detail.getTax().compareTo(new BigDecimal("0.25")) == 0) {
+						detail.setDeductNumber(new BigDecimal(2660));
+					} else if (detail.getTax().compareTo(new BigDecimal("0.20")) == 0) {
+						detail.setDeductNumber(new BigDecimal(1410));
+					} else if (detail.getTax().compareTo(new BigDecimal("0.10")) == 0) {
+						detail.setDeductNumber(new BigDecimal(210));
+					} else if (detail.getTax().compareTo(new BigDecimal("0.03")) == 0) {
+						detail.setDeductNumber(new BigDecimal(0));
+					} else {
+						detail.setDeductNumber(new BigDecimal(0));
+					}
 		// 代扣代缴所得税=ROUND((V*W-X),2)
 		// V应纳税所得额 W税率 X速算扣除数
 		BigDecimal incomeTax = detail.getShouldTaxAmount()

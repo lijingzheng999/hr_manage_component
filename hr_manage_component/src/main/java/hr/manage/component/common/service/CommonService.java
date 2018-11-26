@@ -1,11 +1,13 @@
 package hr.manage.component.common.service;
 
 import hr.manage.component.common.model.CommonType;
+import hr.manage.component.common.model.SettingHoliday;
 import hr.manage.component.common.model.UploadFile;
 import hr.manage.component.personal.model.PersonalAll;
 import hr.manage.component.personal.model.PersonalAllExport;
 import hr.manage.component.personal.model.PersonalCondition;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -58,6 +60,38 @@ public interface CommonService {
      */
 	public List<CommonType> listCommonType(Integer type);
 	
+	/**
+     * 
+    * @Title: listSettingHoliday
+    * @Description: 获取节假日日期设置
+    * @Param nteger type,Date startDate, Date endDate
+    * @param @return    
+    * @return List<SettingHoliday>    
+    * @throws
+     */
+	public List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate);
 	
+	/**
+     * 
+    * @Title: deleteSettingHoliday
+    * @Description: 逻辑删除节假日日期设置
+    * @Param Integer fileId
+    * @param @return    
+    * @return int    
+    * @throws
+     */
+	public int deleteSettingHoliday(Integer holiDayId);
 	
+
+	/**
+     * 
+    * @Title: saveSettingHoliday
+    * @Description: 保存上传附件
+    * @Param SettingHoliday holiday
+    * @param @return    
+    * @return int    
+    * @throws
+     */
+	public int saveSettingHoliday(SettingHoliday holiday);
+
 }

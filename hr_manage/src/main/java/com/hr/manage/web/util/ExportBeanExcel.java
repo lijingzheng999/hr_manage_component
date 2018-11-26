@@ -96,14 +96,16 @@ public class ExportBeanExcel<T> {
             zdRow++;
             row = sheet.createRow(zdRow);
             T l = (T) labIt.next();
+            Iterator<String> zdIt = zdC.iterator();//一条字段的集合的迭代器
+            while (zdIt.hasNext()) {//遍历要导出的字段集合
+            String curZdIt=zdIt.next();
             // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
             Field[] fields = l.getClass().getDeclaredFields();//获得JavaBean全部属性
             for (short i = 0; i < fields.length; i++) {//遍历属性，比对
                 Field field = fields[i];
                 String fieldName = field.getName();//属性名
-                Iterator<String> zdIt = zdC.iterator();//一条字段的集合的迭代器
-                while (zdIt.hasNext()) {//遍历要导出的字段集合
-                    if (zdIt.next().equals(fieldName)) {//比对JavaBean的属性名，一致就写入，不一致就丢弃
+               
+                    if (curZdIt.equals(fieldName)) {//比对JavaBean的属性名，一致就写入，不一致就丢弃
                         String getMethodName = "get"
                                 + fieldName.substring(0, 1).toUpperCase()
                                 + fieldName.substring(1);//拿到属性的get方法

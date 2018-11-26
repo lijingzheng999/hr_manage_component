@@ -315,8 +315,8 @@ public class SalaryController {
 		response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");//xlsx
 //		response.setContentType("application/vnd.ms-excel");//xls
-		String heads = "";
-		String columns = "";
+		String heads = "姓名,月份,入职时间,外派单位, 试用期工资 , 基本工资 , 绩效工资 , 其他工资 , 交通补助 , 电脑补助 , 餐补 , 话补 , 考勤扣款 , 其它扣款 ,本月应发工资,个人养老,个人医疗,个人失业,个人公积金,个人社保及公积金扣款合计, 报税工资 , 应纳税所得额 , 税率 ,速算扣除数,代扣代缴所得税,实发工资,招行代发";
+		String columns = "name,term,entryTime,expatriateUnit,probationaryPay,basePay,meritPay,otherPay,trafficSubsidy,computerSubsidy,mealSubsidy,phoneSubsidy,attendanceDeduction,otherDeduction,shouldPay,endowment,medical,unemployment,accumulationFund,insuranceDeduction,taxPay,shouldTaxAmount,tax,deductNumber,incomeTax,realPay,bankPay";
 		List<String> listHeads = StringToListUtil.getStringList(heads, ",");
 		List<String> listColumns = StringToListUtil.getStringList(columns, ",");
 		OutputStream out = null;
@@ -895,8 +895,8 @@ public class SalaryController {
 				response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 				response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");//xlsx
 //				response.setContentType("application/vnd.ms-excel");//xls
-				String heads = "";
-				String columns = "";
+				String heads = "姓名,月份,外派单位,部门,所在城市,职务,级别,试用期薪资,基本工资,绩效工资,交通补,电脑补,餐费补,其他补助,试用期五险一金,转正后薪资,公司承担社保,公司承担公积金,薪资(全通结算价),天数,日单价,试用期工会经费,试用期残疾人就业保障金,试用期增值税及附加税,转正后工会经费,转正后残疾人就业保障金,转正后增值税及附加税,试用期利润,试用期利润率,转正后利润,转正后利润率";
+				String columns = "name,term,expatriateUnit,workingPlace,department,position,level,probationaryPay,basePay,meritPay,trafficSubsidy,computerSubsidy,mealSubsidy,otherPay,probationaryInsurance,workerPay,socialSecurity,housingPay,settlementPrice,settlementDays,settlementDayPrice,probationaryUnionPay,probationaryDisabledPay,probationaryTaxPay,unionPay,disabledPay,taxPay,probationaryProfit,probationaryProfitRate,profit,profitRate";
 				List<String> listHeads = StringToListUtil.getStringList(heads, ",");
 				List<String> listColumns = StringToListUtil.getStringList(columns, ",");
 				OutputStream out = null;

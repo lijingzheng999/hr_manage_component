@@ -3,11 +3,15 @@ package com.hr.manage.web.controllers;
 import hr.manage.component.admin.model.Admin;
 import hr.manage.component.admin.service.AdminService;
 import hr.manage.component.common.model.CommonType;
+import hr.manage.component.common.model.SettingHoliday;
 import hr.manage.component.common.model.UploadFile;
 import hr.manage.component.common.model.UploadResult;
 import hr.manage.component.common.service.CommonService;
 import hr.manage.component.personal.model.PersonalAll;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,4 +186,115 @@ public class CommonController {
 		return "@"+JSONResult.success(listUploadFile);
 	}
 	
+	/**
+     * 
+    * Title: listSettingHoliday
+    * Description: 获取节假日设置列表
+    * Url: common/listSettingHoliday
+    * @param Integer type,Date startDate, Date endDate 
+    * @return List<SettingHoliday>    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
+	@NotCareLogin
+	@Post("listSettingHoliday")
+	@Get("listSettingHoliday")
+	public String listSettingHoliday(@Param("type") Integer type,@Param("startDate") String startDate,
+			@Param("endDate") String endDate){
+		SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟  
+		Date curStartDate=null;
+		Date curEndDate=null;
+		try {
+			if(StringUtils.isNotBlank(startDate)){
+				curStartDate = sdt.parse(String.valueOf(startDate).trim());			
+			}
+			if(StringUtils.isNotBlank(endDate)){
+				curEndDate = sdt.parse(String.valueOf(endDate).trim());
+			}
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			logger.error("=====参数错误，日期格式不对，转换错误=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，日期格式不对，转换错误！");
+		}
+		List<SettingHoliday> listSettingHoliday = commonService.listSettingHoliday(type,curStartDate,curEndDate);
+		return "@"+JSONResult.success(listSettingHoliday);
+	}
+	
+
+	/**
+     * 
+    * Title: deleteSettingHoliday
+    * Description: 删除节假日设置
+    * Url: common/deleteSettingHoliday
+    * @param Integer holiDayId  节假日设置ID
+    * @return String    
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
+	@NotCareLogin
+	@Post("deleteSettingHoliday")
+	@Get("deleteSettingHoliday")
+	public String deleteSettingHoliday(@Param("holiDayId") Integer holiDayId){
+		if(holiDayId==null ){
+			logger.error("=====holiDayId参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"holiDayId参数错误，不应为空！");
+		}
+		int result = commonService.deleteSettingHoliday(holiDayId);
+		if(result>0){
+			return "@"+JSONResult.success();
+		}
+		else{
+			return "@" + JSONResult.error(CodeMsg.ERROR, "删除节假日设置失败");
+		}
+	}
+	
+	/**
+     * 
+    * Title: saveSettingHoliday
+    * Description: 上传附件
+    * Url: common/saveSettingHoliday
+    * @param Integer type  日期类型 1标记为普通工作日 2标记为周末 3标记为节假日
+    * @param String curDate  具体日期
+    * @param @return    
+    * @return String    UploadResult的json
+    * @see UploadResult
+    * 
+    * @throws
+     */
+	@AuthorityCheck(function = FunctionIds.FUNCTION_11)
+	@NotCareLogin
+	@Post("saveSettingHoliday")
+	@Get("saveSettingHoliday")
+	public String saveSettingHoliday(@Param("type") Integer type,@Param("curDate")String curDate){
+		if(type==null ){
+			logger.error("=====type参数错误，不应为空=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"type参数错误，不应为空！");
+		}
+		SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟  
+		Date curSetDate=null;
+		try {
+			if(StringUtils.isNotBlank(curDate)){
+				curSetDate = sdt.parse(String.valueOf(curDate).trim());			
+			}
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			logger.error("=====参数错误，日期格式不对，转换错误=====");
+			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，日期格式不对，转换错误！");
+		}
+		
+		SettingHoliday holiday = new SettingHoliday();
+		holiday.setType(type);
+		holiday.setCurDate(curSetDate);
+		holiday.setCreateTime(new Date());
+		holiday.setIsDel(1);
+		int result = commonService.saveSettingHoliday(holiday);
+		if(result>0){
+			return "@"+JSONResult.success();
+		}
+		else{
+			return "@" + JSONResult.error(CodeMsg.ERROR, "保存数据库失败");
+		}
+	}
 }

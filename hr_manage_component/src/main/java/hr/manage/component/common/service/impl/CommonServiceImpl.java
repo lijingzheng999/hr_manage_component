@@ -3,8 +3,10 @@ package hr.manage.component.common.service.impl;
 import hr.manage.component.common.constants.DepartmentConstants;
 import hr.manage.component.common.constants.UnitConstants;
 import hr.manage.component.common.dao.CommonTypeDAO;
+import hr.manage.component.common.dao.SettingHolidayDAO;
 import hr.manage.component.common.dao.UploadFileDAO;
 import hr.manage.component.common.model.CommonType;
+import hr.manage.component.common.model.SettingHoliday;
 import hr.manage.component.common.model.UploadFile;
 import hr.manage.component.common.service.CommonService;
 import hr.manage.component.personal.dao.PersonalInfoDAO;
@@ -40,6 +42,8 @@ public class CommonServiceImpl implements CommonService {
 	CommonTypeDAO commonTypeDAO;
 	@Autowired
 	UploadFileDAO uploadFileDAO;
+	@Autowired
+	SettingHolidayDAO settingHolidayDAO;
 	
 	@Override
 	public int saveUploadFile(UploadFile file){
@@ -61,5 +65,16 @@ public class CommonServiceImpl implements CommonService {
 		return commonTypeDAO.listCommonType(type);
 	}
 	
-	
+	@Override
+	public List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate){
+		return settingHolidayDAO.listSettingHoliday(type,startDate,endDate);
+	}
+	@Override
+	public int deleteSettingHoliday(Integer holiDayId){
+		return settingHolidayDAO.deleteSettingHoliday(holiDayId);
+	}
+	@Override
+	public int saveSettingHoliday(SettingHoliday holiday){
+		return settingHolidayDAO.save(holiday);
+	}
 }
