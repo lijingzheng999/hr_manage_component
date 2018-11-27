@@ -626,6 +626,7 @@ public class CheckWorkController {
 	                while (cells.hasNext()) {  
 	               	 Cell cell = cells.next();  
 	               	 String cellValue = "";
+	               	 Integer holiType=0;
 	               	 detail = new CheckWorkBaiduDetail();
 	   					 switch (cell.getCellType()) {   //根据cell中的类型来输出数据  
 	   	                    case HSSFCell.CELL_TYPE_NUMERIC:  
@@ -698,13 +699,16 @@ public class CheckWorkController {
 	   								if(StringUtils.isBlank(transforValue)){
 	   									continue;
 	   								}
+	   								if(mapHolidays.containsKey(1)){
+	   									holiType=mapHolidays.get(1);
+	   								}
 	   								//0为背景色  1:为字体色
 	   								colorStrings = ExportBeanExcel.getFontColors(wb,cell);
 	   								if(colorStrings!=null){
 	   									System.out.print( "  1 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(1);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								//detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
@@ -720,7 +724,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  2 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(2);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								
@@ -736,7 +740,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  3 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(3);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								
@@ -752,7 +756,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  4 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(4);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								
@@ -768,7 +772,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  5 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(5);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -783,7 +787,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  6 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(6);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -798,7 +802,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  7 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(7);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -813,7 +817,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  8 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(8);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -828,7 +832,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  9 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(9);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -843,7 +847,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  10 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(10);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -858,7 +862,7 @@ public class CheckWorkController {
 	   									System.out.print( "  11 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(11);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -873,7 +877,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  12 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(12);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -888,7 +892,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  13 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(13);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -903,7 +907,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  14 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(14);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -918,7 +922,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  15 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(15);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -933,7 +937,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  16 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(16);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -948,7 +952,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  17 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(17);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -963,7 +967,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  18 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(18);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -978,7 +982,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  19 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(19);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -993,7 +997,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  20 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(20);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1008,7 +1012,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  21 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(21);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1023,7 +1027,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  22 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(22);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1038,7 +1042,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  23 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(23);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1053,7 +1057,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  24 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(24);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1068,7 +1072,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  25 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(25);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1083,7 +1087,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  26 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(26);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1098,7 +1102,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  27 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(27);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1113,7 +1117,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  28 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(28);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1128,7 +1132,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  29 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(29);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1143,7 +1147,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  30 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(30);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;
@@ -1158,7 +1162,7 @@ public class CheckWorkController {
 	   									System.out.print(  "  31 "+colorStrings+" "+transforValue);
 	   								}
 	   								detail.setCurrentDay(31);
-	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType);
+	   								detail=ExportBeanExcel.getDetail(detail, colorStrings, transforValue,curType,holiType);
 	   								baiduDetails.add(detail); 
 	   								System.out.print( detail.getCurrentDay()+"  "+detail.getType()+ " "+detail.getWorkType()+" "+detail.getWorkHours());
 	   								break;

@@ -152,15 +152,69 @@ public class ExportBeanExcel<T> {
     }
     
     //获取百度考勤详情
-    public static CheckWorkBaiduDetail getDetail(CheckWorkBaiduDetail detail,String colorStrings,String transforValue,Integer type ) {
+    public static CheckWorkBaiduDetail getDetail(CheckWorkBaiduDetail detail,String colorStrings,String transforValue,Integer type,Integer holiType ) {
 		// FABF8F背景红色;BFBFBF 背景黑色 FFFFFF背景白色 7F7F7F背景深黑
 		// FFFF0000字体红色
-//		detail.setType(type);
-//		if(colorStrings[0].equals("7F7F7F")){
-//			detail.setWorkType(3); //节假日加班有可能字体为黑色
-//			detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-//			return detail;
-//		}
+		detail.setType(type);
+		// 日期类型 1标记为普通工作日 2标记为周末 3标记为节假日 
+		switch (holiType) {
+		case 1: //1标记为普通工作日
+			if(colorStrings.equals("FFFF0000")){ 
+				detail.setWorkType(1); //普通加班
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+			}
+			else{
+				detail.setWorkType(0);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+        	
+			}
+			break;
+        case 2: //2标记为周末
+        	if(colorStrings.equals("FFFF0000")){ 
+        		detail.setWorkType(2); //周末加班
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+        	}
+        	else{
+        		detail.setWorkType(0);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+        	}
+			break;
+        case 3: //3标记为节假日 
+        	if(colorStrings.equals("FFFF0000")){ 
+        		//红色字体；4倍工资
+        		detail.setWorkType(3); //节假日加班有可能字体为黑色
+    			detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+        	}
+        	else{
+        		//黑色字体；3倍工资
+        		detail.setWorkType(4); //节假日加班有可能字体为黑色
+    			detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+        	}
+        	break;
+		default: //正常计算
+			
+			//周中
+			if(transforValue.startsWith("年")){
+				detail.setWorkType(5);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue.substring(1, transforValue.length()))));
+			}
+			else if(transforValue.startsWith("病")){
+				detail.setWorkType(6);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue.substring(1, transforValue.length()))));
+			}
+			else if(transforValue.startsWith("事")){
+				detail.setWorkType(7);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue.substring(1, transforValue.length()))));
+			}
+			else{
+				detail.setWorkType(0);
+				detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+			}
+			break;
+		}
+			
+		
+
 //		//判断是否为加班
 //		if(colorStrings[1].equals("#")){
 //			if(transforValue.startsWith("年")){
