@@ -208,13 +208,13 @@ public class ExportBeanExcel<T> {
 			break;
         case 3: //3标记为节假日 
         	if(colorStrings.equals("FFFF0000")){ 
-        		//红色字体；4倍工资
-        		detail.setWorkType(3); //节假日加班有可能字体为黑色
+        		//红色字体；3倍工资
+        		detail.setWorkType(4); //节假日加班有可能字体为黑色
     			detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
         	}
         	else{
-        		//黑色字体；3倍工资
-        		detail.setWorkType(4); //节假日加班有可能字体为黑色
+        		//黑色字体；4倍工资
+        		detail.setWorkType(3); //节假日加班有可能字体为黑色
     			detail.setWorkHours(BigDecimal.valueOf(Double.parseDouble(transforValue)));
         	}
         	break;
