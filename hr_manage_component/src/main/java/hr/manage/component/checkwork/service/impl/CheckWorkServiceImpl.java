@@ -385,7 +385,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	        	//全通加班结算天数合计
 	        	BigDecimal settlementDays=BigDecimal.ZERO;
 	        	for (CheckWorkBaiduDetail detail : baidu.getBaiduDetails()) {
-	        		/** 0:正常班；1：普通加班；2：周末加班；3：节假日加班  ；4：年假算正常班 ；5：病假算正常班；6病假不算上班*/
+	        		/** 0:正常班；1：普通加班；2：周末加班；3：节假日加班 （4倍） ；4：节假日正常班(3倍)  ；5：年假算正常班 ；6：病假不算上班；7事假不算上班*/
 	        		switch (detail.getWorkType()) {
 					case 0:
 						checkWorkHours=checkWorkHours.add(detail.getWorkHours());
@@ -401,7 +401,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 						checkWorkHours=checkWorkHours.add(detail.getWorkHours());
 						break;
 					case 4:
-						checkWorkHours=checkWorkHours.add(detail.getWorkHours());
+						threeHours=threeHours.add(detail.getWorkHours());
 						break;
 					case 5:
 						checkWorkHours=checkWorkHours.add(detail.getWorkHours());

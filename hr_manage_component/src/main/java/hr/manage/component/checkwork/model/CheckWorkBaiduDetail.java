@@ -28,7 +28,7 @@ public class CheckWorkBaiduDetail implements java.io.Serializable {
     @Column(value = "type")
     private Integer type;
 
-    /** 0:正常班；1：普通加班；2：周末加班；3：节假日加班 （4倍） ；4：节假日正常班(3倍)  ；5：年假算正常班 ；6：病假算正常班；7事假不算上班*/
+    /** 0:正常班；1：普通加班；2：周末加班；3：节假日加班 （4倍） ；4：节假日正常班(3倍)  ；5：年假算正常班 ；6：病假不算上班；7事假不算上班*/
     @Column(value = "work_type")
     private Integer workType;
 
