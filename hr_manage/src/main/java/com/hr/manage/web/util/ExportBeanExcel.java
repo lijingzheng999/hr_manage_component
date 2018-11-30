@@ -15,6 +15,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -221,7 +223,7 @@ public class ExportBeanExcel<T> {
 		default: //正常计算
 			Calendar curDate = Calendar.getInstance();  
 			curDate.setTime(startDate);  
-			curDate.add(Calendar.DATE, detail.getCurrentDay());
+			curDate.add(Calendar.DATE, detail.getCurrentDay()-1);
 			//周末
 			if(curDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || 
 					curDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
@@ -337,6 +339,28 @@ public class ExportBeanExcel<T> {
     }
 	
     public static void main(String [] args){
+    	SimpleDateFormat sdt=new SimpleDateFormat("yyyyMM");
+		java.util.Date startDate=null;
+		try {
+			startDate = sdt.parse(String.valueOf("201810").trim());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Calendar curDate = Calendar.getInstance();  
+		for (int i = 1; i < 32; i++) {
+			
+			curDate.setTime(startDate);  
+			curDate.add(Calendar.DATE, i-1);
+			//周末
+			if(curDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || 
+					curDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
+				System.out.println(curDate.getTime()+"#"+curDate.get(Calendar.DAY_OF_WEEK)+"周末");
+			}else{
+				System.out.println(curDate.getTime()+"#"+curDate.get(Calendar.DAY_OF_WEEK)+"工作日");
+			}
+		}
+    	
 //        List<String> headerId = new ArrayList<>();
 //        Field[] fields = Admin.class.getDeclaredFields();
 //        int i = 0;
@@ -350,19 +374,19 @@ public class ExportBeanExcel<T> {
 //        System.out.println(headerId.toString());
 
         
-		List<String> listName = new ArrayList<>();
-//		listName.add("用户id");
-		listName.add("用户名");
-		listName.add("名字");
-		listName.add("电话");
-		listName.add("tba2");
-		List<String> listId = new ArrayList<>();
-//		listId.add("userid");
-		listId.add("username");
-		listId.add("realname");
-		listId.add("mobilePhone");
-		listId.add("tblAa2");
-		List<Admin> list = new ArrayList<>();
+//		List<String> listName = new ArrayList<>();
+////		listName.add("用户id");
+//		listName.add("用户名");
+//		listName.add("名字");
+//		listName.add("电话");
+//		listName.add("tba2");
+//		List<String> listId = new ArrayList<>();
+////		listId.add("userid");
+//		listId.add("username");
+//		listId.add("realname");
+//		listId.add("mobilePhone");
+//		listId.add("tblAa2");
+//		List<Admin> list = new ArrayList<>();
 //		list.add(new Admin(1, "admin","管理员", "11111111111",new TblA(1, "2")));
 //		list.add(new Admin(2, "sufei","苏菲", "2222222222",new TblA(1, "2")));
 //		list.add(new Admin(3, "common","卡门", "33333333",new TblA(1, "2")));
