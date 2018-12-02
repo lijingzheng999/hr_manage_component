@@ -3,6 +3,7 @@ package hr.manage.component.common.service;
 import hr.manage.component.common.model.CommonType;
 import hr.manage.component.common.model.SettingHoliday;
 import hr.manage.component.common.model.UploadFile;
+import hr.manage.component.contract.model.ContractCondition;
 import hr.manage.component.personal.model.PersonalAll;
 import hr.manage.component.personal.model.PersonalAllExport;
 import hr.manage.component.personal.model.PersonalCondition;
@@ -69,7 +70,17 @@ public interface CommonService {
     * @return List<SettingHoliday>    
     * @throws
      */
-	public List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate);
+	public List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate,Integer curOffset,Integer curLimit);
+	
+	/**
+     * 
+    * @Title: countSettingHoliday
+    * @Description: 条件查询节假日信息列表个数
+    * @param  countSettingHoliday
+    * @return Long
+    * @throws
+     */
+	public Long countSettingHoliday(Integer type,Date startDate, Date endDate);
 	
 	/**
      * 

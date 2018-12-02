@@ -66,8 +66,12 @@ public class CommonServiceImpl implements CommonService {
 	}
 	
 	@Override
-	public List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate){
-		return settingHolidayDAO.listSettingHoliday(type,startDate,endDate);
+	public List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate,Integer curOffset,Integer curLimit){
+		return settingHolidayDAO.listSettingHoliday(type,startDate,endDate,curOffset,curLimit);
+	}
+	@Override
+	public Long countSettingHoliday(Integer type,Date startDate, Date endDate){
+		return settingHolidayDAO.countSettingHoliday(type, startDate, endDate);
 	}
 	@Override
 	public int deleteSettingHoliday(Integer holiDayId){

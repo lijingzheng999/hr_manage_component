@@ -7,10 +7,12 @@ import hr.manage.component.common.model.SettingHoliday;
 import hr.manage.component.common.model.UploadFile;
 import hr.manage.component.common.model.UploadResult;
 import hr.manage.component.common.service.CommonService;
+import hr.manage.component.contract.model.ContractInfo;
 import hr.manage.component.personal.model.PersonalAll;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,7 @@ import com.hr.manage.web.annotation.NotCareLogin;
 import com.hr.manage.web.constant.CodeMsg;
 import com.hr.manage.web.constant.FunctionIds;
 import com.hr.manage.web.constant.JSONResult;
+import com.hr.manage.web.util.DataMapUtil;
 import com.hr.manage.web.util.MD5Util;
 import com.hr.manage.web.util.UploadUtil;
 
@@ -192,6 +195,8 @@ public class CommonController {
     * Description: 获取节假日设置列表
     * Url: common/listSettingHoliday
     * @param Integer type,Date startDate, Date endDate 
+    * @param int pageIndex, 分页页数
+    * @param int pageSize 	行数
     * @return List<SettingHoliday>    
     * @throws
      */
@@ -200,7 +205,8 @@ public class CommonController {
 	@Post("listSettingHoliday")
 	@Get("listSettingHoliday")
 	public String listSettingHoliday(@Param("type") Integer type,@Param("startDate") String startDate,
-			@Param("endDate") String endDate){
+			@Param("endDate") String endDate,@Param("pageIndex") int pageIndex, 
+			@Param("pageSize") int pageSize){
 		SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟  
 		Date curStartDate=null;
 		Date curEndDate=null;
@@ -217,8 +223,24 @@ public class CommonController {
 			logger.error("=====参数错误，日期格式不对，转换错误=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，日期格式不对，转换错误！");
 		}
-		List<SettingHoliday> listSettingHoliday = commonService.listSettingHoliday(type,curStartDate,curEndDate);
-		return "@"+JSONResult.success(listSettingHoliday);
+		pageIndex = pageIndex < 0 ? 0 : pageIndex;
+		pageSize = pageSize < 1 ? 1 : pageSize;
+		Integer curOffset =pageIndex * pageSize;
+		Integer curLimit=pageSize;
+		Long count = 0L;
+		List<SettingHoliday> listSettingHoliday = new ArrayList<>();
+		try {
+			listSettingHoliday = commonService.listSettingHoliday(type,curStartDate,curEndDate,curOffset,curLimit);
+			count = commonService.countSettingHoliday(type,curStartDate,curEndDate);
+		} catch (Exception e) {
+			logger.error("=====根据条件获取节假日信息列表查询，调用service出错=====", e);
+			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+		}
+		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+		Map<String, Object> dataMap = DataMapUtil.getDataMap("listSettingHoliday", listSettingHoliday, count, pageCount);
+		return "@" + JSONResult.success(dataMap);
+//		List<SettingHoliday> listSettingHoliday = commonService.listSettingHoliday(type,curStartDate,curEndDate);
+//		return "@"+JSONResult.success(listSettingHoliday);
 	}
 	
 

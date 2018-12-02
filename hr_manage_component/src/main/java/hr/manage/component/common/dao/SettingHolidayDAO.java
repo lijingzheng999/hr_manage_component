@@ -23,9 +23,18 @@ public interface SettingHolidayDAO  extends GenericDAO<SettingHoliday,Integer>{
 	            "#if(:2 != null) { and cur_date >= :2 } " +
 	            "#if(:3 != null) { and cur_date < :3 } " +
 	            " and is_del=1 " +
-	            " order by id ")
-	    List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate);
+	            " order by id " +
+	    		 "#if(:4 != null && :5 != null ){ limit :4 , :5 }")
+	    List<SettingHoliday> listSettingHoliday(Integer type,Date startDate, Date endDate,Integer curOffset,Integer curLimit);
 
+	    @SQL("SELECT  count(1) FROM "+TABLE+" WHERE 1 = 1 " +
+	            "#if(:1 != null) { and type = :1 } " +
+	            "#if(:2 != null) { and cur_date >= :2 } " +
+	            "#if(:3 != null) { and cur_date < :3 } " +
+	            " and is_del=1 " )
+	    Long countSettingHoliday(Integer type,Date startDate, Date endDate);
+
+	    
 	    @SQL(" UPDATE "+TABLE +
 		           " set is_del=0,update_time = now() " +
 		    		" where id = :1 ")

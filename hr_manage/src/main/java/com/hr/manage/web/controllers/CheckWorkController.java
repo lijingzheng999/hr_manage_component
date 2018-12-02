@@ -552,7 +552,7 @@ public class CheckWorkController {
         endDate.setTime(startDate);  
         endDate.add(Calendar.MONTH, 1);  
         //获取节假日列表
-        List<SettingHoliday> listSettingHolidays = commonService.listSettingHoliday(null,startDate,endDate.getTime());
+        List<SettingHoliday> listSettingHolidays = commonService.listSettingHoliday(null,startDate,endDate.getTime(),null,null);
         Map<Integer,Integer> mapHolidays = new HashMap<Integer,Integer>();
         for (SettingHoliday settingHoliday : listSettingHolidays) {
         	mapHolidays.put(settingHoliday.getCurDate().getDate(), settingHoliday.getType());
