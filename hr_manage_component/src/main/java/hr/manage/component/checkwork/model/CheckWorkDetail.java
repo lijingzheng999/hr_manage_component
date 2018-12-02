@@ -69,6 +69,23 @@ public class CheckWorkDetail implements java.io.Serializable {
     @Column(value = "manager")
     private String manager;
 
+    /** 本月调休天数 */
+    @Column(value = "cur_off_duty_shift_days")
+    private BigDecimal curOffDutyShiftDays;
+    
+    /** 本月事假天数 */
+    @Column(value = "cur_compassionate_days")
+    private BigDecimal curCompassionateDays;
+    
+    /** 本月年假天数 */
+    @Column(value = "cur_annual_days")
+    private BigDecimal curAnnualDays;
+    
+    /** 婚假 */
+    @Column(value = "cur_marital_days")
+    private BigDecimal curMaritalDays;
+    
+    
     /** 备注 */
     @Column(value = "memo")
     private String memo;
@@ -364,7 +381,40 @@ public class CheckWorkDetail implements java.io.Serializable {
         this.manager = manager;
     }
 
-    /**
+    
+    public BigDecimal getCurOffDutyShiftDays() {
+		return curOffDutyShiftDays;
+	}
+
+	public void setCurOffDutyShiftDays(BigDecimal curOffDutyShiftDays) {
+		this.curOffDutyShiftDays = curOffDutyShiftDays;
+	}
+
+	public BigDecimal getCurCompassionateDays() {
+		return curCompassionateDays;
+	}
+
+	public void setCurCompassionateDays(BigDecimal curCompassionateDays) {
+		this.curCompassionateDays = curCompassionateDays;
+	}
+
+	public BigDecimal getCurAnnualDays() {
+		return curAnnualDays;
+	}
+
+	public void setCurAnnualDays(BigDecimal curAnnualDays) {
+		this.curAnnualDays = curAnnualDays;
+	}
+
+	public BigDecimal getCurMaritalDays() {
+		return curMaritalDays;
+	}
+
+	public void setCurMaritalDays(BigDecimal curMaritalDays) {
+		this.curMaritalDays = curMaritalDays;
+	}
+
+	/**
      * 获取备注
      * 
      * @return 备注
