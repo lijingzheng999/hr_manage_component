@@ -18,12 +18,16 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
 
     /** 表的主键 */
     @Column(pk=true,value = "id")
-    private Integer id;
+    private BigDecimal id;
 
     /** 姓名 */
     @Column(value = "name")
     private String name;
-
+    
+    /** 年度 */
+    @Column(value = "term")
+    private String term;
+    
     /** 入职时间 */
     @Column(value = "entry_time")
     private Date entryTime;
@@ -94,111 +98,111 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
 
     /** 1月加班明细 */
     @Column(value = "overtime_jan")
-    private Integer overtimeJan;
+    private BigDecimal overtimeJan;
 
     /** 2月加班明细 */
     @Column(value = "overtime_feb")
-    private Integer overtimeFeb;
+    private BigDecimal overtimeFeb;
 
     /** 3月加班明细 */
     @Column(value = "overtime_mar")
-    private Integer overtimeMar;
+    private BigDecimal overtimeMar;
 
     /** 4月加班明细 */
     @Column(value = "overtime_apr")
-    private Integer overtimeApr;
+    private BigDecimal overtimeApr;
 
     /** 5月加班明细 */
     @Column(value = "overtime_may")
-    private Integer overtimeMay;
+    private BigDecimal overtimeMay;
 
     /** 6月加班明细 */
     @Column(value = "overtime_jun")
-    private Integer overtimeJun;
+    private BigDecimal overtimeJun;
 
     /** 7月加班明细 */
     @Column(value = "overtime_jul")
-    private Integer overtimeJul;
+    private BigDecimal overtimeJul;
 
     /** 8月加班明细 */
     @Column(value = "overtime_aug")
-    private Integer overtimeAug;
+    private BigDecimal overtimeAug;
 
     /** 9月加班明细 */
     @Column(value = "overtime_sept")
-    private Integer overtimeSept;
+    private BigDecimal overtimeSept;
 
     /** 10月加班明细 */
     @Column(value = "overtime_oct")
-    private Integer overtimeOct;
+    private BigDecimal overtimeOct;
 
     /** 11月加班明细 */
     @Column(value = "overtime_nov")
-    private Integer overtimeNov;
+    private BigDecimal overtimeNov;
 
     /** 12月加班明细 */
     @Column(value = "overtime_dec")
-    private Integer overtimeDec;
+    private BigDecimal overtimeDec;
 
-    /** 加班汇总(h) */
+    /** 加班汇总 */
     @Column(value = "overtime_collect")
-    private Integer overtimeCollect;
+    private BigDecimal overtimeCollect;
 
     /** 1月调休明细 */
     @Column(value = "off_duty_shift_jan")
-    private Integer offDutyShiftJan;
+    private BigDecimal offDutyShiftJan;
 
     /** 2月调休明细 */
     @Column(value = "off_duty_shift_feb")
-    private Integer offDutyShiftFeb;
+    private BigDecimal offDutyShiftFeb;
 
     /** 3月调休明细 */
     @Column(value = "off_duty_shift_mar")
-    private Integer offDutyShiftMar;
+    private BigDecimal offDutyShiftMar;
 
     /** 4月调休明细 */
     @Column(value = "off_duty_shift_apr")
-    private Integer offDutyShiftApr;
+    private BigDecimal offDutyShiftApr;
 
     /** 5月调休明细 */
     @Column(value = "off_duty_shift_may")
-    private Integer offDutyShiftMay;
+    private BigDecimal offDutyShiftMay;
 
     /** 6月调休明细 */
     @Column(value = "off_duty_shift_jun")
-    private Integer offDutyShiftJun;
+    private BigDecimal offDutyShiftJun;
 
     /** 7月调休明细 */
     @Column(value = "off_duty_shift_jul")
-    private Integer offDutyShiftJul;
+    private BigDecimal offDutyShiftJul;
 
     /** 8月调休明细 */
     @Column(value = "off_duty_shift_aug")
-    private Integer offDutyShiftAug;
+    private BigDecimal offDutyShiftAug;
 
     /** 9月调休明细 */
     @Column(value = "off_duty_shift_sept")
-    private Integer offDutyShiftSept;
+    private BigDecimal offDutyShiftSept;
 
     /** 10月调休明细 */
     @Column(value = "off_duty_shift_oct")
-    private Integer offDutyShiftOct;
+    private BigDecimal offDutyShiftOct;
 
     /** 11月调休明细 */
     @Column(value = "off_duty_shift_nov")
-    private Integer offDutyShiftNov;
+    private BigDecimal offDutyShiftNov;
 
     /** 12月调休明细 */
     @Column(value = "off_duty_shift_dec")
-    private Integer offDutyShiftDec;
+    private BigDecimal offDutyShiftDec;
 
-    /** 调休汇总(h) */
+    /** 调休汇总*/
     @Column(value = "off_duty_shift_collect")
-    private Integer offDutyShiftCollect;
+    private BigDecimal offDutyShiftCollect;
 
-    /** 剩余加班小时数 */
-    @Column(value = "surplus_overtime_hours")
-    private Integer surplusOvertimeHours;
+    /** 剩余加班天数 */
+    @Column(value = "surplus_overtime_days")
+    private BigDecimal surplusOvertimeDays;
 
     /** 1月请假天数 */
     @Column(value = "leave_jan")
@@ -254,7 +258,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
 
     /** 是否删除 1未删除 0已删除 */
     @Column(value = "is_del")
-    private Integer isDel;
+    private BigDecimal isDel;
 
     /** 编辑时间 */
     @Column(value = "update_time")
@@ -269,7 +273,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 表的主键
      */
-    public Integer getId() {
+    public BigDecimal getId() {
         return this.id;
     }
 
@@ -279,7 +283,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param id
      *          表的主键
      */
-    public void setId(Integer id) {
+    public void setId(BigDecimal id) {
         this.id = id;
     }
 
@@ -291,8 +295,17 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
     public String getname() {
         return this.name;
     }
+    
 
-    /**
+	public String getTerm() {
+		return term;
+	}
+
+	public void setTerm(String term) {
+		this.term = term;
+	}
+
+	/**
      * 设置姓名
      * 
      * @param value
@@ -630,7 +643,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 1月加班明细
      */
-    public Integer getOvertimeJan() {
+    public BigDecimal getOvertimeJan() {
         return this.overtimeJan;
     }
 
@@ -640,7 +653,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeJan
      *          1月加班明细
      */
-    public void setOvertimeJan(Integer overtimeJan) {
+    public void setOvertimeJan(BigDecimal overtimeJan) {
         this.overtimeJan = overtimeJan;
     }
 
@@ -649,7 +662,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 2月加班明细
      */
-    public Integer getOvertimeFeb() {
+    public BigDecimal getOvertimeFeb() {
         return this.overtimeFeb;
     }
 
@@ -659,7 +672,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeFeb
      *          2月加班明细
      */
-    public void setOvertimeFeb(Integer overtimeFeb) {
+    public void setOvertimeFeb(BigDecimal overtimeFeb) {
         this.overtimeFeb = overtimeFeb;
     }
 
@@ -668,7 +681,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 3月加班明细
      */
-    public Integer getOvertimeMar() {
+    public BigDecimal getOvertimeMar() {
         return this.overtimeMar;
     }
 
@@ -678,7 +691,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeMar
      *          3月加班明细
      */
-    public void setOvertimeMar(Integer overtimeMar) {
+    public void setOvertimeMar(BigDecimal overtimeMar) {
         this.overtimeMar = overtimeMar;
     }
 
@@ -687,7 +700,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 4月加班明细
      */
-    public Integer getOvertimeApr() {
+    public BigDecimal getOvertimeApr() {
         return this.overtimeApr;
     }
 
@@ -697,7 +710,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeApr
      *          4月加班明细
      */
-    public void setOvertimeApr(Integer overtimeApr) {
+    public void setOvertimeApr(BigDecimal overtimeApr) {
         this.overtimeApr = overtimeApr;
     }
 
@@ -706,7 +719,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 5月加班明细
      */
-    public Integer getOvertimeMay() {
+    public BigDecimal getOvertimeMay() {
         return this.overtimeMay;
     }
 
@@ -716,7 +729,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeMay
      *          5月加班明细
      */
-    public void setOvertimeMay(Integer overtimeMay) {
+    public void setOvertimeMay(BigDecimal overtimeMay) {
         this.overtimeMay = overtimeMay;
     }
 
@@ -725,7 +738,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 6月加班明细
      */
-    public Integer getOvertimeJun() {
+    public BigDecimal getOvertimeJun() {
         return this.overtimeJun;
     }
 
@@ -735,7 +748,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeJun
      *          6月加班明细
      */
-    public void setOvertimeJun(Integer overtimeJun) {
+    public void setOvertimeJun(BigDecimal overtimeJun) {
         this.overtimeJun = overtimeJun;
     }
 
@@ -744,7 +757,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 7月加班明细
      */
-    public Integer getOvertimeJul() {
+    public BigDecimal getOvertimeJul() {
         return this.overtimeJul;
     }
 
@@ -754,7 +767,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeJul
      *          7月加班明细
      */
-    public void setOvertimeJul(Integer overtimeJul) {
+    public void setOvertimeJul(BigDecimal overtimeJul) {
         this.overtimeJul = overtimeJul;
     }
 
@@ -763,7 +776,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 8月加班明细
      */
-    public Integer getOvertimeAug() {
+    public BigDecimal getOvertimeAug() {
         return this.overtimeAug;
     }
 
@@ -773,7 +786,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeAug
      *          8月加班明细
      */
-    public void setOvertimeAug(Integer overtimeAug) {
+    public void setOvertimeAug(BigDecimal overtimeAug) {
         this.overtimeAug = overtimeAug;
     }
 
@@ -782,7 +795,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 9月加班明细
      */
-    public Integer getOvertimeSept() {
+    public BigDecimal getOvertimeSept() {
         return this.overtimeSept;
     }
 
@@ -792,7 +805,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeSept
      *          9月加班明细
      */
-    public void setOvertimeSept(Integer overtimeSept) {
+    public void setOvertimeSept(BigDecimal overtimeSept) {
         this.overtimeSept = overtimeSept;
     }
 
@@ -801,7 +814,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 10月加班明细
      */
-    public Integer getOvertimeOct() {
+    public BigDecimal getOvertimeOct() {
         return this.overtimeOct;
     }
 
@@ -811,7 +824,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeOct
      *          10月加班明细
      */
-    public void setOvertimeOct(Integer overtimeOct) {
+    public void setOvertimeOct(BigDecimal overtimeOct) {
         this.overtimeOct = overtimeOct;
     }
 
@@ -820,7 +833,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 11月加班明细
      */
-    public Integer getOvertimeNov() {
+    public BigDecimal getOvertimeNov() {
         return this.overtimeNov;
     }
 
@@ -830,7 +843,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeNov
      *          11月加班明细
      */
-    public void setOvertimeNov(Integer overtimeNov) {
+    public void setOvertimeNov(BigDecimal overtimeNov) {
         this.overtimeNov = overtimeNov;
     }
 
@@ -839,7 +852,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 12月加班明细
      */
-    public Integer getOvertimeDec() {
+    public BigDecimal getOvertimeDec() {
         return this.overtimeDec;
     }
 
@@ -849,7 +862,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeDec
      *          12月加班明细
      */
-    public void setOvertimeDec(Integer overtimeDec) {
+    public void setOvertimeDec(BigDecimal overtimeDec) {
         this.overtimeDec = overtimeDec;
     }
 
@@ -858,7 +871,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 加班汇总(h)
      */
-    public Integer getOvertimeCollect() {
+    public BigDecimal getOvertimeCollect() {
         return this.overtimeCollect;
     }
 
@@ -868,7 +881,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param overtimeCollect
      *          加班汇总(h)
      */
-    public void setOvertimeCollect(Integer overtimeCollect) {
+    public void setOvertimeCollect(BigDecimal overtimeCollect) {
         this.overtimeCollect = overtimeCollect;
     }
 
@@ -877,7 +890,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 1月调休明细
      */
-    public Integer getOffDutyShiftJan() {
+    public BigDecimal getOffDutyShiftJan() {
         return this.offDutyShiftJan;
     }
 
@@ -887,7 +900,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftJan
      *          1月调休明细
      */
-    public void setOffDutyShiftJan(Integer offDutyShiftJan) {
+    public void setOffDutyShiftJan(BigDecimal offDutyShiftJan) {
         this.offDutyShiftJan = offDutyShiftJan;
     }
 
@@ -896,7 +909,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 2月调休明细
      */
-    public Integer getOffDutyShiftFeb() {
+    public BigDecimal getOffDutyShiftFeb() {
         return this.offDutyShiftFeb;
     }
 
@@ -906,7 +919,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftFeb
      *          2月调休明细
      */
-    public void setOffDutyShiftFeb(Integer offDutyShiftFeb) {
+    public void setOffDutyShiftFeb(BigDecimal offDutyShiftFeb) {
         this.offDutyShiftFeb = offDutyShiftFeb;
     }
 
@@ -915,7 +928,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 3月调休明细
      */
-    public Integer getOffDutyShiftMar() {
+    public BigDecimal getOffDutyShiftMar() {
         return this.offDutyShiftMar;
     }
 
@@ -925,7 +938,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftMar
      *          3月调休明细
      */
-    public void setOffDutyShiftMar(Integer offDutyShiftMar) {
+    public void setOffDutyShiftMar(BigDecimal offDutyShiftMar) {
         this.offDutyShiftMar = offDutyShiftMar;
     }
 
@@ -934,7 +947,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 4月调休明细
      */
-    public Integer getOffDutyShiftApr() {
+    public BigDecimal getOffDutyShiftApr() {
         return this.offDutyShiftApr;
     }
 
@@ -944,7 +957,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftApr
      *          4月调休明细
      */
-    public void setOffDutyShiftApr(Integer offDutyShiftApr) {
+    public void setOffDutyShiftApr(BigDecimal offDutyShiftApr) {
         this.offDutyShiftApr = offDutyShiftApr;
     }
 
@@ -953,7 +966,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 5月调休明细
      */
-    public Integer getOffDutyShiftMay() {
+    public BigDecimal getOffDutyShiftMay() {
         return this.offDutyShiftMay;
     }
 
@@ -963,7 +976,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftMay
      *          5月调休明细
      */
-    public void setOffDutyShiftMay(Integer offDutyShiftMay) {
+    public void setOffDutyShiftMay(BigDecimal offDutyShiftMay) {
         this.offDutyShiftMay = offDutyShiftMay;
     }
 
@@ -972,7 +985,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 6月调休明细
      */
-    public Integer getOffDutyShiftJun() {
+    public BigDecimal getOffDutyShiftJun() {
         return this.offDutyShiftJun;
     }
 
@@ -982,7 +995,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftJun
      *          6月调休明细
      */
-    public void setOffDutyShiftJun(Integer offDutyShiftJun) {
+    public void setOffDutyShiftJun(BigDecimal offDutyShiftJun) {
         this.offDutyShiftJun = offDutyShiftJun;
     }
 
@@ -991,7 +1004,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 7月调休明细
      */
-    public Integer getOffDutyShiftJul() {
+    public BigDecimal getOffDutyShiftJul() {
         return this.offDutyShiftJul;
     }
 
@@ -1001,7 +1014,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftJul
      *          7月调休明细
      */
-    public void setOffDutyShiftJul(Integer offDutyShiftJul) {
+    public void setOffDutyShiftJul(BigDecimal offDutyShiftJul) {
         this.offDutyShiftJul = offDutyShiftJul;
     }
 
@@ -1010,7 +1023,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 8月调休明细
      */
-    public Integer getOffDutyShiftAug() {
+    public BigDecimal getOffDutyShiftAug() {
         return this.offDutyShiftAug;
     }
 
@@ -1020,7 +1033,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftAug
      *          8月调休明细
      */
-    public void setOffDutyShiftAug(Integer offDutyShiftAug) {
+    public void setOffDutyShiftAug(BigDecimal offDutyShiftAug) {
         this.offDutyShiftAug = offDutyShiftAug;
     }
 
@@ -1029,7 +1042,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 9月调休明细
      */
-    public Integer getOffDutyShiftSept() {
+    public BigDecimal getOffDutyShiftSept() {
         return this.offDutyShiftSept;
     }
 
@@ -1039,7 +1052,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftSept
      *          9月调休明细
      */
-    public void setOffDutyShiftSept(Integer offDutyShiftSept) {
+    public void setOffDutyShiftSept(BigDecimal offDutyShiftSept) {
         this.offDutyShiftSept = offDutyShiftSept;
     }
 
@@ -1048,7 +1061,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 10月调休明细
      */
-    public Integer getOffDutyShiftOct() {
+    public BigDecimal getOffDutyShiftOct() {
         return this.offDutyShiftOct;
     }
 
@@ -1058,7 +1071,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftOct
      *          10月调休明细
      */
-    public void setOffDutyShiftOct(Integer offDutyShiftOct) {
+    public void setOffDutyShiftOct(BigDecimal offDutyShiftOct) {
         this.offDutyShiftOct = offDutyShiftOct;
     }
 
@@ -1067,7 +1080,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 11月调休明细
      */
-    public Integer getOffDutyShiftNov() {
+    public BigDecimal getOffDutyShiftNov() {
         return this.offDutyShiftNov;
     }
 
@@ -1077,7 +1090,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftNov
      *          11月调休明细
      */
-    public void setOffDutyShiftNov(Integer offDutyShiftNov) {
+    public void setOffDutyShiftNov(BigDecimal offDutyShiftNov) {
         this.offDutyShiftNov = offDutyShiftNov;
     }
 
@@ -1086,7 +1099,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 12月调休明细
      */
-    public Integer getOffDutyShiftDec() {
+    public BigDecimal getOffDutyShiftDec() {
         return this.offDutyShiftDec;
     }
 
@@ -1096,7 +1109,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftDec
      *          12月调休明细
      */
-    public void setOffDutyShiftDec(Integer offDutyShiftDec) {
+    public void setOffDutyShiftDec(BigDecimal offDutyShiftDec) {
         this.offDutyShiftDec = offDutyShiftDec;
     }
 
@@ -1105,7 +1118,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 调休汇总(h)
      */
-    public Integer getOffDutyShiftCollect() {
+    public BigDecimal getOffDutyShiftCollect() {
         return this.offDutyShiftCollect;
     }
 
@@ -1115,27 +1128,27 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param offDutyShiftCollect
      *          调休汇总(h)
      */
-    public void setOffDutyShiftCollect(Integer offDutyShiftCollect) {
+    public void setOffDutyShiftCollect(BigDecimal offDutyShiftCollect) {
         this.offDutyShiftCollect = offDutyShiftCollect;
     }
 
     /**
-     * 获取剩余加班小时数
+     * 获取剩余加班天数
      * 
-     * @return 剩余加班小时数
+     * @return 剩余加班天数
      */
-    public Integer getSurplusOvertimeHours() {
-        return this.surplusOvertimeHours;
+    public BigDecimal getSurplusOvertimeDays() {
+        return this.surplusOvertimeDays;
     }
 
     /**
-     * 设置剩余加班小时数
+     * 设置剩余加班天数
      * 
      * @param surplusOvertimeHours
-     *          剩余加班小时数
+     *          剩余加班天数
      */
-    public void setSurplusOvertimeHours(Integer surplusOvertimeHours) {
-        this.surplusOvertimeHours = surplusOvertimeHours;
+    public void setSurplusOvertimeDays(BigDecimal surplusOvertimeDays) {
+        this.surplusOvertimeDays = surplusOvertimeDays;
     }
 
     /**
@@ -1390,7 +1403,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 是否删除 1未删除 0已删除
      */
-    public Integer getIsDel() {
+    public BigDecimal getIsDel() {
         return this.isDel;
     }
 
@@ -1400,7 +1413,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param isDel
      *          是否删除 1未删除 0已删除
      */
-    public void setIsDel(Integer isDel) {
+    public void setIsDel(BigDecimal isDel) {
         this.isDel = isDel;
     }
 

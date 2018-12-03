@@ -451,51 +451,51 @@ public class CheckWorkController {
 								transforValue = String.valueOf(cellValue).trim();
 								detail.setMemo(transforValue);
 								break;
-							case 15:// 剩余加班小时数 
+							case 15://上一年流转加班天数
 								transforValue = String.valueOf(cellValue).trim();
-								if(!StringUtils.isBlank(transforValue)){
-								  detail.setSurplusOvertimeHours(Integer.parseInt(transforValue));
+								if(StringUtils.isBlank(transforValue)){
+									transforValue="0";
 								}
-								else{
-								  detail.setSurplusOvertimeHours(0);
-								}
+								detail.setSurplusOvertimeDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								
 								break;
-							case 16://可休年假天数 
-								transforValue = String.valueOf(cellValue).trim();
-								if(!StringUtils.isBlank(transforValue)){
-								  detail.setAnnualLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								}
-								else{
-								  detail.setAnnualLeaveDays(BigDecimal.ZERO);
-								}
-								break;
-							case 17:// 剩余年休天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(!StringUtils.isBlank(transforValue)){
-								  detail.setSurplusAnnualLeave(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								}
-								else{
-								  detail.setSurplusAnnualLeave(BigDecimal.ZERO);
-								}
-								break;
-							case 18:// 累计长期病假天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(!StringUtils.isBlank(transforValue)){
-									  detail.setSickLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								}
-								else{
-								  detail.setSickLeaveDays(BigDecimal.ZERO);
-								}
-								break;
-							case 19:// 累计长期事假天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(!StringUtils.isBlank(transforValue)){
-									  detail.setCompassionateLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								}
-								else{
-								  detail.setCompassionateLeaveDays(BigDecimal.ZERO);
-								}
-								break;
+//							case 16://可休年假天数 
+//								transforValue = String.valueOf(cellValue).trim();
+//								if(!StringUtils.isBlank(transforValue)){
+//								  detail.setAnnualLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+//								}
+//								else{
+//								  detail.setAnnualLeaveDays(BigDecimal.ZERO);
+//								}
+//								break;
+//							case 17:// 剩余年休天数
+//								transforValue = String.valueOf(cellValue).trim();
+//								if(!StringUtils.isBlank(transforValue)){
+//								  detail.setSurplusAnnualLeave(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+//								}
+//								else{
+//								  detail.setSurplusAnnualLeave(BigDecimal.ZERO);
+//								}
+//								break;
+//							case 18:// 累计长期病假天数
+//								transforValue = String.valueOf(cellValue).trim();
+//								if(!StringUtils.isBlank(transforValue)){
+//									  detail.setSickLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+//								}
+//								else{
+//								  detail.setSickLeaveDays(BigDecimal.ZERO);
+//								}
+//								break;
+//							case 19:// 累计长期事假天数
+//								transforValue = String.valueOf(cellValue).trim();
+//								if(!StringUtils.isBlank(transforValue)){
+//									  detail.setCompassionateLeaveDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+//								}
+//								else{
+//								  detail.setCompassionateLeaveDays(BigDecimal.ZERO);
+//								}
+//								break;
+							
 						}
 	                }  
 	                //验证员工信息是否存在

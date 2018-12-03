@@ -90,25 +90,25 @@ public class CheckWorkDetail implements java.io.Serializable {
     @Column(value = "memo")
     private String memo;
 
-    /** 剩余加班小时数 */
-    @Column(value = "surplus_overtime_hours")
-    private Integer surplusOvertimeHours;
+    /** 上一年剩余加班天数 */
+    @Column(value = "surplus_overtime_days")
+    private BigDecimal surplusOvertimeDays;
 
-    /** 可休年假天数 */
-    @Column(value = "annual_leave_days")
-    private BigDecimal annualLeaveDays;
-
-    /** 剩余年休天数 */
-    @Column(value = "surplus_annual_leave")
-    private BigDecimal surplusAnnualLeave;
-
-    /** 累计长期病假天数 */
-    @Column(value = "sick_leave_days")
-    private BigDecimal sickLeaveDays;
-
-    /** 累计长期事假天数 */
-    @Column(value = "compassionate_leave_days")
-    private BigDecimal compassionateLeaveDays;
+//    /** 可休年假天数 */
+//    @Column(value = "annual_leave_days")
+//    private BigDecimal annualLeaveDays;
+//
+//    /** 剩余年休天数 */
+//    @Column(value = "surplus_annual_leave")
+//    private BigDecimal surplusAnnualLeave;
+//
+//    /** 累计长期病假天数 */
+//    @Column(value = "sick_leave_days")
+//    private BigDecimal sickLeaveDays;
+//
+//    /** 累计长期事假天数 */
+//    @Column(value = "compassionate_leave_days")
+//    private BigDecimal compassionateLeaveDays;
 
     /** 当月考勤扣款天数 */
     @Column(value = "settlement_days")
@@ -434,12 +434,12 @@ public class CheckWorkDetail implements java.io.Serializable {
     }
 
     /**
-     * 获取剩余加班小时数
+     * 获取剩余加班天数
      * 
-     * @return 剩余加班小时数
+     * @return 剩余加班天数
      */
-    public Integer getSurplusOvertimeHours() {
-        return this.surplusOvertimeHours;
+    public BigDecimal getSurplusOvertimeDays() {
+        return this.surplusOvertimeDays;
     }
 
     /**
@@ -448,85 +448,85 @@ public class CheckWorkDetail implements java.io.Serializable {
      * @param surplusOvertimeHours
      *          剩余加班小时数
      */
-    public void setSurplusOvertimeHours(Integer surplusOvertimeHours) {
-        this.surplusOvertimeHours = surplusOvertimeHours;
+    public void setSurplusOvertimeDays(BigDecimal surplusOvertimeDays) {
+        this.surplusOvertimeDays = surplusOvertimeDays;
     }
 
-    /**
-     * 获取可休年假天数
-     * 
-     * @return 可休年假天数
-     */
-    public BigDecimal getAnnualLeaveDays() {
-        return this.annualLeaveDays;
-    }
-
-    /**
-     * 设置可休年假天数
-     * 
-     * @param annualLeaveDays
-     *          可休年假天数
-     */
-    public void setAnnualLeaveDays(BigDecimal annualLeaveDays) {
-        this.annualLeaveDays = annualLeaveDays;
-    }
-
-    /**
-     * 获取剩余年休天数
-     * 
-     * @return 剩余年休天数
-     */
-    public BigDecimal getSurplusAnnualLeave() {
-        return this.surplusAnnualLeave;
-    }
-
-    /**
-     * 设置剩余年休天数
-     * 
-     * @param surplusAnnualLeave
-     *          剩余年休天数
-     */
-    public void setSurplusAnnualLeave(BigDecimal surplusAnnualLeave) {
-        this.surplusAnnualLeave = surplusAnnualLeave;
-    }
-
-    /**
-     * 获取累计长期病假天数
-     * 
-     * @return 累计长期病假天数
-     */
-    public BigDecimal getSickLeaveDays() {
-        return this.sickLeaveDays;
-    }
-
-    /**
-     * 设置累计长期病假天数
-     * 
-     * @param sickLeaveDays
-     *          累计长期病假天数
-     */
-    public void setSickLeaveDays(BigDecimal sickLeaveDays) {
-        this.sickLeaveDays = sickLeaveDays;
-    }
-
-    /**
-     * 获取累计长期事假天数
-     * 
-     * @return 累计长期事假天数
-     */
-    public BigDecimal getCompassionateLeaveDays() {
-        return this.compassionateLeaveDays;
-    }
-
-    /**
-     * 设置累计长期事假天数
-     * 
-     * @param compassionateLeaveDays
-     *          累计长期事假天数
-     */
-    public void setCompassionateLeaveDays(BigDecimal compassionateLeaveDays) {
-        this.compassionateLeaveDays = compassionateLeaveDays;
-    }
+//    /**
+//     * 获取可休年假天数
+//     * 
+//     * @return 可休年假天数
+//     */
+//    public BigDecimal getAnnualLeaveDays() {
+//        return this.annualLeaveDays;
+//    }
+//
+//    /**
+//     * 设置可休年假天数
+//     * 
+//     * @param annualLeaveDays
+//     *          可休年假天数
+//     */
+//    public void setAnnualLeaveDays(BigDecimal annualLeaveDays) {
+//        this.annualLeaveDays = annualLeaveDays;
+//    }
+//
+//    /**
+//     * 获取剩余年休天数
+//     * 
+//     * @return 剩余年休天数
+//     */
+//    public BigDecimal getSurplusAnnualLeave() {
+//        return this.surplusAnnualLeave;
+//    }
+//
+//    /**
+//     * 设置剩余年休天数
+//     * 
+//     * @param surplusAnnualLeave
+//     *          剩余年休天数
+//     */
+//    public void setSurplusAnnualLeave(BigDecimal surplusAnnualLeave) {
+//        this.surplusAnnualLeave = surplusAnnualLeave;
+//    }
+//
+//    /**
+//     * 获取累计长期病假天数
+//     * 
+//     * @return 累计长期病假天数
+//     */
+//    public BigDecimal getSickLeaveDays() {
+//        return this.sickLeaveDays;
+//    }
+//
+//    /**
+//     * 设置累计长期病假天数
+//     * 
+//     * @param sickLeaveDays
+//     *          累计长期病假天数
+//     */
+//    public void setSickLeaveDays(BigDecimal sickLeaveDays) {
+//        this.sickLeaveDays = sickLeaveDays;
+//    }
+//
+//    /**
+//     * 获取累计长期事假天数
+//     * 
+//     * @return 累计长期事假天数
+//     */
+//    public BigDecimal getCompassionateLeaveDays() {
+//        return this.compassionateLeaveDays;
+//    }
+//
+//    /**
+//     * 设置累计长期事假天数
+//     * 
+//     * @param compassionateLeaveDays
+//     *          累计长期事假天数
+//     */
+//    public void setCompassionateLeaveDays(BigDecimal compassionateLeaveDays) {
+//        this.compassionateLeaveDays = compassionateLeaveDays;
+//    }
 
 
     public BigDecimal getSettlementDays() {
