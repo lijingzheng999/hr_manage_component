@@ -18,7 +18,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
 
     /** 表的主键 */
     @Column(pk=true,value = "id")
-    private BigDecimal id;
+    private Integer id;
 
     /** 姓名 */
     @Column(value = "name")
@@ -96,6 +96,10 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
     @Column(value = "surplus_annual_leave")
     private BigDecimal surplusAnnualLeave;
 
+    /** 上一年剩余加班天数 */
+    @Column(value = "overtime_last_year")
+    private BigDecimal overtimeLastYear;
+    
     /** 1月加班明细 */
     @Column(value = "overtime_jan")
     private BigDecimal overtimeJan;
@@ -273,7 +277,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 表的主键
      */
-    public BigDecimal getId() {
+    public Integer getId() {
         return this.id;
     }
 
@@ -283,7 +287,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param id
      *          表的主键
      */
-    public void setId(BigDecimal id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -637,8 +641,18 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
     public void setSurplusAnnualLeave(BigDecimal surplusAnnualLeave) {
         this.surplusAnnualLeave = surplusAnnualLeave;
     }
+    
+    
 
-    /**
+    public BigDecimal getOvertimeLastYear() {
+		return overtimeLastYear;
+	}
+
+	public void setOvertimeLastYear(BigDecimal overtimeLastYear) {
+		this.overtimeLastYear = overtimeLastYear;
+	}
+
+	/**
      * 获取1月加班明细
      * 
      * @return 1月加班明细

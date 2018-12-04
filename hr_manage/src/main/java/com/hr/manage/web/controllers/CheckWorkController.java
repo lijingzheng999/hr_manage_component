@@ -2,6 +2,7 @@ package com.hr.manage.web.controllers;
 
 import hr.manage.component.admin.model.Admin;
 import hr.manage.component.admin.service.AdminService;
+import hr.manage.component.checkwork.model.CheckWorkAnnualLeave;
 import hr.manage.component.checkwork.model.CheckWorkBaidu;
 import hr.manage.component.checkwork.model.CheckWorkBaiduDetail;
 import hr.manage.component.checkwork.model.CheckWorkCurrent;
@@ -2182,10 +2183,10 @@ public class CheckWorkController {
 		condition.setOffset(pageIndex * pageSize);
 		condition.setLimit(pageSize);
 		Long count = 0L;
-		List<CheckWorkCurrent> checkWorkCurrentLists = new ArrayList<>();
+		List<CheckWorkAnnualLeave> checkWorkCurrentLists = new ArrayList<>();
 		try {
-			checkWorkCurrentLists = checkWorkService.listCheckWorkCurrent(condition);
-			count = checkWorkService.countCheckWorkCurrent(condition);
+			checkWorkCurrentLists = checkWorkService.listCheckWorkAnnualLeave(condition);
+			count = checkWorkService.countCheckWorkAnnualLeave(condition);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("=====根据条件查询全通物联网人员加班及年假信息列表查询，调用service出错=====", e);
@@ -2199,23 +2200,23 @@ public class CheckWorkController {
 
 	/**
      * 
-    * Title: getCheckWorkCurrentById
+    * Title: getCheckWorkAnnualLeaveById
     * Description: 通过ID获取年假及加班当前信息
-    * Url: checkwork/getCheckWorkCurrentById
-    * @param Integer currentId  年假及加班当前信息ID
+    * Url: checkwork/getCheckWorkAnnualLeaveById
+    * @param Integer annualId  年假及加班当前信息ID
     * @return String    
     * @throws
      */
 	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
-	@Post("getCheckWorkCurrentById")
-	@Get("getCheckWorkCurrentById")
-	public String getCheckWorkCurrentById(
-			@Param("currentId")Integer currentId) {
+	@Post("getCheckWorkAnnualLeaveById")
+	@Get("getCheckWorkAnnualLeaveById")
+	public String getCheckWorkAnnualLeaveById(
+			@Param("annualId")Integer annualId) {
 		
-		CheckWorkCurrent currentInfo= checkWorkService.getCheckWorkCurrentById(currentId);
-		if (currentInfo != null) {
-			return "@" + JSONResult.success(currentInfo);			
+		CheckWorkAnnualLeave annual= checkWorkService.getCheckWorkAnnualLeaveById(annualId);
+		if (annual != null) {
+			return "@" + JSONResult.success(annual);			
 		} else {
 			logger.error("=====根据ID未查到基本信息=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID未查到基本信息");
@@ -2226,44 +2227,44 @@ public class CheckWorkController {
 	
 	/**
      * 
-    * Title: updateCheckWorkCurrent
+    * Title: updateCheckWorkAnnualLeave
     * Description: 修改年假及加班当前信息
-    * Url: checkwork/updateCheckWorkCurrent
-    * @param String currentInfoJsonStr 年假及加班当前信息json串
+    * Url: checkwork/updateCheckWorkAnnualLeave
+    * @param String annualLeaveJsonStr 年假及加班当前信息json串
     * @return String    
     * @throws
-    * @see CheckWorkCurrent
+    * @see CheckWorkAnnualLeave
      */
 	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
 	@NotCareLogin
-	@Post("updateCheckWorkCurrent")
-	@Get("updateCheckWorkCurrent")
-	public String updateCheckWorkCurrent(
-			@Param("currentInfoJsonStr") String currentInfoJsonStr) {
-		if(StringUtils.isBlank(currentInfoJsonStr)){
+	@Post("updateCheckWorkAnnualLeave")
+	@Get("updateCheckWorkAnnualLeave")
+	public String updateCheckWorkAnnualLeave(
+			@Param("annualLeaveJsonStr") String annualLeaveJsonStr) {
+		if(StringUtils.isBlank(annualLeaveJsonStr)){
 			logger.error("=====参数错误，不应为空=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
 		}
-		CheckWorkCurrent currentInfo = null;
+		CheckWorkAnnualLeave annual = null;
 		try {
-			currentInfo = JSONObject.parseObject(currentInfoJsonStr, CheckWorkCurrent.class);
+			annual = JSONObject.parseObject(annualLeaveJsonStr, CheckWorkAnnualLeave.class);
 		} catch (Exception e) {
 			logger.error("=====修改年假及加班当前信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
-		CheckWorkCurrent current= checkWorkService.getCheckWorkCurrentById(currentInfo.getId());
+		CheckWorkAnnualLeave current= checkWorkService.getCheckWorkAnnualLeaveById(annual.getId());
 		if (current == null) {
 			logger.error("=====根据ID未查到基本信息=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID未查到基本信息");
 		} 
-		current.setSurplusOvertimeHours(currentInfo.getSurplusOvertimeHours());
-		current.setAnnualLeaveDays(currentInfo.getAnnualLeaveDays());
-		current.setSurplusAnnualLeave(currentInfo.getSurplusAnnualLeave());
-		current.setSickLeaveDays(currentInfo.getSickLeaveDays());
-		current.setCompassionateLeaveDays(currentInfo.getCompassionateLeaveDays());
+//		current.setSurplusOvertimeHours(currentInfo.getSurplusOvertimeHours());
+//		current.setAnnualLeaveDays(currentInfo.getAnnualLeaveDays());
+//		current.setSurplusAnnualLeave(currentInfo.getSurplusAnnualLeave());
+//		current.setSickLeaveDays(currentInfo.getSickLeaveDays());
+//		current.setCompassionateLeaveDays(currentInfo.getCompassionateLeaveDays());
 		current.setUpdateTime(new Date());
 		// 进行修改
-		int result  = checkWorkService.updateCheckWorkCurrent(current);
+		int result  = checkWorkService.updateCheckWorkAnnualLeave(current);
 		if (result>0) {
 			return "@" + JSONResult.success();
 		} else {
@@ -2397,6 +2398,126 @@ public class CheckWorkController {
 		}
 	}
 	
+
+//	/**
+//     * 
+//    * Title: getCurrentList
+//    * Description: 条件查询全通物联网人员加班及年假信息列表
+//    * Url: checkwork/getCurrentList
+//    * @param String name, 姓名
+//    * @param String term, 年度
+//    * @param int pageIndex, 分页页数
+//    * @param int pageSize 	行数
+//    * @return String    
+//    * @throws
+//     */
+//	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
+//	@NotCareLogin
+//	@Post("getCurrentList")
+//	public String getCurrentList(@Param("name") String name,
+//			@Param("term")  String term,
+//			@Param("pageIndex") int pageIndex, 
+//			@Param("pageSize") int pageSize) {
+//		CheckWorkDetailCondition condition = new CheckWorkDetailCondition();
+//			condition.setName(name);
+//			condition.setTerm(term);
+//			
+//		pageIndex = pageIndex < 0 ? 0 : pageIndex;
+//		pageSize = pageSize < 1 ? 1 : pageSize;
+//		condition.setOffset(pageIndex * pageSize);
+//		condition.setLimit(pageSize);
+//		Long count = 0L;
+//		List<CheckWorkCurrent> checkWorkCurrentLists = new ArrayList<>();
+//		try {
+//			checkWorkCurrentLists = checkWorkService.listCheckWorkCurrent(condition);
+//			count = checkWorkService.countCheckWorkCurrent(condition);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			logger.error("=====根据条件查询全通物联网人员加班及年假信息列表查询，调用service出错=====", e);
+//			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
+//		}
+//		Long pageCount = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+//		Map<String, Object> dataMap = DataMapUtil.getDataMap("checkWorkCurrentLists", checkWorkCurrentLists, count, pageCount);
+//		return "@" + JSONResult.success(dataMap);
+//	}
+//	
+//
+//	/**
+//     * 
+//    * Title: getCheckWorkCurrentById
+//    * Description: 通过ID获取年假及加班当前信息
+//    * Url: checkwork/getCheckWorkCurrentById
+//    * @param Integer currentId  年假及加班当前信息ID
+//    * @return String    
+//    * @throws
+//     */
+//	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
+//	@NotCareLogin
+//	@Post("getCheckWorkCurrentById")
+//	@Get("getCheckWorkCurrentById")
+//	public String getCheckWorkCurrentById(
+//			@Param("currentId")Integer currentId) {
+//		
+//		CheckWorkCurrent currentInfo= checkWorkService.getCheckWorkCurrentById(currentId);
+//		if (currentInfo != null) {
+//			return "@" + JSONResult.success(currentInfo);			
+//		} else {
+//			logger.error("=====根据ID未查到基本信息=====");
+//			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID未查到基本信息");
+//		}
+//	}
+//	
+//
+//	
+//	/**
+//     * 
+//    * Title: updateCheckWorkCurrent
+//    * Description: 修改年假及加班当前信息
+//    * Url: checkwork/updateCheckWorkCurrent
+//    * @param String currentInfoJsonStr 年假及加班当前信息json串
+//    * @return String    
+//    * @throws
+//    * @see CheckWorkCurrent
+//     */
+//	@AuthorityCheck(function = FunctionIds.FUNCTION_14)
+//	@NotCareLogin
+//	@Post("updateCheckWorkCurrent")
+//	@Get("updateCheckWorkCurrent")
+//	public String updateCheckWorkCurrent(
+//			@Param("currentInfoJsonStr") String currentInfoJsonStr) {
+//		if(StringUtils.isBlank(currentInfoJsonStr)){
+//			logger.error("=====参数错误，不应为空=====");
+//			return "@" + JSONResult.error(CodeMsg.ERROR,"参数错误，不应为空！");
+//		}
+//		CheckWorkCurrent currentInfo = null;
+//		try {
+//			currentInfo = JSONObject.parseObject(currentInfoJsonStr, CheckWorkCurrent.class);
+//		} catch (Exception e) {
+//			logger.error("=====修改年假及加班当前信息，解析参数出错=====", e);
+//			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
+//		}
+//		CheckWorkCurrent current= checkWorkService.getCheckWorkCurrentById(currentInfo.getId());
+//		if (current == null) {
+//			logger.error("=====根据ID未查到基本信息=====");
+//			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID未查到基本信息");
+//		} 
+//		current.setSurplusOvertimeHours(currentInfo.getSurplusOvertimeHours());
+//		current.setAnnualLeaveDays(currentInfo.getAnnualLeaveDays());
+//		current.setSurplusAnnualLeave(currentInfo.getSurplusAnnualLeave());
+//		current.setSickLeaveDays(currentInfo.getSickLeaveDays());
+//		current.setCompassionateLeaveDays(currentInfo.getCompassionateLeaveDays());
+//		current.setUpdateTime(new Date());
+//		// 进行修改
+//		int result  = checkWorkService.updateCheckWorkCurrent(current);
+//		if (result>0) {
+//			return "@" + JSONResult.success();
+//		} else {
+//			logger.error("=====修改年假及加班当前信息数据库异常=====result="+result);
+//			return "@" + JSONResult.error(CodeMsg.ERROR, "修改年假及加班当前信息数据库异常result="+result);
+//		}
+//	}
+//	
+//	
 //	/**
 //     * 
 //    * Title: deleteCheckWorkCurrent

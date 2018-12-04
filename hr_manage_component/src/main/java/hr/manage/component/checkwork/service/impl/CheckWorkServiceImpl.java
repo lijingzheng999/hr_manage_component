@@ -80,38 +80,60 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 		}
 		return result;
 	}
-	
 	@Override
-	public  List<CheckWorkCurrent> listCheckWorkCurrent(CheckWorkDetailCondition condition){
-		return checkWorkCurrentDAO.listCheckWorkCurrent(condition);
+	public  List<CheckWorkAnnualLeave> listCheckWorkAnnualLeave(CheckWorkDetailCondition condition){
+		return checkWorkAnnualLeaveDAO.listCheckWorkAnnualLeave(condition);
 	}
 	
 	@Override
-	public  Long countCheckWorkCurrent(CheckWorkDetailCondition condition){
-		return checkWorkCurrentDAO.countCheckWorkCurrent(condition);
+	public  Long countCheckWorkAnnualLeave(CheckWorkDetailCondition condition){
+		return checkWorkAnnualLeaveDAO.countCheckWorkAnnualLeave(condition);
 	}
 	
 	@Override
-	public  CheckWorkCurrent getCheckWorkCurrentById(Integer currentId){
-		return checkWorkCurrentDAO.get(currentId);
+	public  CheckWorkAnnualLeave getCheckWorkAnnualLeaveById(Integer annualId){
+		return checkWorkAnnualLeaveDAO.get(annualId);
 	}
 	
 	@Override
-	public  int updateCheckWorkCurrent(CheckWorkCurrent current){
+	public  int updateCheckWorkAnnualLeave(CheckWorkAnnualLeave annual){
 		int result =0;
-		if(checkWorkCurrentDAO.update(current)){
+		if(checkWorkAnnualLeaveDAO.update(annual)){
 			result =1;
 		}
 		return result;
 	}
-	
-	@Override
-	public  int deleteCheckWorkCurrent(Integer currentId){
-		int result =0;
-		result = checkWorkCurrentDAO.deleteCheckWorkCurrentById(currentId);
-			
-		return result;
-	}
+//	@Override
+//	public  List<CheckWorkCurrent> listCheckWorkCurrent(CheckWorkDetailCondition condition){
+//		return checkWorkCurrentDAO.listCheckWorkCurrent(condition);
+//	}
+//	
+//	@Override
+//	public  Long countCheckWorkCurrent(CheckWorkDetailCondition condition){
+//		return checkWorkCurrentDAO.countCheckWorkCurrent(condition);
+//	}
+//	
+//	@Override
+//	public  CheckWorkCurrent getCheckWorkCurrentById(Integer currentId){
+//		return checkWorkCurrentDAO.get(currentId);
+//	}
+//	
+//	@Override
+//	public  int updateCheckWorkCurrent(CheckWorkCurrent current){
+//		int result =0;
+//		if(checkWorkCurrentDAO.update(current)){
+//			result =1;
+//		}
+//		return result;
+//	}
+//	
+//	@Override
+//	public  int deleteCheckWorkCurrent(Integer currentId){
+//		int result =0;
+//		result = checkWorkCurrentDAO.deleteCheckWorkCurrentById(currentId);
+//			
+//		return result;
+//	}
 //	@Override
 //	public CheckWorkDetail getCheckWorkDetailByName(CheckWorkDetailCondition condition){
 //		return checkWorkDetailDAO.getCheckWorkDetailByName(condition);
