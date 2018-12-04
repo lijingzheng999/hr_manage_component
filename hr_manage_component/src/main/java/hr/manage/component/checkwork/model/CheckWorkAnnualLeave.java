@@ -258,7 +258,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
 
     /** 是否删除 1未删除 0已删除 */
     @Column(value = "is_del")
-    private BigDecimal isDel;
+    private Integer isDel;
 
     /** 编辑时间 */
     @Column(value = "update_time")
@@ -1403,7 +1403,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 是否删除 1未删除 0已删除
      */
-    public BigDecimal getIsDel() {
+    public Integer getIsDel() {
         return this.isDel;
     }
 
@@ -1413,7 +1413,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * @param isDel
      *          是否删除 1未删除 0已删除
      */
-    public void setIsDel(BigDecimal isDel) {
+    public void setIsDel(Integer isDel) {
         this.isDel = isDel;
     }
 
