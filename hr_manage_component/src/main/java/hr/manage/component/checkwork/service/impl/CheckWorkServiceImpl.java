@@ -146,7 +146,11 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	public synchronized int saveCheckWorkDetailListRecord( List<CheckWorkDetail> checkWorkList){
 		int result = 0;
 		for (CheckWorkDetail checkWork : checkWorkList) {
-			
+			BigDecimal attendanceDays = BigDecimal.ZERO;
+			attendanceDays=attendanceDays.add(checkWork.getCheckWorkDays());
+			attendanceDays=attendanceDays.add(checkWork.getOvertimeDays());
+			attendanceDays=attendanceDays.subtract(checkWork.getLeaveDays());
+			checkWork.setAttendanceDays(attendanceDays);
 			logger.info("saveCheckWorkDetailListRecord : 员工姓名：" + checkWork.getName() +" ---考勤月份："+checkWork.getTerm());
 			//判断是否导入过本月考勤
 			CheckWorkDetail curDetail = checkWorkDetailDAO.getCheckWorkDetailByName(checkWork.getName(),checkWork.getTerm());
@@ -289,7 +293,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 				shiftDays = shiftDays.add(annual.getOffDutyShiftDec());
 				annual.setOffDutyShiftCollect(shiftDays);
 				//剩余加班天数
-				BigDecimal surplusOvertime=overtimeDays.subtract(shiftDays);
+				BigDecimal surplusOvertime=overtimeDays.add(annual.getOvertimeLastYear()).subtract(shiftDays);
 				annual.setSurplusOvertimeDays(surplusOvertime);
 				//请假天数
 				BigDecimal leaveDays = BigDecimal.ZERO;
@@ -396,22 +400,25 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 				//剩余加班天数
 				annual.setSurplusOvertimeDays(BigDecimal.ZERO);
 				//判断是否为1月
-				if(termMonth.equals("01")){
+//				if(termMonth.equals("01")){
 					//取出上一年剩余加班天数
 					String lastTerm=String.valueOf(Integer.parseInt(annual.getTerm())-1);
 					CheckWorkAnnualLeave lastAnnual = checkWorkAnnualLeaveDAO.getCheckWorkAnnualLeaveByName(checkWork.getName(),lastTerm);
 					if(lastAnnual!=null){
+						annual.setOvertimeLastYear(lastAnnual.getSurplusOvertimeDays());
 						annual.setSurplusOvertimeDays(lastAnnual.getSurplusOvertimeDays());
 					}
 					else{
 						//上一年没记录，从excel字段中取
+						annual.setOvertimeLastYear(checkWork.getSurplusOvertimeDays());
 						annual.setSurplusOvertimeDays(checkWork.getSurplusOvertimeDays());
 					}
-				}
+//				}
 				annual.setSurplusLeave(BigDecimal.ZERO);
 				annual.setCreateTime(new Date());
 				annual.setIsDel(1);
-				checkWorkAnnualLeaveDAO.save(annual);
+				int curId = checkWorkAnnualLeaveDAO.save(annual);
+				annual.setId(curId);
 			}
 			BigDecimal curAnnualLeave=BigDecimal.ZERO;
 			BigDecimal curOffDutyShift=BigDecimal.ZERO;
@@ -587,7 +594,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 			shiftDays = shiftDays.add(annual.getOffDutyShiftDec());
 			annual.setOffDutyShiftCollect(shiftDays);
 			//剩余加班天数
-			BigDecimal surplusOvertime=overtimeDays.subtract(shiftDays);
+			BigDecimal surplusOvertime=overtimeDays.add(annual.getOvertimeLastYear()).subtract(shiftDays);
 			annual.setSurplusOvertimeDays(surplusOvertime);
 			//请假天数
 			BigDecimal leaveDays = BigDecimal.ZERO;

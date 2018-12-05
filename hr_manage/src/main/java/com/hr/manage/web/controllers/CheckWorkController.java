@@ -314,7 +314,7 @@ public class CheckWorkController {
 	            List<CheckWorkDetail> checkWorkDetailList = new ArrayList<CheckWorkDetail>();
 	            while (rows.hasNext()) {  
 	                Row row = rows.next();  //获得行数据  
-	                if(row.getRowNum()<4||row==null)
+	                if(row.getRowNum()<4||row==null||ExportBeanExcel.isRowEmpty(row))
 	                	continue;
 	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
 	                CheckWorkDetail detail= new CheckWorkDetail();
@@ -389,11 +389,11 @@ public class CheckWorkController {
 								}
 								break;
 							case 5:// 出勤天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(StringUtils.isBlank(transforValue)){
-									transforValue="0";
-								}
-								detail.setAttendanceDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+//								transforValue = String.valueOf(cellValue).trim();
+//								if(StringUtils.isBlank(transforValue)){
+//									transforValue="0";
+//								}
+//								detail.setAttendanceDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 6:// 考勤天数
 								transforValue = String.valueOf(cellValue).trim();
@@ -421,25 +421,25 @@ public class CheckWorkController {
 								detail.setManager(transforValue);
 								break;
 							case 10:// 本月调休天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(StringUtils.isBlank(transforValue)){
-									transforValue="0";
-								}
-								detail.setCurOffDutyShiftDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+//								transforValue = String.valueOf(cellValue).trim();
+//								if(StringUtils.isBlank(transforValue)){
+//									transforValue="0";
+//								}
+//								detail.setCurOffDutyShiftDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 11:// 本月事假天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(StringUtils.isBlank(transforValue)){
-									transforValue="0";
-								}
-								detail.setCurCompassionateDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+//								transforValue = String.valueOf(cellValue).trim();
+//								if(StringUtils.isBlank(transforValue)){
+//									transforValue="0";
+//								}
+//								detail.setCurCompassionateDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 12:// 本月年假天数
-								transforValue = String.valueOf(cellValue).trim();
-								if(StringUtils.isBlank(transforValue)){
-									transforValue="0";
-								}
-								detail.setCurAnnualDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+//								transforValue = String.valueOf(cellValue).trim();
+//								if(StringUtils.isBlank(transforValue)){
+//									transforValue="0";
+//								}
+//								detail.setCurAnnualDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 13:// 婚假
 								transforValue = String.valueOf(cellValue).trim();
@@ -649,7 +649,7 @@ public class CheckWorkController {
 	   		 CheckWorkBaiduDetail detail = null;
 	   		 while (rows.hasNext()) {  
 	                Row row = rows.next();  //获得行数据  
-	                if(row.getRowNum()<5||ExportBeanExcel.isRowEmpty(row))
+	                if(row.getRowNum()<5||row==null||ExportBeanExcel.isRowEmpty(row))
 	                	continue;
 	                Iterator<Cell> cells = row.cellIterator();    //获得第一行的迭代器
 	                
