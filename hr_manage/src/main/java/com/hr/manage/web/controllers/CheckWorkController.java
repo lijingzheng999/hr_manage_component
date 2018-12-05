@@ -421,25 +421,25 @@ public class CheckWorkController {
 								detail.setManager(transforValue);
 								break;
 							case 10:// 本月调休天数
-//								transforValue = String.valueOf(cellValue).trim();
-//								if(StringUtils.isBlank(transforValue)){
-//									transforValue="0";
-//								}
-//								detail.setCurOffDutyShiftDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									transforValue="0";
+								}
+								detail.setCurOffDutyShiftDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 11:// 本月事假天数
-//								transforValue = String.valueOf(cellValue).trim();
-//								if(StringUtils.isBlank(transforValue)){
-//									transforValue="0";
-//								}
-//								detail.setCurCompassionateDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									transforValue="0";
+								}
+								detail.setCurCompassionateDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 12:// 本月年假天数
-//								transforValue = String.valueOf(cellValue).trim();
-//								if(StringUtils.isBlank(transforValue)){
-//									transforValue="0";
-//								}
-//								detail.setCurAnnualDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									transforValue="0";
+								}
+								detail.setCurAnnualDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
 								break;
 							case 13:// 婚假
 								transforValue = String.valueOf(cellValue).trim();
@@ -458,7 +458,6 @@ public class CheckWorkController {
 									transforValue="0";
 								}
 								detail.setSurplusOvertimeDays(BigDecimal.valueOf(Double.parseDouble(transforValue)));
-								
 								break;
 //							case 16://可休年假天数 
 //								transforValue = String.valueOf(cellValue).trim();
@@ -496,7 +495,8 @@ public class CheckWorkController {
 //								  detail.setCompassionateLeaveDays(BigDecimal.ZERO);
 //								}
 //								break;
-							
+							default:
+								break;
 						}
 	                }  
 	                //验证员工信息是否存在

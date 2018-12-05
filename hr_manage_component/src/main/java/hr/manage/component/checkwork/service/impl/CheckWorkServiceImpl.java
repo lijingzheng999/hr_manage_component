@@ -341,8 +341,11 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 				// 本年应休年假
 				BigDecimal annualLeaveDays = new BigDecimal(
 						DateTimeUtil.differentDaysByMillisecond(
-								annual.getStartDate(), annual.getEndDate())*5 / 365).setScale(2,
-						BigDecimal.ROUND_HALF_UP);
+								annual.getStartDate(), annual.getEndDate())*5).divide(new BigDecimal(365),2,BigDecimal.ROUND_HALF_UP);
+				int r=annualLeaveDays.compareTo(BigDecimal.ZERO); //和0，Zero比较
+				if(r==-1){
+					annualLeaveDays = BigDecimal.ZERO;
+				}
 				annual.setAnnualLeaveDays(annualLeaveDays);
 				
 				annual.setAnnualLeaveJan(BigDecimal.ZERO);
