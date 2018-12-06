@@ -219,12 +219,18 @@ public class CheckWorkController {
 			logger.error("=====根据ID未查到考勤信息=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID未查到考勤信息");
 		} 
-//		current.setSurplusOvertimeHours(currentInfo.getSurplusOvertimeHours());
-//		current.setAnnualLeaveDays(currentInfo.getAnnualLeaveDays());
-//		current.setSurplusAnnualLeave(currentInfo.getSurplusAnnualLeave());
-//		current.setSickLeaveDays(currentInfo.getSickLeaveDays());
-//		current.setCompassionateLeaveDays(currentInfo.getCompassionateLeaveDays());
-		detail.setSettlementDays(detailInfo.getSettlementDays());
+		detail.setOvertimeDays(detailInfo.getOvertimeDays());
+		detail.setLeaveDays(detailInfo.getLeaveDays());
+		BigDecimal attendanceDays = BigDecimal.ZERO;
+		attendanceDays=attendanceDays.add(detail.getCheckWorkDays());
+		attendanceDays=attendanceDays.add(detailInfo.getOvertimeDays());
+		attendanceDays=attendanceDays.subtract(detailInfo.getLeaveDays());
+		detail.setAttendanceDays(attendanceDays);
+		detail.setCurAnnualDays(detailInfo.getCurAnnualDays());
+		detail.setCurCompassionateDays(detailInfo.getCurCompassionateDays());
+		detail.setCurOffDutyShiftDays(detailInfo.getCurOffDutyShiftDays());
+		detail.setCurMaritalDays(detailInfo.getCurMaritalDays());
+		detail.setMemo(detailInfo.getMemo());
 		detail.setUpdateTime(new Date());
 		// 进行修改
 		int result  = checkWorkService.updateCheckWorkDetail(detail);
@@ -2257,11 +2263,40 @@ public class CheckWorkController {
 			logger.error("=====根据ID未查到基本信息=====");
 			return "@" + JSONResult.error(CodeMsg.ERROR, "根据ID未查到基本信息");
 		} 
-//		current.setSurplusOvertimeHours(currentInfo.getSurplusOvertimeHours());
-//		current.setAnnualLeaveDays(currentInfo.getAnnualLeaveDays());
-//		current.setSurplusAnnualLeave(currentInfo.getSurplusAnnualLeave());
-//		current.setSickLeaveDays(currentInfo.getSickLeaveDays());
-//		current.setCompassionateLeaveDays(currentInfo.getCompassionateLeaveDays());
+		current.setAnnualLeaveJan(annual.getAnnualLeaveJan());
+		current.setAnnualLeaveFeb(annual.getAnnualLeaveFeb());
+		current.setAnnualLeaveMar(annual.getAnnualLeaveMar());
+		current.setAnnualLeaveApr(annual.getAnnualLeaveApr());
+		current.setAnnualLeaveMay(annual.getAnnualLeaveMay());
+		current.setAnnualLeaveJun(annual.getAnnualLeaveJun());
+		current.setAnnualLeaveJul(annual.getAnnualLeaveJul());
+		current.setAnnualLeaveAug(annual.getAnnualLeaveAug());
+		current.setAnnualLeaveSept(annual.getAnnualLeaveSept());
+		current.setAnnualLeaveOct(annual.getAnnualLeaveOct());
+		current.setAnnualLeaveNov(annual.getAnnualLeaveNov());
+		current.setAnnualLeaveDec(annual.getAnnualLeaveDec());
+		//总年假
+		BigDecimal annualDays=BigDecimal.ZERO;
+		annualDays = annualDays.add(annual.getAnnualLeaveJan());
+		annualDays = annualDays.add(annual.getAnnualLeaveFeb());
+		annualDays = annualDays.add(annual.getAnnualLeaveMar());
+		annualDays = annualDays.add(annual.getAnnualLeaveApr());
+		annualDays = annualDays.add(annual.getAnnualLeaveMay());
+		annualDays = annualDays.add(annual.getAnnualLeaveJun());
+		annualDays = annualDays.add(annual.getAnnualLeaveJul());
+		annualDays = annualDays.add(annual.getAnnualLeaveAug());
+		annualDays = annualDays.add(annual.getAnnualLeaveSept());
+		annualDays = annualDays.add(annual.getAnnualLeaveOct());
+		annualDays = annualDays.add(annual.getAnnualLeaveNov());
+		annualDays = annualDays.add(annual.getAnnualLeaveDec());
+		//剩余年假
+		BigDecimal surplusAnnualDays=current.getAnnualLeaveDays().subtract(annualDays);
+		current.setSurplusAnnualLeave(surplusAnnualDays);
+		//去年流转加班天数
+		current.setOvertimeLastYear(annual.getOvertimeLastYear());
+		//剩余加班天数
+		BigDecimal surplusOvertime=current.getOvertimeCollect().add(annual.getOvertimeLastYear()).subtract(current.getOffDutyShiftCollect());
+		current.setSurplusOvertimeDays(surplusOvertime);
 		current.setUpdateTime(new Date());
 		// 进行修改
 		int result  = checkWorkService.updateCheckWorkAnnualLeave(current);

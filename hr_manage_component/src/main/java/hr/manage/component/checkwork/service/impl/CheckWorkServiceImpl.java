@@ -317,7 +317,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 				//本年度没有年假汇总表数据，进行初始化
 				PersonalSalaryInfo salaryInfo = personalSalaryInfoDAO.getPersonalSalaryInfoById(checkWork.getPersonalInfo().getId());
 				annual = new CheckWorkAnnualLeave();
-				annual.setname(checkWork.getName());
+				annual.setName(checkWork.getName());
 				annual.setTerm(checkWork.getTerm().substring(0, 4));
 				annual.setEntryTime(salaryInfo.getEntryTime());
 				

@@ -296,10 +296,19 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
      * 
      * @return 姓名
      */
-    public String getname() {
+    public String getName() {
         return this.name;
     }
-    
+    /**
+     * 设置姓名
+     * 
+     * @param value
+     *          姓名
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
 	public String getTerm() {
 		return term;
@@ -309,16 +318,7 @@ public class CheckWorkAnnualLeave implements java.io.Serializable {
 		this.term = term;
 	}
 
-	/**
-     * 设置姓名
-     * 
-     * @param value
-     *          姓名
-     */
-    public void setname(String name) {
-        this.name = name;
-    }
-
+	
     /**
      * 获取入职时间
      * 
