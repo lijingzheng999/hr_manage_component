@@ -231,6 +231,7 @@ public class CheckWorkController {
 		detail.setCurOffDutyShiftDays(detailInfo.getCurOffDutyShiftDays());
 		detail.setCurMaritalDays(detailInfo.getCurMaritalDays());
 		detail.setMemo(detailInfo.getMemo());
+		detail.setSettlementDays(detailInfo.getCurCompassionateDays());
 		detail.setUpdateTime(new Date());
 		// 进行修改
 		int result  = checkWorkService.updateCheckWorkDetail(detail);

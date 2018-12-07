@@ -73,8 +73,163 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	}
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
 	public  int updateCheckWorkDetail(CheckWorkDetail detail){
 		int result =0;
+		String termMonth =detail.getTerm().substring(4);
+		CheckWorkAnnualLeave annual = checkWorkAnnualLeaveDAO.getCheckWorkAnnualLeaveByName(detail.getName(),detail.getTerm().substring(0, 4));
+		if(annual!=null){
+			//计算CheckWorkAnnualLeave表
+			BigDecimal curAnnualLeave=detail.getCurAnnualDays();
+			BigDecimal curOffDutyShift=detail.getCurOffDutyShiftDays();
+			BigDecimal curOvertime=detail.getOvertimeDays();
+			BigDecimal curLeave=detail.getLeaveDays();
+			switch (termMonth) {
+			case "01":
+				annual.setAnnualLeaveJan(curAnnualLeave);
+				annual.setOvertimeJan(curOvertime);
+				annual.setOffDutyShiftJan(curOffDutyShift);
+				annual.setLeaveJan(curLeave);
+			
+				break;
+			case "02":
+				annual.setAnnualLeaveFeb(curAnnualLeave);
+				annual.setOvertimeFeb(curOvertime);
+				annual.setOffDutyShiftFeb(curOffDutyShift);
+				annual.setLeaveFeb(curLeave);
+				break;
+			case "03":
+				annual.setAnnualLeaveMar(curAnnualLeave);
+				annual.setOvertimeMar(curOvertime);
+				annual.setOffDutyShiftMar(curOffDutyShift);
+				annual.setLeaveMar(curLeave);
+				break;
+			case "04":
+				annual.setAnnualLeaveApr(curAnnualLeave);
+				annual.setOvertimeApr(curOvertime);
+				annual.setOffDutyShiftApr(curOffDutyShift);
+				annual.setLeaveApr(curLeave);
+				break;
+			case "05":
+				annual.setAnnualLeaveMay(curAnnualLeave);
+				annual.setOvertimeMay(curOvertime);
+				annual.setOffDutyShiftMay(curOffDutyShift);
+				annual.setLeaveMay(curLeave);
+				break;
+			case "06":
+				annual.setAnnualLeaveJun(curAnnualLeave);
+				annual.setOvertimeJun(curOvertime);
+				annual.setOffDutyShiftJun(curOffDutyShift);
+				annual.setLeaveJun(curLeave);
+				break;
+			case "07":
+				annual.setAnnualLeaveJul(curAnnualLeave);
+				annual.setOvertimeJul(curOvertime);
+				annual.setOffDutyShiftJul(curOffDutyShift);
+				annual.setLeaveJul(curLeave);
+				break;
+			case "08":
+				annual.setAnnualLeaveAug(curAnnualLeave);
+				annual.setOvertimeAug(curOvertime);
+				annual.setOffDutyShiftAug(curOffDutyShift);
+				annual.setLeaveAug(curLeave);
+				break;
+			case "09":
+				annual.setAnnualLeaveSept(curAnnualLeave);
+				annual.setOvertimeSept(curOvertime);
+				annual.setOffDutyShiftSept(curOffDutyShift);
+				annual.setLeaveSept(curLeave);
+				break;
+			case "10":
+				annual.setAnnualLeaveOct(curAnnualLeave);
+				annual.setOvertimeOct(curOvertime);
+				annual.setOffDutyShiftOct(curOffDutyShift);
+				annual.setLeaveOct(curLeave);
+				break;
+			case "11":
+				annual.setAnnualLeaveNov(curAnnualLeave);
+				annual.setOvertimeNov(curOvertime);
+				annual.setOffDutyShiftNov(curOffDutyShift);
+				annual.setLeaveNov(curLeave);
+				break;
+			case "12":
+				annual.setAnnualLeaveDec(curAnnualLeave);
+				annual.setOvertimeDec(curOvertime);
+				annual.setOffDutyShiftDec(curOffDutyShift);
+				annual.setLeaveDec(curLeave);
+				break;
+			default:
+				break;
+			}
+			
+			//总年假
+			BigDecimal annualDays=BigDecimal.ZERO;
+			annualDays = annualDays.add(annual.getAnnualLeaveJan());
+			annualDays = annualDays.add(annual.getAnnualLeaveFeb());
+			annualDays = annualDays.add(annual.getAnnualLeaveMar());
+			annualDays = annualDays.add(annual.getAnnualLeaveApr());
+			annualDays = annualDays.add(annual.getAnnualLeaveMay());
+			annualDays = annualDays.add(annual.getAnnualLeaveJun());
+			annualDays = annualDays.add(annual.getAnnualLeaveJul());
+			annualDays = annualDays.add(annual.getAnnualLeaveAug());
+			annualDays = annualDays.add(annual.getAnnualLeaveSept());
+			annualDays = annualDays.add(annual.getAnnualLeaveOct());
+			annualDays = annualDays.add(annual.getAnnualLeaveNov());
+			annualDays = annualDays.add(annual.getAnnualLeaveDec());
+			//剩余年假
+			BigDecimal surplusAnnualDays=annual.getAnnualLeaveDays().subtract(annualDays);
+			annual.setSurplusAnnualLeave(surplusAnnualDays);
+			//总加班
+			BigDecimal overtimeDays=BigDecimal.ZERO;
+			overtimeDays = overtimeDays.add(annual.getOvertimeJan());
+			overtimeDays = overtimeDays.add(annual.getOvertimeFeb());
+			overtimeDays = overtimeDays.add(annual.getOvertimeMar());
+			overtimeDays = overtimeDays.add(annual.getOvertimeApr());
+			overtimeDays = overtimeDays.add(annual.getOvertimeMay());
+			overtimeDays = overtimeDays.add(annual.getOvertimeJun());
+			overtimeDays = overtimeDays.add(annual.getOvertimeJul());
+			overtimeDays = overtimeDays.add(annual.getOvertimeAug());
+			overtimeDays = overtimeDays.add(annual.getOvertimeSept());
+			overtimeDays = overtimeDays.add(annual.getOvertimeOct());
+			overtimeDays = overtimeDays.add(annual.getOvertimeNov());
+			overtimeDays = overtimeDays.add(annual.getOvertimeDec());
+			annual.setOvertimeCollect(overtimeDays);
+			//总调休
+			BigDecimal shiftDays=BigDecimal.ZERO;
+			shiftDays = shiftDays.add(annual.getOffDutyShiftJan());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftFeb());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftMar());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftApr());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftMay());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftJun());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftJul());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftAug());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftSept());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftOct());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftNov());
+			shiftDays = shiftDays.add(annual.getOffDutyShiftDec());
+			annual.setOffDutyShiftCollect(shiftDays);
+			//剩余加班天数
+			BigDecimal surplusOvertime=overtimeDays.add(annual.getOvertimeLastYear()).subtract(shiftDays);
+			annual.setSurplusOvertimeDays(surplusOvertime);
+			//请假天数
+			BigDecimal leaveDays = BigDecimal.ZERO;
+			leaveDays = leaveDays.add(annual.getLeaveJan());
+			leaveDays = leaveDays.add(annual.getLeaveFeb());
+			leaveDays = leaveDays.add(annual.getLeaveMar());
+			leaveDays = leaveDays.add(annual.getLeaveApr());
+			leaveDays = leaveDays.add(annual.getLeaveMay());
+			leaveDays = leaveDays.add(annual.getLeaveJun());
+			leaveDays = leaveDays.add(annual.getLeaveJul());
+			leaveDays = leaveDays.add(annual.getLeaveAug());
+			leaveDays = leaveDays.add(annual.getLeaveSept());
+			leaveDays = leaveDays.add(annual.getLeaveOct());
+			leaveDays = leaveDays.add(annual.getLeaveNov());
+			leaveDays = leaveDays.add(annual.getLeaveDec());
+			annual.setSurplusLeave(leaveDays);
+			annual.setUpdateTime(new Date());
+			checkWorkAnnualLeaveDAO.update(annual);
+		}
 		if(checkWorkDetailDAO.update(detail)){
 			result =1;
 		}
@@ -146,11 +301,7 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 	public synchronized int saveCheckWorkDetailListRecord( List<CheckWorkDetail> checkWorkList){
 		int result = 0;
 		for (CheckWorkDetail checkWork : checkWorkList) {
-			BigDecimal attendanceDays = BigDecimal.ZERO;
-			attendanceDays=attendanceDays.add(checkWork.getCheckWorkDays());
-			attendanceDays=attendanceDays.add(checkWork.getOvertimeDays());
-			attendanceDays=attendanceDays.subtract(checkWork.getLeaveDays());
-			checkWork.setAttendanceDays(attendanceDays);
+			
 			logger.info("saveCheckWorkDetailListRecord : 员工姓名：" + checkWork.getName() +" ---考勤月份："+checkWork.getTerm());
 			//判断是否导入过本月考勤
 			CheckWorkDetail curDetail = checkWorkDetailDAO.getCheckWorkDetailByName(checkWork.getName(),checkWork.getTerm());
@@ -162,9 +313,20 @@ public class CheckWorkServiceImpl implements CheckWorkService {
 				//删除导入的当月考勤数据
 				checkWorkDetailDAO.deleteCheckWorkDetailByName(checkWork.getName(),checkWork.getTerm());
 			}
+			BigDecimal attendanceDays = BigDecimal.ZERO;
+			attendanceDays=attendanceDays.add(checkWork.getCheckWorkDays());
+			attendanceDays=attendanceDays.add(checkWork.getOvertimeDays());
+			attendanceDays=attendanceDays.subtract(checkWork.getLeaveDays());
+			checkWork.setAttendanceDays(attendanceDays);
+			if(checkWork.getCurMaritalDays()==null){
+				checkWork.setCurMaritalDays(BigDecimal.ZERO);
+			}
+			if(checkWork.getSurplusOvertimeDays()==null){
+				checkWork.setSurplusOvertimeDays(BigDecimal.ZERO);
+			}
 			//判断是否年假加班汇总表数据
 			String termMonth =checkWork.getTerm().substring(4);
-			CheckWorkAnnualLeave annual = checkWorkAnnualLeaveDAO.getCheckWorkAnnualLeaveByName(checkWork.getName(),checkWork.getTerm());
+			CheckWorkAnnualLeave annual = checkWorkAnnualLeaveDAO.getCheckWorkAnnualLeaveByName(checkWork.getName(),checkWork.getTerm().substring(0, 4));
 			if(annual!=null){
 				//有数据，根据term恢复
 				switch (termMonth) {
