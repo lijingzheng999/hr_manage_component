@@ -168,6 +168,7 @@ public class SalaryController {
 			salaryLists = salaryService.listSalaryChange(condition);
 			count = salaryService.countSalaryChange(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件获取调薪列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -200,6 +201,7 @@ public class SalaryController {
 		try {
 			salaryChange = JSONObject.parseObject(salaryChangeJsonStr, SalaryChange.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====新增工资调整信息失败，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -269,6 +271,7 @@ public class SalaryController {
 			salaryLists = salaryService.listSalaryDetail(condition);
 			count = salaryService.countSalaryDetail(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件获取工资表明细查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -303,6 +306,7 @@ public class SalaryController {
 		try {
 			salaryLists = salaryService.listSalaryDetail(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件导出工资表明细查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -327,7 +331,6 @@ public class SalaryController {
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.error(admin.getRealname() + " 操作导出工资表列表文件出错", e);
-			e.printStackTrace();
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		} finally {
 			try {
@@ -390,6 +393,7 @@ public class SalaryController {
 		try {
 			salaryDetail = JSONObject.parseObject(salaryDetailJsonStr, SalaryDetail.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改工资表信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -493,6 +497,7 @@ public class SalaryController {
 			salaryLists = salaryService.listInsuranceDetail(condition);
 			count = salaryService.countInsuranceDetail(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====通过条件查询社保表明细查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -551,6 +556,7 @@ public class SalaryController {
 		try {
 			insuranceDetail = JSONObject.parseObject(insuranceDetailJsonStr, InsuranceDetail.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改社保表信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -883,6 +889,7 @@ public class SalaryController {
 		try {
 			profitLists = salaryService.listProfitDetail(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====通过条件查询利润测算表明细查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -907,7 +914,6 @@ public class SalaryController {
 				} catch (IOException e) {
 					e.printStackTrace();
 					logger.error(admin.getRealname() + " 操作导出利润测算表列表文件出错", e);
-					e.printStackTrace();
 					return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 				} finally {
 					try {
@@ -957,6 +963,7 @@ public class SalaryController {
 			profitLists = salaryService.listProfitDetail(condition);
 			count = salaryService.countProfitDetail(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====通过条件查询利润测算表明细查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}

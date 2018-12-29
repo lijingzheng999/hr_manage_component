@@ -162,6 +162,7 @@ public class ContractController {
 			contractLists = contractService.listContractInfo(condition);
 			count = contractService.countContractInfo(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件获取合同信息列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -194,6 +195,7 @@ public class ContractController {
 		try {
 			contractInfo = JSONObject.parseObject(contractInfoJsonStr, ContractInfo.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====新增合同基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -260,6 +262,7 @@ public class ContractController {
 		try {
 			contractInfo = JSONObject.parseObject(contractInfoJsonStr, ContractInfo.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改合同基本信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -342,6 +345,7 @@ public class ContractController {
 				return "@" + JSONResult.success();
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				logger.error("=====删除合同信息异常====="+e);
 				return "@" + JSONResult.error(CodeMsg.ERROR, "删除合同信息异常,"+e.getMessage());
 			}	

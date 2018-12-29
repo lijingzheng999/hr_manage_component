@@ -36,6 +36,7 @@ public class ValidateCodeController {
 		//randomValidateCode.getRandcode(inv.getRequest(), inv.getResponse());// 输出图片方法
 			createValidateCode.printValidateCode(inv.getRequest(), inv.getResponse());
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOGGER.error(e);
 		}
 	}

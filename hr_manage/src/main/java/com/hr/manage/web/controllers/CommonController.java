@@ -233,6 +233,7 @@ public class CommonController {
 			listSettingHoliday = commonService.listSettingHoliday(type,curStartDate,curEndDate,curOffset,curLimit);
 			count = commonService.countSettingHoliday(type,curStartDate,curEndDate);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件获取节假日信息列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}

@@ -211,6 +211,7 @@ public class CheckWorkController {
 		try {
 			detailInfo = JSONObject.parseObject(detailInfoJsonStr, CheckWorkDetail.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改考勤信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -2256,6 +2257,7 @@ public class CheckWorkController {
 		try {
 			annual = JSONObject.parseObject(annualLeaveJsonStr, CheckWorkAnnualLeave.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改年假及加班当前信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -2409,6 +2411,7 @@ public class CheckWorkController {
 		try {
 			baiduInfo = JSONObject.parseObject(baiduInfoJsonStr, CheckWorkBaidu.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改百度考勤信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}

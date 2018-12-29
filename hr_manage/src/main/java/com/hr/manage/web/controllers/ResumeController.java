@@ -112,6 +112,7 @@ public class ResumeController {
 		try {
 			recruitInfo = JSONObject.parseObject(recruitInfoJsonStr, RecruitInfo.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====新增招聘需求信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -171,6 +172,7 @@ public class ResumeController {
 			recruitLists = resumeService.listRecruitInfo(condition);
 			count = resumeService.countRecruitInfo(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====获取招聘需求列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -231,6 +233,7 @@ public class ResumeController {
 		try {
 			recruitInfo = JSONObject.parseObject(recruitInfoJsonStr, RecruitInfo.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改招聘需求信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -556,6 +559,7 @@ public class ResumeController {
 		try {
 			resumeInfo = JSONObject.parseObject(resumeInfoJsonStr, ResumeInfo.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====新增简历信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -628,6 +632,7 @@ public class ResumeController {
 			resumeLists = resumeService.listResumeInfo(condition);
 			count = resumeService.countResumeInfo(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件筛选简历信息列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}
@@ -716,6 +721,7 @@ public class ResumeController {
 		try {
 			resumeInfo = JSONObject.parseObject(resumeInfoJsonStr, ResumeInfo.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改简历信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -906,6 +912,7 @@ public class ResumeController {
 		try {
 			resumeInterview = JSONObject.parseObject(resumeInterviewJsonStr, ResumeInterview.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改简历信息，解析参数出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -1127,6 +1134,7 @@ public class ResumeController {
 			interviewLists = resumeService.listResumeInterview(condition);
 			count = resumeService.countResumeInterview(condition);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====根据条件筛选沟通表信息列表查询，调用service出错=====", e);
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		}

@@ -153,6 +153,7 @@ public class PersonalController {
 				try {
 					result = personalService.updatePersonalAllInfoBySelf(newPersonalAll);
 				} catch (Exception e) {
+					e.printStackTrace();
 					logger.error("更新数据库异常"+e);
 					return "@"+JSONResult.error(CodeMsg.ERROR,"更新数据库异常"+e);
 				}
@@ -369,7 +370,13 @@ public class PersonalController {
 								break;
 							case 1:// 姓名
 								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									logger.error("=====导入失败！姓名不能为空=====");
+									return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！姓名不能为空");  
+									
+								}
 								person.setName(transforValue);
+								
 								break;
 							case 2:// 工作地點
 								transforValue = String.valueOf(cellValue).trim();
@@ -417,16 +424,20 @@ public class PersonalController {
 								break;
 							case 13:// 入职时间 
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isBlank(transforValue)){
+									logger.error("=====导入失败！入职时间 不能为空=====");
+									return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！入职时间不能为空");  
+								}
 									SimpleDateFormat sdtentry=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date entryrdate=sdtentry.parse(String.valueOf(cellValue).trim());
 									salary.setEntryTime(entryrdate);
-								}
-								
 								break;
 							case 14:// 到岗时间
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isBlank(transforValue)){
+									logger.error("=====导入失败！到岗时间不能为空=====");
+									return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！到岗时间不能为空");  
+								}
 									SimpleDateFormat sdtarray=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date arraydate=sdtarray.parse(String.valueOf(cellValue).trim());
 									salary.setArrivalTime(arraydate);
@@ -434,18 +445,17 @@ public class PersonalController {
 									double f1 = new BigDecimal((float)DateTimeUtil.differentDaysByMillisecond(arraydate,new Date())/365).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 									
 									salary.setWorkingYears(BigDecimal.valueOf(f1));
-								}
-								
+						
 								break;
 							case 15:// 转正时间
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isBlank(transforValue)){
+									logger.error("=====导入失败！转正时间不能为空=====");
+									return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！转正时间不能为空");  
+								}
 									SimpleDateFormat sdtworker=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date workerdate=sdtworker.parse(String.valueOf(cellValue).trim());
 									salary.setWorkerTime(workerdate);
-								}
-								
-
 								break;
 							case 16:// 工齡=(TODAY()-到崗時間)/365
 //								double f1 = new BigDecimal((float)DateTimeUtil.differentDaysByMillisecond(salary.getArrivalTime(),new Date())/365).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -472,25 +482,30 @@ public class PersonalController {
 								break;
 							case 20:// 合同签订日期
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isBlank(transforValue)){
+									logger.error("=====导入失败！合同签订日期不能为空=====");
+									return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！合同签订日期不能为空");  
+								}
 									SimpleDateFormat sdtContractDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date contractDate=sdtContractDate.parse(String.valueOf(cellValue).trim());
 									work.setContractStartdate(contractDate);
-								}
 								
 								break;
 							case 21:// 合同失效日期
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isBlank(transforValue)){
+									logger.error("=====导入失败！合同失效日期不能为空=====");
+									return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！合同失效日期不能为空");  
+								}
 									SimpleDateFormat sdtContractEnddate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date contractEnddate=sdtContractEnddate.parse(String.valueOf(cellValue).trim());
 									work.setContractEnddate(contractEnddate);
-								}
+								
 								
 								break;
 							case 22:// 续签合同日期
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isNotBlank(transforValue)){
 									SimpleDateFormat sdtContractRenewDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date contractRenewDate=sdtContractRenewDate.parse(String.valueOf(cellValue).trim());
 									work.setContractRenewDate(contractRenewDate);
@@ -499,7 +514,7 @@ public class PersonalController {
 								break;
 							case 23:// 续签合同失效日期
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isNotBlank(transforValue)){
 									SimpleDateFormat sdtContractRenewEnddate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date contractRenewEnddate=sdtContractRenewEnddate.parse(String.valueOf(cellValue).trim());
 									work.setContractRenewEnddate(contractRenewEnddate);
@@ -508,6 +523,10 @@ public class PersonalController {
 								break;
 							case 24:// 身份证411024199101118518
 								transforValue = String.valueOf(cellValue).trim();
+								if(StringUtils.isBlank(transforValue)){
+									logger.error("=====导入失败！身份证不能为空=====");
+									return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！身份证不能为空");  
+								}
 								person.setIdentityCard(transforValue);
 								// 年龄=YEAR(TODAY())-MID(身份证,7,4)
 								String strBirthDay=transforValue.substring(6, 14);
@@ -584,7 +603,7 @@ public class PersonalController {
 								break;
 							case 37:// 毕业时间
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isNotBlank(transforValue)){
 									SimpleDateFormat sdtGraduationTime=new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟  
 									Date graduationTime=sdtGraduationTime.parse(cellValue.toString());
 									person.setGraduationTime(graduationTime);
@@ -687,7 +706,7 @@ public class PersonalController {
 								break;
 							case 55:// 离职日期
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
+								if(StringUtils.isNotBlank(transforValue)){
 									SimpleDateFormat sdtLeaveWorkingTime=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟  
 									java.util.Date leaveWorkingTime=sdtLeaveWorkingTime.parse(String.valueOf(cellValue).trim());
 									work.setLeaveWorkingTime(leaveWorkingTime);
@@ -696,10 +715,13 @@ public class PersonalController {
 								break;
 							case 56:// 结算价
 								transforValue = String.valueOf(cellValue).trim();
-								if(!transforValue.equals("")){
-									salary.setSettlementPrice(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+								if(StringUtils.isBlank(transforValue)){
+									logger.error("=====导入失败！结算价不能为空=====");
+									return "@"+JSONResult.error(CodeMsg.ERROR,"导入失败！结算价不能为空");  
+									
 								}
-								
+								salary.setSettlementPrice(BigDecimal.valueOf(Double.parseDouble(transforValue)));
+							
 								break;
 							case 57:// 邮箱
 								transforValue = String.valueOf(cellValue).trim();
@@ -799,6 +821,7 @@ public class PersonalController {
 		try {
 			newPersonalAll = JSONObject.parseObject(personalAllJsonStr, PersonalAll.class);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("=====修改员工基本信息，解析参数出错====="+personalAllJsonStr, e);
 			return "@" + JSONResult.error(CodeMsg.ERROR,"解析对象出错！");
 		}
@@ -1133,7 +1156,6 @@ public class PersonalController {
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.error(admin.getRealname() + " 操作导出员工列表文件出错", e);
-			e.printStackTrace();
 			return "@" + JSONResult.error(CodeMsg.SERVER_ERROR);
 		} finally {
 			try {
